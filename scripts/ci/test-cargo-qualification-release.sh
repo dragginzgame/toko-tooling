@@ -3,7 +3,7 @@
 set -euo pipefail
 selection=all
 if [[ $# != 0 ]]; then
-    [[ $# == 2 && $1 == --case && $2 == inheritance ]] || exit 2
+    [[ $# == 2 && $1 == --case && ( $2 == inheritance || $2 == release ) ]] || exit 2
     selection=$2
 fi
 if [[ $selection == all ]]; then bash "$0" --case inheritance; fi
@@ -18,28 +18,48 @@ fixture="$(fixture_create "$ROOT/target/fixtures/cargo-qualification.XXXXXX")"
 export TMPDIR="$fixture"
 fixture_complete=false
 trap 'fixture_finish "$?" "$fixture" "Qualification release fixtures retained"' EXIT
-if [[ $selection == all ]]; then
+if [[ $selection != inheritance ]]; then
     export CARGO_RELEASE_METADATA_EDITOR="${CARGO_RELEASE_METADATA_EDITOR:?select the released Build editor}"
 fi
 export CARGO_RELEASE_METADATA_MAX_BYTES=8388608
 export RELEASE_PREVIOUS=0.1.0 RELEASE_VERSION=0.2.0 RELEASE_DATE=2026-11-09
 helper="$ROOT/scripts/ci/cargo-release-group.sh"
 mkdir -p "$fixture/source/ci" "$fixture/source/crates/domain/product/src" "$fixture/source/crates/unused/src" \
+    "$fixture/source/crates/derive/src" "$fixture/source/crates/leaf/src" \
     "$fixture/source/qualification/domain/probe/src"
 cd "$fixture/source"
 cat > Cargo.toml <<'TOML'
 [workspace]
-members = ["crates/domain/product", "crates/unused"]
+members = ["crates/domain/product", "crates/unused", "crates/derive", "crates/leaf"]
 exclude = ["qualification"]
 resolver = "3"
 [workspace.dependencies]
 product = { path = "crates/domain/product", version = "0.1.0" }
 unused = { path = "crates/unused", version = "0.1.0" }
+derive = { path = "crates/derive", version = "0.1.0" }
+leaf = { path = "crates/leaf", version = "0.1.0" }
 TOML
-for path in domain/product unused; do
+for path in domain/product unused derive leaf; do
     printf '[package]\nname = "%s"\nversion = "0.1.0"\nedition = "2024"\n' "${path##*/}" > "crates/$path/Cargo.toml"
     printf 'pub fn fixture() {}\n' > "crates/$path/src/lib.rs"
 done
+cat >> crates/domain/product/Cargo.toml <<'TOML'
+[dependencies]
+derive = { workspace = true, optional = true }
+[features]
+typescript = ["dep:derive"]
+research = ["derive/research"]
+TOML
+cat >> crates/derive/Cargo.toml <<'TOML'
+[dependencies]
+unused = { workspace = true }
+[target.'cfg(windows)'.dependencies]
+leaf = { workspace = true, optional = true }
+[features]
+research = ["dep:leaf"]
+TOML
+# These must be identified without compiling mutually exclusive research code.
+printf 'compile_error!("metadata admission must not compile research code");\n' > crates/leaf/src/lib.rs
 cat > qualification/Cargo.toml <<'TOML'
 [workspace]
 members = ["domain/probe"]
@@ -56,11 +76,14 @@ edition = "2024"
 publish = false
 [dependencies]
 renamed.workspace = true
+[features]
+typescript = ["renamed/typescript"]
+research = ["renamed/research"]
 TOML
 printf 'pub fn probe() { renamed::fixture(); }\n' > qualification/domain/probe/src/lib.rs
 cat > ci/cargo-release-groups.json <<'JSON'
 {"schema":1,"qualification_workspace":"qualification","groups":[
- {"name":"product","primary":"product","version":"package","members":["product"],"changelog":"CHANGELOG.md","dependencies":["product"]},
+ {"name":"product","primary":"product","version":"package","members":["product","derive","leaf"],"changelog":"CHANGELOG.md","dependencies":["product","derive","leaf"]},
  {"name":"unused","primary":"unused","version":"package","members":["unused"],"changelog":"unused.md","dependencies":["unused"]}
 ]}
 JSON
@@ -103,13 +126,31 @@ if [[ $selection == inheritance ]]; then
 fi
 bash "$helper" plan product > "$fixture/plan.json"
 cargo metadata --locked --offline --format-version 1 > "$fixture/product.json"
+(cd qualification && cargo metadata --locked --offline --format-version 1) > "$fixture/qualification-default.json"
+jq -e '[.packages[].name] == ["probe","product"]' "$fixture/qualification-default.json" > /dev/null
+# All-feature metadata proves the lock's optional identities without compilation.
+(cd qualification && cargo metadata --locked --offline --all-features --format-version 1) > "$fixture/qualification-all.json"
+jq -e '[.packages[].name] == ["derive","leaf","probe","product","unused"]' "$fixture/qualification-all.json" > /dev/null
+yq -p toml -o json '.' qualification/Cargo.toml > "$fixture/qualification-root.json"
+yq -p toml -o json '.' qualification/Cargo.lock > "$fixture/qualification-lock.json"
+# A matching lock name/version must not bypass canonical Cargo path evidence.
+jq -L "$ROOT/scripts/ci" -e --slurpfile product "$fixture/product.json" \
+    --slurpfile manifest "$fixture/qualification-root.json" --slurpfile lock "$fixture/qualification-lock.json" \
+    --slurpfile plan "$fixture/plan.json" --arg directory "$PWD/qualification" '
+    include "cargo-qualification-release";
+    def foreign_path:
+      (.packages[] | select(.name == "product") | .dependencies[] | select(.name == "derive") | .path) = "/foreign/derive";
+    foreign_path |
+    (try qualification_plan(($product[0] | foreign_path); $manifest[0]; $plan[0]; $directory; "0.2.0"; $lock[0])
+     catch .) == "qualification lock product identity lacks Cargo path evidence: derive"' \
+    "$fixture/qualification-default.json" > /dev/null
 # jq optional indexing must not turn a string requirement into an empty predicate
 # that all() accepts. Exercise admission directly before Cargo rejects resolution.
 jq -L "$ROOT/scripts/ci" -ne --slurpfile product "$fixture/product.json" --slurpfile plan "$fixture/plan.json" '
     include "cargo-qualification-release";
     {dependencies:{renamed:"0.1.0"}} |
     qualification_member_catalog($product[0]; $plan[0].qualification.catalog) | not' > /dev/null
-jq -e '.qualification.members == ["product"] and
+jq -e '.qualification.members == ["derive","leaf","product"] and
     ([.files[] | select(startswith("qualification/"))] == ["qualification/Cargo.toml","qualification/Cargo.lock"]) and
     (.qualification.manifest.dependencies == [{alias:"renamed",previous:"=0.1.0",next:"=0.2.0"}])' "$fixture/plan.json" > /dev/null
 bash "$helper" prepare product
@@ -117,11 +158,16 @@ bash "$helper" check product
 cmp qualification/domain/probe/Cargo.toml "$fixture/original/qualification/domain/probe/Cargo.toml"
 cmp crates/unused/Cargo.toml "$fixture/original/crates/unused/Cargo.toml"
 yq -p toml -o json '.' qualification/Cargo.lock | jq -e \
-    '[.package[] | {name,version}] == [{name:"probe",version:"0.7.0"},{name:"product",version:"0.2.0"}]' > /dev/null
+    '[.package[] | {name,version}] == [{name:"derive",version:"0.2.0"},{name:"leaf",version:"0.2.0"},{name:"probe",version:"0.7.0"},{name:"product",version:"0.2.0"},{name:"unused",version:"0.1.0"}]' > /dev/null
+(cd qualification && cargo metadata --locked --offline --format-version 1 > /dev/null)
 restore
 # Qualification need not consume every group; no selected lock entries is a no-op.
+perl -ni -e 'print unless /^unused =/' crates/derive/Cargo.toml
+cargo generate-lockfile --offline
+(cd qualification && cargo generate-lockfile --offline)
+cp qualification/Cargo.lock "$fixture/no-unused.lock"
 bash "$helper" prepare unused
-cmp qualification/Cargo.lock "$fixture/original/qualification/Cargo.lock"
+cmp qualification/Cargo.lock "$fixture/no-unused.lock"
 cmp qualification/Cargo.toml "$fixture/original/qualification/Cargo.toml"
 restore
 # Refuse stale locks, public harnesses, aliases escaping their product identity,
@@ -180,7 +226,7 @@ restore
 # The same machinery supports one coordinated product group with inherited
 # versions; qualification still has an independent version and lock.
 printf '\n[workspace.package]\nversion = "0.1.0"\n' >> Cargo.toml
-for path in domain/product unused; do
+for path in domain/product unused derive leaf; do
     perl -pi -e 's/version = "0.1.0"/version.workspace = true/' "crates/$path/Cargo.toml"
 done
 jq '.groups = [.groups[0]] | .groups[0].version="workspace" |

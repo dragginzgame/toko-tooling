@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.43.2] - Unreleased
+
+### 🩹 Fixed
+
+- Include optional and transitive local product crates in qualification release
+  lock updates using Cargo path identities, preserving unrelated groups and
+  private versions without enabling consumer features.
+  [#383 — Release qualification lock planner misses optional local product crates](https://github.com/dragginzgame/toko-tooling/issues/383).
+
 ## [0.43.1] - 2026-11-14
 
 ### ▶️ Try it

@@ -1327,6 +1327,13 @@ requirements and stale bounds refuse. Every product alias is checked against
 its actual product member path, including unused aliases. A group need not be
 used by qualification: in that case its qualification lock stays unchanged.
 
+Lock membership includes optional, transitive and target-specific local product
+dependencies. Admission traces Cargo's canonical dependency paths through the
+admitted product identities, then intersects them with the qualification lock.
+It does not rely on default-feature resolve membership or enable/compile every
+research feature. An unmatched product lock identity refuses preparation rather
+than permitting a name-only rewrite.
+
 Preparation admits both locked/offline graphs, renders every candidate before
 installation, and validates both resulting graphs in one
 `release_metadata_prepare` transaction. Only selected product versions and their
