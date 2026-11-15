@@ -295,6 +295,8 @@ PR closure or branch deletion; a policy update does not request fleet adoption P
 
 ## Delivery and review
 
+- Apply the baseline's [post-push review](../TOKO-TOOLING.md#post-push-review)
+  as part of delivery, including PR branch pushes and direct releases.
 - Review the whole index before committing; stage only explicit reviewed paths.
   Never use blanket `git add .` or `git add -A`. PRs use topic branches; delegated
   direct delivery uses the established integration branch in the normal checkout.

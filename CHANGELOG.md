@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.44.2] - Unreleased
+
+### 📚 Documentation
+
+- Require a focused post-push review of delivered changes and directly affected
+  callers before the next increment, using existing delivery and follow-up records.
+
 ## [0.44.1] - 2026-11-15
 
 ### ▶️ Try it

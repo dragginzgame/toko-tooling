@@ -226,6 +226,10 @@ authorize partial publication of a selected group or stale-proof reuse.
 
 ## Required workflow
 
+Include the baseline's [post-push review](../../TOKO-TOOLING.md#post-push-review)
+in the delivery handoff for either delivery policy; this is an agent review,
+not a new runner hook or validation target.
+
 Repository secret scanning runs once in CI under the
 [shared scanning contract](../../rules/engineering-details.md#repository-secret-scanning),
 not in group release gates, batch setup or publication. Preserve required checks
