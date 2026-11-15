@@ -42,6 +42,10 @@ cmp "$FIXTURE/summary" "$FIXTURE/default-scratch"
 cmp "$FIXTURE/summary" "$FIXTURE/relative-scratch"
 [[ -d "$FIXTURE/relative scratch" && ! -e "$parent/zeta/relative scratch" ]]
 report -d 0 "$parent" > "$FIXTURE/expanded"
+cmp "$FIXTURE/summary" "$FIXTURE/expanded"
+report --wide "$parent" > "$FIXTURE/wide"
+report --wide -d 0 "$parent" > "$FIXTURE/wide-zero"
+cmp "$FIXTURE/wide" "$FIXTURE/wide-zero"
 report -d 1 "$parent" > "$FIXTURE/modules"
 grep -E '^alpha repo ' "$FIXTURE/expanded" >/dev/null
 grep -E '^zeta ' "$FIXTURE/modules" >/dev/null
@@ -52,7 +56,7 @@ if grep -Eq '\(root\)|\(self\)' "$FIXTURE/modules"; then exit 1; fi
 [[ "$(awk 'END {print $2,$3,$4,$5,$6,$7,$8}' "$FIXTURE/summary")" == '2 4 0 0 0 0 6' ]]
 [[ "$(awk 'END {print $2,$3,$4,$5,$6,$7,$8}' "$FIXTURE/expanded")" == '2 4 0 0 0 0 6' ]]
 awk -v width="$((${#long_name}+2))" 'NR==1 {n=length($0)} length($0)!=n {exit 1} END {if(n!=width+57)exit 1}' "$FIXTURE/expanded"
-[[ "$(wc -l < "$FIXTURE/summary" | tr -d ' ')" == 7 ]]
+[[ "$(wc -l < "$FIXTURE/summary" | tr -d ' ')" == 9 ]]
 [[ "$(wc -l < "$FIXTURE/expanded" | tr -d ' ')" == 9 ]]
 [[ "$(head -1 "$FIXTURE/summary" | xargs)" == 'workspace/crate app/lib tests examples bench tooling ??? total' ]]
 [[ "$(grep -Ec '^[- ]+$' "$FIXTURE/summary")" == 2 ]]
@@ -67,6 +71,8 @@ cmp "$FIXTURE/summary" "$FIXTURE/relative"
 git init -q "$parent/middle-broken"
 printf '[package\n' > "$parent/middle-broken/Cargo.toml"
 if report "$parent" > "$FIXTURE/partial" 2> "$FIXTURE/partial.err"; then exit 1; fi
+if report -d 0 "$parent" > "$FIXTURE/partial-zero" 2> "$FIXTURE/partial-zero.err"; then exit 1; fi
+cmp "$FIXTURE/partial" "$FIXTURE/partial-zero"
 grep -F 'TOTAL (partial)' "$FIXTURE/partial" >/dev/null
 grep -E 'middle-broken +ERROR' "$FIXTURE/partial" >/dev/null
 [[ "$(awk 'END {print $3,$4,$5,$6,$7,$8,$9}' "$FIXTURE/partial")" == '2 4 0 0 0 0 6' ]]
@@ -81,6 +87,8 @@ done
 mkdir "$FIXTURE/no-rust"
 git init -q "$FIXTURE/no-rust/notes"
 report "$FIXTURE/no-rust" > "$FIXTURE/no-rust.out"
+report -d 0 "$FIXTURE/no-rust" > "$FIXTURE/no-rust-zero.out"
+cmp "$FIXTURE/no-rust.out" "$FIXTURE/no-rust-zero.out"
 grep -E '^TOTAL +n/a' "$FIXTURE/no-rust.out" >/dev/null
 if report --json "$parent" > "$FIXTURE/rejected.json" 2>/dev/null; then exit 1; fi
 [[ ! -s "$FIXTURE/rejected.json" ]]

@@ -56,8 +56,9 @@ the exclusions above. Each admitted Rust source path counts once, including
 copies with identical bytes. Retained source fixtures and unreachable source
 still belong to this maintenance footprint; this is not a compiled-code count.
 
-The unified [cloc.sh](../../scripts/dev/cloc.sh) reports repository summaries by
-default; `-d 0` adds individual crate rows without changing totals. Terminal names
+The unified [cloc.sh](../../scripts/dev/cloc.sh) reports repository summaries and
+individual crate rows by default, exactly as with `-d 0`, including sibling
+reports. Neither form expands modules or changes totals. Terminal names
 are green for all workspaces (including non-Cargo repositories with `n/a` counts),
 blue for crates and white for modules. Redirected output,
 `TERM=dumb` and a nonempty `NO_COLOR` disable colours.

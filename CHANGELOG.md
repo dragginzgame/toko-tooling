@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.44.1] - Unreleased
+
+### ▶️ Try it
+
+From a checkout with the updated LOC reporter, `toko-cloc` and `toko-cloc -d 0`
+now print the same crate-level report. This also applies to `toko-cloc ..` and
+`toko-cloc -d 0 ..`; use `-d 1` to expand modules.
+
+### 🩹 Fixed
+
+- Make omitted `toko-cloc` depth identical to `-d 0`: show crate rows without
+  module expansion for repository, workspace, selection and sibling reports.
+
 ## [0.44.0] - 2026-11-15
 
 ### ⚠️ Breaking

@@ -65,6 +65,23 @@ for manifest in "$repo/Cargo.toml" "$repo/qualification/Cargo.toml"; do
 done
 (cd "$repo" && bash "$reporter" --json same-name) > "$FIXTURE/crate.json"
 jq -e '.totals.total == 2 and .selection == "same-name"' "$FIXTURE/crate.json" > /dev/null
+# Omitted depth and explicit zero must agree across all repository selections.
+same_zero_depth() (
+    cd "$repo"
+    bash "$reporter" "$@" > "$FIXTURE/implicit"
+    bash "$reporter" -d 0 "$@" > "$FIXTURE/zero"
+    cmp "$FIXTURE/implicit" "$FIXTURE/zero"
+)
+for mode in table wide json; do
+    flags=()
+    case "$mode" in wide) flags=(--wide) ;; json) flags=(--json) ;; esac
+    same_zero_depth "${flags[@]}"
+    same_zero_depth "${flags[@]}" "$repo"
+    same_zero_depth "${flags[@]}" --manifest "$repo/Cargo.toml"
+    same_zero_depth "${flags[@]}" --manifest "$repo/qualification/Cargo.toml"
+    same_zero_depth "${flags[@]}" same-name
+    same_zero_depth "${flags[@]}" same-name::shared
+done
 cmp "$repo/Cargo.lock" "$FIXTURE/product.lock"
 cmp "$repo/qualification/Cargo.lock" "$FIXTURE/qualification.lock"
 # Two scans observing different bytes must not silently discard either version.
