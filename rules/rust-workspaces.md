@@ -78,8 +78,8 @@ crates/
 apps/
   app-name/
     canic.toml             # Canic fleet configuration
-    component-role/
-      Cargo.toml           # Existing package name; directory may name its role
+    component-package/
+      Cargo.toml           # [package].name = "component-package"
       src/
 qualification/             # Only when separate qualification packages exist
   Cargo.toml               # Independent virtual workspace
@@ -107,8 +107,9 @@ qualification/             # Only when separate qualification packages exist
   a qualification package. Keep a small unit-test helper local to its product
   instead of creating a reverse dependency.
 - Reserve `apps/<fleet-name>/` for Canic fleet configuration and the canister
-  components deployed by that fleet. Component packages may use role directories
-  such as `apps/demo/user_hub/`, preserving their existing Cargo package names.
+  components deployed by that fleet. Package directories follow the baseline's
+  [package naming rule](../TOKO-TOOLING.md#product-and-qualification-workspaces),
+  for example `apps/demo/demo-user-hub/` for package `demo-user-hub`.
   A native publisher, command-line application or product generator belongs in
   `crates/`; a qualification-only harness or fixture belongs in `qualification/`.
   A standalone canister is not a Canic fleet merely because it is an application.

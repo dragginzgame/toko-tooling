@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.44.4] - Unreleased
+
+### 📚 Documentation
+
+- Require long shell commands in root changelog quick starts to use copyable,
+  indented backslash continuations rather than excessively wide lines.
+- Require maintained Cargo package directories to match their package names
+  across product, qualification and fleet layouts, preserving descriptive grouping
+  directories, virtual workspace roots and package identities during adoption.
+
 ## [0.44.3] - 2026-11-15
 
 ### ▶️ Try it
