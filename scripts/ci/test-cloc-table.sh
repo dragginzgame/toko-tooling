@@ -17,15 +17,18 @@ perl -MJSON::PP -e '
         {name=>"unavailable",status=>"n/a"}],totals=>$counts});
 ' > "$fixture/report.json"
 renderer="$root/scripts/dev/cloc-classify.pl"
-perl "$renderer" --table "$fixture/report.json" -d 0 > "$fixture/default"
-perl "$renderer" --table "$fixture/report.json" --columns 80 -d 0 > "$fixture/narrow"
-perl "$renderer" --table "$fixture/report.json" -d 0 --wide > "$fixture/wide"
+perl "$renderer" --table "$fixture/report.json" -d 1 > "$fixture/default"
+perl "$renderer" --table "$fixture/report.json" --columns 80 -d 1 > "$fixture/narrow"
+perl "$renderer" --table "$fixture/report.json" -d 1 --wide > "$fixture/wide"
 perl "$renderer" --table "$fixture/report.json" > "$fixture/implicit"
-cmp "$fixture/default" "$fixture/implicit"
+perl "$renderer" --table "$fixture/report.json" -d 0 > "$fixture/zero"
+cmp "$fixture/zero" "$fixture/implicit"
 perl "$renderer" --table "$fixture/report.json" --columns 80 > "$fixture/implicit"
-cmp "$fixture/narrow" "$fixture/implicit"
+perl "$renderer" --table "$fixture/report.json" --columns 80 -d 0 > "$fixture/zero"
+cmp "$fixture/zero" "$fixture/implicit"
 perl "$renderer" --table "$fixture/report.json" --wide > "$fixture/implicit"
-cmp "$fixture/wide" "$fixture/implicit"
+perl "$renderer" --table "$fixture/report.json" --wide -d 0 > "$fixture/zero"
+cmp "$fixture/zero" "$fixture/implicit"
 perl -CSD -e '
     my ($base)=@ARGV;
     my %rows;

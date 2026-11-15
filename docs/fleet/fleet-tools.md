@@ -33,7 +33,7 @@ pass `..` to report siblings. No global reporter version or shell alias is used.
 toko-cloc
 toko-cloc ..
 toko-cloc -d 2 ..
-toko-cloc --wide -d 0
+toko-cloc --wide -d 1
 toko-cloc -d 1 my-crate::parser
 toko-cloc --manifest qualification/Cargo.toml
 toko-cloc --json
@@ -56,9 +56,9 @@ the exclusions above. Each admitted Rust source path counts once, including
 copies with identical bytes. Retained source fixtures and unreachable source
 still belong to this maintenance footprint; this is not a compiled-code count.
 
-The unified [cloc.sh](../../scripts/dev/cloc.sh) reports repository summaries and
-individual crate rows by default, exactly as with `-d 0`, including sibling
-reports. Neither form expands modules or changes totals. Terminal names
+The unified [cloc.sh](../../scripts/dev/cloc.sh) reports repository totals by
+default, exactly as with `-d 0`, including sibling reports. Neither form expands
+crate or module rows. Terminal names
 are green for all workspaces (including non-Cargo repositories with `n/a` counts),
 blue for crates and white for modules. Redirected output,
 `TERM=dumb` and a nonempty `NO_COLOR` disable colours.
@@ -67,9 +67,11 @@ using a 120-column fallback for redirected output or unavailable terminal sizing
 Long names retain their beginning and end around an ellipsis. `--wide` restores
 full names; JSON always retains them. Numeric columns are never truncated; very
 narrow terminals may still overflow because the header and counts stay readable.
-Use `-d N` to include crates and N source-layout levels beneath each one:
-`-d 0` shows crates only, `-d 1` shows top-level modules, and larger values
-expand their children. `src/` is implicit; `foo.rs` and `foo/mod.rs` map to
+Use `-d N` to expand N levels below the selected scope. For repository or explicit
+workspace reports, `-d 0` shows totals, `-d 1` adds crates, `-d 2` adds top-level
+modules, and larger values expand their children. Sibling reports use the same
+depth beneath each repository. For a named crate or module, `-d 0` shows its
+total and `-d 1` adds its immediate children. `src/` is implicit; `foo.rs` and `foo/mod.rs` map to
 `foo`, including files beneath `foo/`. Inline modules stay in their containing
 file. File extensions and directory slashes are omitted; matching names from
 `src/tests.rs`, `src/tests/` and `tests/` merge into one `tests` branch.

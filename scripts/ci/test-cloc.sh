@@ -4,14 +4,16 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/../.." && pwd -P)"
 export PATH="$ROOT/.tools/host/bin:$PATH"
 unset CARGO_TARGET_DIR
+depth_only=false
 case "${1:-}" in
     '') scopes_only=false; metadata_only=false; bash "$ROOT/scripts/ci/test-cloc-launcher.sh"; bash "$ROOT/scripts/ci/test-cloc-table.sh"; bash "$ROOT/scripts/ci/test-cloc-workspaces.sh" ;;
     --launcher-only) exec bash "$ROOT/scripts/ci/test-cloc-launcher.sh" ;;
     --table-only) exec bash "$ROOT/scripts/ci/test-cloc-table.sh" ;;
     --workspaces-only) exec bash "$ROOT/scripts/ci/test-cloc-workspaces.sh" ;;
+    --depth-only) depth_only=true ;;
     --scopes-only) scopes_only=true; metadata_only=false ;;
     --metadata-only) scopes_only=false; metadata_only=true ;;
-    *) echo 'usage: test-cloc.sh [--launcher-only|--table-only|--scopes-only|--metadata-only|--workspaces-only]' >&2; exit 2 ;;
+    *) echo 'usage: test-cloc.sh [--depth-only|--launcher-only|--table-only|--scopes-only|--metadata-only|--workspaces-only]' >&2; exit 2 ;;
 esac
 FIXTURE="$(mktemp -d "${TMPDIR:-/tmp}/shared-cloc-test.XXXXXX")"
 FIXTURE="$(cd "$FIXTURE" && pwd -P)"
@@ -20,6 +22,7 @@ git init -q "$FIXTURE"
 source "$ROOT/scripts/ci/fixture-lifecycle.sh"
 fixture_complete=false
 trap 'fixture_finish "$?" "$FIXTURE" "Failed LOC fixture retained"' EXIT
+if [[ "$depth_only" == false ]]; then
 if [[ "$scopes_only" == false ]]; then
     mkdir -p "$FIXTURE/policy/src"
     printf '[package]\nname="policy"\nversion="0.1.0"\n[workspace]\n' > "$FIXTURE/policy/Cargo.toml"
@@ -435,6 +438,7 @@ SH
 if PATH="$FIXTURE/bin:$PATH" bash "$FIXTURE/reporter/scripts/dev/cloc.sh" --json --manifest "$FIXTURE/Cargo.toml" "$FIXTURE" > "$FIXTURE/removed.json" 2> "$FIXTURE/removed.err"; then exit 1; fi
 grep -F 'LOC scratch input disappeared:' "$FIXTURE/removed.err" >/dev/null
 [[ ! -s "$FIXTURE/removed.json" ]]
+fi
 # Depth is a view of existing file counts, never a second counting pass.
 depth_root="$FIXTURE/depth"
 mkdir -p "$depth_root/src/foo/deep" "$depth_root/tests"
@@ -447,34 +451,41 @@ printf 'pub fn util() {}\n' > "$depth_root/src/util.rs"
 printf '#[test] fn test() {}\n' > "$depth_root/tests/check.rs"
 printf '#[cfg(test)] mod tests;\n' >> "$depth_root/src/lib.rs"
 printf '#[test] fn unit() {}\n' > "$depth_root/src/tests.rs"
-for depth in 0 1 2 3 999999; do
+for depth in 0 1 2 3 4 999999; do
     bash "$ROOT/scripts/dev/cloc.sh" -d "$depth" --manifest "$depth_root/Cargo.toml" "$depth_root" > "$FIXTURE/depth-$depth"
     grep -Eq '^depth +5 +3 +0 +0 +0 +0 +8$' "$FIXTURE/depth-$depth"
-    grep -Eq '^  depth-fixture +5 +3 +0 +0 +0 +0 +8$' "$FIXTURE/depth-$depth"
+    if [[ "$depth" != 0 ]]; then
+        grep -Eq '^  depth-fixture +5 +3 +0 +0 +0 +0 +8$' "$FIXTURE/depth-$depth"
+    fi
     if grep -Eq '\(root\)|\(self\)|\.rs |/ ' "$FIXTURE/depth-$depth"; then exit 1; fi
 done
-if grep -q '^    foo ' "$FIXTURE/depth-0"; then exit 1; fi
-grep -Eq '^    foo +3 +0 +0 +0 +0 +0 +3$' "$FIXTURE/depth-1"
-grep -Eq '^    util +1 +0 +0 +0 +0 +0 +1$' "$FIXTURE/depth-1"
-grep -Eq '^    tests +0 +2 +0 +0 +0 +0 +2$' "$FIXTURE/depth-1"
-[[ $(grep -c '^    tests ' "$FIXTURE/depth-1") == 1 ]]
-if grep -q '^      deep ' "$FIXTURE/depth-1"; then exit 1; fi
-grep -Eq '^      deep +2 +0 +0 +0 +0 +0 +2$' "$FIXTURE/depth-2"
-grep -Eq '^      check +0 +1 +0 +0 +0 +0 +1$' "$FIXTURE/depth-2"
-if grep -q '^        leaf ' "$FIXTURE/depth-2"; then exit 1; fi
-grep -Eq '^        leaf +1 +0 +0 +0 +0 +0 +1$' "$FIXTURE/depth-3"
-cmp "$FIXTURE/depth-3" "$FIXTURE/depth-999999"
+if grep -q '^  ' "$FIXTURE/depth-0"; then exit 1; fi
+if grep -q '^    ' "$FIXTURE/depth-1"; then exit 1; fi
+bash "$ROOT/scripts/dev/cloc.sh" --manifest "$depth_root/Cargo.toml" "$depth_root" > "$FIXTURE/depth-default"
+cmp "$FIXTURE/depth-0" "$FIXTURE/depth-default"
+grep -Eq '^    foo +3 +0 +0 +0 +0 +0 +3$' "$FIXTURE/depth-2"
+grep -Eq '^    util +1 +0 +0 +0 +0 +0 +1$' "$FIXTURE/depth-2"
+grep -Eq '^    tests +0 +2 +0 +0 +0 +0 +2$' "$FIXTURE/depth-2"
+[[ $(grep -c '^    tests ' "$FIXTURE/depth-2") == 1 ]]
+if grep -q '^      deep ' "$FIXTURE/depth-2"; then exit 1; fi
+grep -Eq '^      deep +2 +0 +0 +0 +0 +0 +2$' "$FIXTURE/depth-3"
+grep -Eq '^      check +0 +1 +0 +0 +0 +0 +1$' "$FIXTURE/depth-3"
+if grep -q '^        leaf ' "$FIXTURE/depth-3"; then exit 1; fi
+grep -Eq '^        leaf +1 +0 +0 +0 +0 +0 +1$' "$FIXTURE/depth-4"
+cmp "$FIXTURE/depth-4" "$FIXTURE/depth-999999"
 # foo.rs plus foo/ is equivalent to foo/mod.rs plus foo/.
 mv "$depth_root/src/foo/mod.rs" "$depth_root/src/foo.rs"
-bash "$ROOT/scripts/dev/cloc.sh" -d 3 --manifest "$depth_root/Cargo.toml" "$depth_root" > "$FIXTURE/depth-file"
-cmp "$FIXTURE/depth-3" "$FIXTURE/depth-file"
+bash "$ROOT/scripts/dev/cloc.sh" -d 4 --manifest "$depth_root/Cargo.toml" "$depth_root" > "$FIXTURE/depth-file"
+cmp "$FIXTURE/depth-4" "$FIXTURE/depth-file"
 for invalid in -1 1.5 nope 01 1000000 ''; do
     if bash "$ROOT/scripts/dev/cloc.sh" -d "$invalid" "$depth_root" > "$FIXTURE/invalid-depth" 2>&1; then exit 1; fi
 done
 if bash "$ROOT/scripts/dev/cloc.sh" -d > "$FIXTURE/invalid-depth" 2>&1; then exit 1; fi
 # Named selection resolves Cargo members and reuses the same module tree/counts.
+if [[ "$depth_only" == false ]]; then
 bash "$ROOT/scripts/dev/cloc.sh" --json --manifest "$FIXTURE/Cargo.toml" app > "$FIXTURE/selected-app.json"
 jq -e '(.crates | length) == 1 and .crates[0].crate == "app" and all(.files[]; .crate == "app")' "$FIXTURE/selected-app.json" >/dev/null
+fi
 bash "$ROOT/scripts/dev/cloc.sh" -d 1 --manifest "$depth_root/Cargo.toml" depth-fixture > "$FIXTURE/selected-crate"
 grep -Eq '^depth-fixture +5 +3 +0 +0 +0 +0 +8$' "$FIXTURE/selected-crate"
 grep -Eq '^  foo +3 +0 +0 +0 +0 +0 +3$' "$FIXTURE/selected-crate"

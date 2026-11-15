@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.44.3] - Unreleased
+
+### ▶️ Try it
+
+```sh
+toko-cloc ..       # Sibling repository totals (same as -d 0)
+toko-cloc -d 1 ..  # Add crate rows
+toko-cloc -d 2 ..  # Add top-level modules
+```
+
+### 🩹 Fixed
+
+- Restore compact LOC totals by making depth count levels below the selected
+  scope. Omitted depth and `-d 0` remain identical; repository/workspace reports
+  now expand crates at `-d 1` and modules at `-d 2`. Named crate/module selections
+  still expand their immediate children at `-d 1`. JSON counts are unchanged.
+
 ## [0.44.2] - 2026-11-15
 
 ### 📚 Documentation
