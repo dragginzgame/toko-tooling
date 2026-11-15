@@ -17,7 +17,7 @@ common toolset, but does not expose Rust formatting or hook installation.
 The include preserves the consumer's default goal, even when declared later.
 Parsing it never installs tools, activates hooks or starts a release.
 
-Shared releases are opt-in: set `TOKO_TOOLING_RELEASE := 1` before including
+Toko Tooling releases are opt-in: set `TOKO_TOOLING_RELEASE := 1` before including
 `consumer.mk` only after providing the [release adapters](../releases/releases.md).
 The default `0` supplies no shared release or empty-directory cleanup targets
 and leaves consumer-owned release recipes alone. Existing users of the shared
@@ -127,7 +127,7 @@ installations, logs and build artifacts during adoption.
 Keep native/system installation in the consumer's existing explicit setup or
 release-preparation adapter, before calling the shared installer. For example,
 this **consumer-owned** target has a sequential recipe, including under parallel
-Make; the local target names are examples, not additions to Shared's interface:
+Make; the local target names are examples, not additions to Toko Tooling's interface:
 
 ```make
 .PHONY: prepare-release-prerequisites
@@ -367,7 +367,7 @@ refusal before later setup or validation. Check that failed prerequisite admissi
 stops gate dispatch and that standalone checks reach no installer. Do not test a
 handwritten duplicate of the adapter or invoke host package managers in a fixture.
 
-Shared's Cargo-tool fixtures own native-environment fingerprint invalidation and
+Toko Tooling's Cargo-tool fixtures own native-environment fingerprint invalidation and
 explicit re-preparation. Retain that rejection/recovery behavior; consumers
 qualify their wiring and named missing product proofs instead of copying the
 generic matrix. Substituted ordering fixtures do not prove native compilation,

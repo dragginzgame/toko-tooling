@@ -3,7 +3,7 @@
 ## PocketIC provisioning and admission
 
 IC Testkit owns server selection, provisioning, offline admission and
-compatibility. Shared 0.2.0 removes its former alignment and binary checkers;
+compatibility. Toko Tooling 0.2.0 removes its former alignment and binary checkers;
 consumer callers and snapshot selections move together under the
 [PocketIC ownership handoff](ic-tools.md#pocketic-ownership-handoff).
 Generic checksum and evidence helpers remain available for their other callers.
@@ -111,9 +111,10 @@ optional snapshot files too. They retain consumer policy at their input boundary
 do not vendor their upstream fixtures as product tests.
 
 After these files have a reviewed committed revision, adopt each desired helper
-and this guide through the [snapshot workflow](../adoption/consuming-snapshots.md). The
-documentation, release-command and registry helpers have no dependencies on
-other shared scripts. Their upstream fixtures
+and its declared executable companions through the
+[snapshot workflow](../adoption/consuming-snapshots.md); read this guide upstream.
+The registry observer includes the release-timing helpers even when timing is
+inactive. Their upstream fixtures
 are `test-documentation-links.pl`, `test-release-commands.sh` and
 `test-crates-io-version.sh`; the release fixture additionally uses the upstream
 Makefile and is not a consumer's product test.

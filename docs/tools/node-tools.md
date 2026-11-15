@@ -78,6 +78,6 @@ Consumers can import `checkIcSdkBoundary(roots)` from the module; it returns
 effect. Adopt `scripts/ci/check-ic-sdk-boundary.mjs` as an explicit snapshot
 entrypoint using the [canonical exporter](../adoption/consuming-snapshots.md#refresh).
 It has no external runtime dependencies; the exporter includes the shared
-`ci/cbor-dependencies.json` inventory. Shared owns its
+`ci/cbor-dependencies.json` inventory. Toko Tooling owns its
 regression matrix in `test-ic-sdk-boundary.mjs`; consumers retain their actual
 root selection and invocation proof rather than replaying that producer matrix.

@@ -1,4 +1,4 @@
-# Shared snapshot integrity and adoption
+# Toko Tooling snapshot integrity and adoption
 <!-- Shared companions: docs/tools/tool-catalog-bindings.md rules/agent-maintenance.md tasks/README.md -->
 
 Apply the [common run contract](README.md) and the
@@ -62,7 +62,7 @@ Report absent adoption explicitly; Toko Tooling itself needs no self-snapshot.
 Reconcile delivered adoption through the
 [issue maintenance procedure](../rules/agent-maintenance.md): verify the consumer's
 required checks and close completed owning issues. Keep outstanding adoption in
-the consumer's issue; update Shared only for remaining producer work. An intact
+the consumer's issue; update Toko Tooling only for remaining producer work. An intact
 snapshot or a pushed commit alone does not satisfy behavior/native acceptance.
 Retire coordination-only trackers under that procedure without claiming their
 consumers have completed adoption.

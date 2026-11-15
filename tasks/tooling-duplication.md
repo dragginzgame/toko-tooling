@@ -6,7 +6,7 @@ Apply the [common run contract](README.md) and the
 Use an explicitly selected projects directory. First apply
 [snapshot-drift](snapshot-drift.md), reusing its evidence when still applicable.
 Keep absent adoption, byte drift, relevant missing fixes and harmless older
-snapshots distinct. Compare against reviewed committed Shared revisions, not
+snapshots distinct. Compare against reviewed committed Toko Tooling revisions, not
 dirty upstream work. No LOC tool or new monitoring service is required.
 
 For each selected repository, trace its actual Make, CI, hooks and deployment

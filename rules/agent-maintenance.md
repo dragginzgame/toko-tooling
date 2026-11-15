@@ -160,9 +160,9 @@ skipped run; do not treat missing failure logs as a completed diagnosis.
   upstream acceptance and consumer adoption. Keep immutable snapshots intact.
 - After an adoption is delivered or the user reports its push, reconcile its
   owning issue during the current inspection pass if it remains open. Verify the
-  consumer revision, recorded Shared snapshot and relevant checks against the
+  consumer revision, recorded Toko Tooling snapshot and relevant checks against the
   issue's completion criteria. Close completed consumer issues with those source
-  identities and evidence links. Update a linked Shared issue only when its
+  identities and evidence links. Update a linked Toko Tooling issue only when its
   own remaining work changes; do not repeat consumer status in a closed producer
   issue. A push, version bump or upstream release alone is
   not completion. Pending native checks leave acceptance open only when they
@@ -175,7 +175,7 @@ skipped run; do not treat missing failure logs as a completed diagnosis.
   producer closure gate. Only unmet issue-specific producer acceptance blocks
   closure. Reopen only for an actual producer defect or unmet producer
   obligation, not a consumer that has yet to adopt.
-- Keep one active issue per owned outcome. Do not create open Shared umbrella
+- Keep one active issue per owned outcome. Do not create open Toko Tooling umbrella
   issues solely to mirror consumer adoption. During reconciliation, retire an
   existing coordination-only tracker once each unresolved obligation has a
   linked owning issue. Explain that tracking moved, preserve its evidence and
@@ -192,7 +192,7 @@ skipped run; do not treat missing failure logs as a completed diagnosis.
 - Consolidate duplicate proposals under one issue, carrying over distinct
   requirements and owner links before closing the duplicate. Do not erase
   unresolved requirements to reduce the count. Downstream automatic closing
-  references must not close Shared issues with unmet producer criteria.
+  references must not close Toko Tooling issues with unmet producer criteria.
   Apply the [shared dependency finding rule](engineering-details.md#shared-dependency-findings)
   to advisory and supplier defects instead of filing a waiting mirror per consumer.
 - Issue-posting authority and source-contribution authority are separate.
@@ -212,8 +212,9 @@ gh issue view ISSUE_NUMBER --repo "$repository" --comments
 ```
 
 Consumers adopt this rule through their
-[reviewed governance snapshot](../docs/adoption/consuming-snapshots.md). Keep product
+[reviewed baseline snapshot](../docs/adoption/consuming-snapshots.md), reading this
+rule through its pinned upstream reference. Keep product
 priorities and required workflow coverage in the local overlay. Refresh the
-baseline and this rule together, then remove redundant local wording only after
+baseline and its reference together, then remove redundant local wording only after
 checking equivalent obligations. Preserve approved scoped exceptions, including
 consumer release boundaries; a dirty upstream policy is not an adopted snapshot.

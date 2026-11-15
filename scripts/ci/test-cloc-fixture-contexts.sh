@@ -12,7 +12,16 @@ fixture="${fixture%/.}"
 # shellcheck source=scripts/ci/fixture-lifecycle.sh
 source "$ROOT/scripts/ci/fixture-lifecycle.sh"
 fixture_complete=false
-trap 'fixture_finish "$?" "$fixture" "Failed LOC context fixture retained"' EXIT
+# shellcheck disable=SC2329 # Invoked by the EXIT trap.
+finish() {
+    local status=$?
+    if [[ "$status" != 0 ]]; then
+        fixture_replay_logs "$fixture/test-cloc.sh.log" "$fixture/test-cloc-siblings.sh.log" \
+            "$fixture/siblings-trailing-slash.log" "$fixture/siblings-directory-alias.log"
+    fi
+    fixture_finish "$status" "$fixture" "Failed LOC context fixture retained"
+}
+trap finish EXIT
 mkdir -p "$fixture/enclosing/.cargo" "$fixture/enclosing/scratch" "$fixture/output"
 git init -q "$fixture/enclosing"
 printf '[workspace]\nmembers = []\nresolver = "2"\n' > "$fixture/enclosing/Cargo.toml"

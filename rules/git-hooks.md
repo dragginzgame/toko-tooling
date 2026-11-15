@@ -116,8 +116,8 @@ executable path. Apple's system Make can resolve a bare recipe command using
 its original process PATH, even though the recipe receives the updated PATH.
 Do not rely on an unrelated global installation to make the recipe work.
 
-For a separate `testing/` workspace, also run `cargo sort --workspace --grouped testing`
-before `cargo fmt --manifest-path testing/Cargo.toml --all`, with their `--check`
+For the separate `qualification/` workspace, also run `cargo sort --workspace --grouped qualification`
+before `cargo fmt --manifest-path qualification/Cargo.toml --all`, with their `--check`
 equivalents in `fmt-check`. Pass one workspace root per `cargo sort --workspace`
 invocation. `cargo-sort` owns its ordering and TOML rendering; do not add a second
 hand-written sort or rewrite dependency declarations to enforce ordering.

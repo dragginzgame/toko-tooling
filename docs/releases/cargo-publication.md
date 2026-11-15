@@ -170,7 +170,8 @@ repository/commit `source-request`, per-package `*-vcs.json` and `*-vcs.log`, an
 Git initialization/fetch logs and `source.git`. Only complete success writes
 `source-verified`. Occupied evidence is never overwritten or retried. The caller
 retains its wider admission lock, final source recheck and interruption recovery.
-Select the helper as a snapshot entrypoint; its guide is a declared companion.
+Select the helper as a snapshot entrypoint with its declared executable companions;
+read this guide at the same reviewed upstream revision.
 The focused fixture uses real local Git history and archives without external
 network requests; native macOS qualification remains separate.
 

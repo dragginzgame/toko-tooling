@@ -17,7 +17,7 @@ different support scopes require an explicitly approved exception.
 | Rust development | rustfmt and product compilation targets | Consumer toolchain setup and the [formatter prerequisite check](setup-helpers.md#formatter-prerequisites) |
 | Workflow-specific tools | ShellCheck, actionlint, Gitleaks, authenticated `gh`, Node/SDKs and other tools used by that repository | Explicit consumer setup; declare the tools required by each workflow |
 
-Shared's archive-license fixtures also require Perl's `Archive::Tar` module.
+Toko Tooling's archive-license fixtures also require Perl's `Archive::Tar` module.
 Registry source-bundle installation requires `Archive::Tar` and
 `IO::Uncompress::Gunzip` as well; prepare them through the host's Perl packages
 before initial adoption.

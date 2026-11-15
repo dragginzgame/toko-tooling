@@ -213,11 +213,11 @@ never install tooling. Source review lives at
 Adopt a snapshot for an applicable fix, a needed capability or an explicitly
 requested refresh. An intact older snapshot does not trigger adoption on its own.
 Batch optional refreshes with requested maintenance or a natural release boundary;
-do not refresh every sibling after each Shared release. Required fixes retain
+do not refresh every sibling after each Toko Tooling release. Required fixes retain
 their own urgency and actual caller qualification.
 
-Run `scripts/distribution/refresh-consumer.sh --impact --source /reviewed/shared-checkout
---consumer /consumer` before adopting a clean committed Shared revision. This
+Run `scripts/distribution/refresh-consumer.sh --impact --source /reviewed/toko-tooling-checkout
+--consumer /consumer` before adopting a clean committed Toko Tooling revision. This
 implies `--preview`; it never publishes or retires consumer files. The source
 checkout's HEAD is the target revision unless `--revision FULL_COMMIT` is supplied.
 Custom manifests and entrypoints use the existing exporter options.
@@ -722,9 +722,9 @@ permissions when adopting this rule, and refresh scheduled prompts that repeat
 them. Reporting an issue neither applies the upstream fix nor verifies consumer
 adoption; broad validation authority stays unchanged.
 After delivering the adoption, apply that rule's issue reconciliation: record
-the exact consumer commit, Shared revision and required validation evidence in
+the exact consumer commit, Toko Tooling revision and required validation evidence in
 the consumer's owning issue and close it when its criteria are met. Update a
-linked Shared issue only for its own remaining work; completed producer issues
+linked Toko Tooling issue only for its own remaining work; completed producer issues
 stay closed while adoption proceeds in consumer issues. Retire redundant
 coordination trackers through the maintenance procedure, preserving owner links.
 Consumers still awaiting required CI remain open. This is
@@ -774,7 +774,7 @@ check alone does not verify those behaviors. Explicit PR adopters instead qualif
 the exact branch push, review boundary, merged-source validation and tag-only push.
 The owner regression fixture, `scripts/ci/test-release-runner.sh`, simulates Git
 effects. Consumers retain their actual integration checks and tool/snapshot
-admission rather than routinely rerunning Shared's implementation regressions. Real-Git tracking qualification is independently selected
+admission rather than routinely rerunning Toko Tooling's implementation regressions. Real-Git tracking qualification is independently selected
 as `scripts/ci/test-release-tracking.sh`; the owner portable suite always runs it.
 Select fixtures according to their documented effects and local authority rather
 than editing vendored tests or invoking an unauthorized broader suite.
@@ -928,7 +928,7 @@ profile. Source-checkout builds and application executable overrides stay local.
 This is a breaking installation contract for Toko Tooling. Consumer libraries
 whose published contracts remain unchanged should use compatible patch notes
 for adoption, even though contributors must reinstall tools and change PATH.
-Do not mirror Shared's minor bump. Assess independent product changes under the
+Do not mirror Toko Tooling's minor bump. Assess independent product changes under the
 [package-impact rules](../../rules/changelogs.md#classify-the-released-packages-own-impact).
 
 For the 0.4 Rust installation hard cut, also follow the
@@ -1024,7 +1024,7 @@ exceptions; their defaults use the snapshot's `ci/tool-versions.env` and
 `ci/ic-tools.tsv`. Command selections target the
 consumer checkout; host/IC payloads use the [shared per-user store](local-setup.md#shared-executable-storage).
 The [consumer Make interface](make-interface.md) selects setup and Rust formatting
-and supplies hook installation and snapshot checking. Shared releases require
+and supplies hook installation and snapshot checking. Toko Tooling releases require
 `TOKO_TOOLING_RELEASE := 1` before the include and consumer-owned release adapters.
 Select `make/consumer.mk` and review its derived closure, keeping product admission,
 metadata, validation and custom formatter adapters local. Non-Rust consumers explicitly
@@ -1097,7 +1097,7 @@ The Rust setup action is an independent entrypoint:
 `.github/actions/prepare-rust-toolchains/action.yml`. Its declared companion is
 `scripts/dev/prepare-rust-toolchain.sh`; the canonical exporter includes that
 helper automatically when selecting or refreshing the action.
-Select `docs/tools/rust-toolchains.md` too for its [caller contract](../tools/rust-toolchains.md).
+Read the [caller contract](../tools/rust-toolchains.md) at the same reviewed upstream revision.
 
 The evidence archiver can be adopted independently as
 `scripts/ci/archive-evidence.sh`; see its
@@ -1113,16 +1113,18 @@ have no shared helper dependencies. Consumers keep test arguments, manifest
 selection and publication/release authority in their adapters.
 
 The read-only runner disk checker has no shared-script dependencies. Add
-`scripts/ci/check-runner-disk-space.sh` and `docs/validation/verification-helpers.md` to the
-reviewed selection. Callers supply an existing filesystem path, minimum MiB,
+`scripts/ci/check-runner-disk-space.sh` to the reviewed executable selection and
+read [verification helpers](../validation/verification-helpers.md) upstream.
+Callers supply an existing filesystem path, minimum MiB,
 label and any diagnostic paths; move local callers before removing their old
 capacity parser. Keep thresholds, diagnostic policy and any separately authorized
 image cleanup local. See the [capacity contract](../validation/evidence-helpers.md#runner-disk-capacity).
 
-The documentation-link, release-command and crates.io observation helpers also
-have no shared helper dependencies. Follow their explicit input and failure
-contracts in [verification helpers](../validation/verification-helpers.md), include that
-document and each selected helper in the snapshot, and move callers before
+Follow the documentation-link, release-command and crates.io observation helpers'
+explicit input and failure contracts in
+[verification helpers](../validation/verification-helpers.md). Include each selected
+executable and its declared companions in the snapshot, read the guide upstream,
+and move callers before
 deleting duplicated code. Keep product-specific checks and publication policy
 local. Adoption must wait for a reviewed committed source revision; local
 upstream tests do not establish that consumers have refreshed their snapshots.
@@ -1138,7 +1140,8 @@ File-digest generation uses the checksum verifier's additive `--print` interface
 so its existing snapshot file set is sufficient. Refresh that verifier before
 changing local hash callers. Advisory database preparation is independently
 available as `scripts/ci/prepare-rustsec-db.sh` with no shared-script dependencies;
-include it and `docs/validation/verification-helpers.md` when adopting it. Replace only
+include the script when adopting it and read
+[verification helpers](../validation/verification-helpers.md) upstream. Replace only
 database acquisition/isolation, retain consumer audit policy and failure evidence,
 and pass `--no-fetch` when auditing the prepared database so its identity stays
 bound to the recorded commit.
@@ -1173,7 +1176,7 @@ With `--external-ic`, the Cargo checker includes the centrally maintained CBOR
 inventory as a snapshot companion; local allowed-package lists cannot relax it.
 Pair this with `check-candid-boundary.pl --cbor ROOT POLICY SOURCE...` and the
 browser SDK boundary checker, which also rejects direct CBOR packages/imports.
-Do not copy the package list into each consumer or replay Shared's generic tests.
+Do not copy the package list into each consumer or replay Toko Tooling's generic tests.
 
 Run Cargo admission separately for every maintained independent Cargo workspace,
 including fixtures and generators; a parent workspace's metadata does not cover

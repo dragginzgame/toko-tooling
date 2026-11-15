@@ -119,7 +119,7 @@ to include siblings; cross-repository delivery requires an explicit request.
   links, cycles and implicit external dependencies. Prefer an ordinary reference
   when it serves the same purpose; do not introduce copied files and a syncing
   mechanism merely to avoid a useful internal link.
-- Shared snapshots and shipped package assets remain regular, self-contained
+- Toko Tooling snapshots and shipped package assets remain regular, self-contained
   files. Materialize packaging copies at their generator and verify them against
   their canonical owner. Package-local `LICENSE` files contain the applicable
   complete terms and notices as regular files. An internal source link does not
@@ -566,17 +566,17 @@ blind retries.
   launch or wait for an additional scan solely because a group is being released.
   Existing required GitHub checks and known failures still apply; this is not
   permission to bypass protections or treat missing evidence as a pass.
-- Consumers adopt this wiring with their reviewed Shared snapshot. Carrying the
+- Consumers adopt this wiring with their reviewed Toko Tooling snapshot. Carrying the
   installer or version catalog alone is not adoption. Audit actual workflow and
   Make callers for both missing scans and duplicate execution; do not require
-  each consumer to replay Shared's generic scanner-installer tests.
+  each consumer to replay Toko Tooling's generic scanner-installer tests.
 
 ## Release commands
 
 - Grouped Cargo increment commands capture frozen inputs by default; an explicit
   `RELEASE_GROUP` selects one group, and multiple groups require an explicit roster.
   Keep publication on that captured source so concurrent
-  normal-checkout lock updates belong to the next batch. Use Shared's
+  normal-checkout lock updates belong to the next batch. Use Toko Tooling's
   [batch setup, recovery and custody interfaces](../docs/releases/release-batches.md),
   rather than adding local orchestration wrappers. Qualify the consumer's real
   hooks before activation; an imported helper alone does not complete adoption.
@@ -602,7 +602,7 @@ blind retries.
   omission; qualify the mapping before enabling it in a release adapter.
 - Keep group validation modular under the
   [shared-mechanics boundary](../docs/releases/release-group-validation.md#shared-mechanics-and-local-policy).
-  Consumers own product mappings and one full-stage roster; Shared owns reusable
+  Consumers own product mappings and one full-stage roster; Toko Tooling owns reusable
   dispatch, checkpoint and evidence mechanics. Raise missing shared capabilities
   at their owner instead of multiplying local frameworks. Full CI must not loop
   over group gates and repeat common checks; full-versus-selected qualification
@@ -1039,7 +1039,7 @@ blind retries.
 
 - A pending sibling release, registry publication, tag or deployment is a user
   coordination matter, not a new engineering issue. Do not create or reopen
-  supplier, consumer or Shared issues, or post repeated release requests, solely
+  supplier, consumer or Toko Tooling issues, or post repeated release requests, solely
   because a needed version is not yet available. This includes "publish the fix",
   "release group X" and "blocked until sibling Y deploys" trackers, even when
   the dependency genuinely blocks the current task.
@@ -1062,7 +1062,7 @@ blind retries.
 - Search open and closed issues before filing. Reuse the canonical issue and
   respect closed consumer redirects. Attach materially new affected-consumer
   source/lock identities, dependency paths and operation/target evidence there;
-  do not recreate mirrors, repeated unchanged comments or a Shared umbrella.
+  do not recreate mirrors, repeated unchanged comments or a Toko Tooling umbrella.
 - Open a separate consumer issue only for **distinct, independently actionable
   consumer-owned work**, such as a direct boundary bypass, an integration defect
   or adoption of an available qualified correction requiring local changes.

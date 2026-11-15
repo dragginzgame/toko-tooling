@@ -12,8 +12,8 @@ without `.md`; people and agents use the same definitions.
 | Task | Question | Suggested cadence |
 | --- | --- | --- |
 | [cargo-machete](cargo-machete.md) | Which Cargo dependencies appear unused? | Every 3 days |
-| [msrv](msrv.md) | Does the advertised minimum really work, and can it be lower? | Every 3 days |
-| [rust-toolchain](rust-toolchain.md) | Are development compilers current with stable Rust? | Every 3 days |
+| [msrv](msrv.md) | Do declarations and actual checks satisfy the approved compiler floor? | Every 3 days |
+| [rust-toolchain](rust-toolchain.md) | Do development pins match policy, and do newer stable releases warrant policy review? | Every 3 days |
 | [cargo-tool-versions](cargo-tool-versions.md) | Are pinned and installed Cargo tools current with stable registry releases? | Every 3 days |
 | [ci-health](ci-health.md) | Which CI failures, persistent queues or repeated gates need attention? | Every 3 days |
 | [snapshot-drift](snapshot-drift.md) | Are shared snapshots intact and relevant fixes adopted? | Every 3 days |

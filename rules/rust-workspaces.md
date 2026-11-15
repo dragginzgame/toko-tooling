@@ -439,9 +439,12 @@ separately scoped consumer task.
 
 ## Adoption and verification
 
-Adopt this rule through a reviewed [governance snapshot](../docs/adoption/consuming-snapshots.md).
+Adopt the reviewed [baseline snapshot](../docs/adoption/consuming-snapshots.md)
+and read this rule at the same upstream revision; do not vendor the reference guide.
 Coordinate consumer work through issues and preserve unrelated working changes.
-The product/qualification standard is introduced in the pending 0.38.0 policy.
+The product/qualification standard was introduced in 0.38.0; atomic multi-lock
+release preparation is available from 0.38.1 under the
+[qualification release contract](../docs/releases/releases.md).
 Consumers must verify the supplying release is actually published, then adopt
 its exact selection and authenticated snapshot before claiming adoption. A pending
 version or this document does not establish publication. Do not patch consumer

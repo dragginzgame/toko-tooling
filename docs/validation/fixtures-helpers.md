@@ -50,7 +50,7 @@ running a generated probe.
 
 ## Producer and consumer fixture boundaries
 
-Shared's Cargo preflight fixture runs the real release runner against cold,
+Toko Tooling's Cargo preflight fixture runs the real release runner against cold,
 offline, fetch-failed and tool-failed preparation, proving refusal before version
 preparation and retention of its isolated source/index. Consumers keep their
 preparation-authority routing, exact package/pin selections and recovery custody.
@@ -176,9 +176,9 @@ must retain their original contents and failure-preservation contract.
 
 ## Controlled hosted-scenario verification
 
-`failure_evidence.py` also exports
-`verify_hosted_scenario(members, read, stage, *, scenario_parent, failure_log_root)`.
-Call it inside `regular_evidence_archive` with explicit canonical relative archive
+`FailureEvidence.pm` also exports
+`verify_hosted_scenario($members, $read, $stage, scenario_parent => $parent, failure_log_root => $logs)`.
+Use the members and read closure returned by `regular_evidence_archive`, with explicit canonical relative archive
 prefixes. It independently checks the maintained hosted driver's exact failure
 status, preserved input bytes/modes, scenario marker, rejected early download or
 late raw/combined logs. It neither extracts archives nor derives expected bytes
@@ -196,9 +196,9 @@ retain refresh/source/index obligations; consumers retain their actual exported
 manifest and representative payload corruption checks. This Bash 3.2 fixture
 requires no Git repository, tool installation or Cargo inputs.
 
-`python3 scripts/ci/test-failure-evidence.py` owns generic downloaded-archive,
-compact-tool receipt and hosted-scenario rejection cases. The standard-library
-suite runs in Linux CI; it adds no Python prerequisite to native shell consumers.
+`perl scripts/ci/test-failure-evidence.pl` owns generic downloaded-archive,
+compact-tool receipt and hosted-scenario rejection cases. The suite uses Perl's
+`Archive::Tar` and runs in Linux CI without a Python dependency.
 Consumers retain actual collector integration, source/run identity, caller pin
 selection and representative rejection checks through their own verifier.
 

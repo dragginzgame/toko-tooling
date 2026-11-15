@@ -147,7 +147,7 @@ Include the complete consumer product-tool recipe/pin fingerprint in
 `cache-extra-key`; common tools and compiler identity are already covered. An
 explicit `rust-tool-versions` must match the catalog actually selected by the
 consumer Makefile. Cache identity is not proof of caller catalog agreement.
-Consumers needing additional acceptance before saving, such as Shared's native
+Consumers needing additional acceptance before saving, such as Toko Tooling's native
 cross-checkout reuse qualification, retain their explicit cache stages. Keep
 failure-evidence collection and all native/product gates unchanged. Local action
 fixtures qualify control flow and input handling, not hosted cache speedups.

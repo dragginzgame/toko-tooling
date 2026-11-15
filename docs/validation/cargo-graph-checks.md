@@ -260,7 +260,7 @@ independent core qualification under the
 Enforce the declared graph constraints through existing consumer metadata/graph
 checks and their failure propagation. Reviewers must reject an unexplained
 downstream bump or a compatibility claim without the corresponding evidence.
-Shared does not infer semantic compatibility or automatically decide affected
+Toko Tooling does not infer semantic compatibility or automatically decide affected
 packages; no new mandatory report file or universal fleet version set is required.
 The focused checks and complete release gates retain their separate scope.
 
@@ -273,7 +273,7 @@ from dependency preparation and the complete release gate. The
 still own lockfile updates and cache preparation.
 
 Keep the orchestration local. Cargo already owns resolution and target/feature
-selection; Shared supplies declaration/graph checks and the existing fail-fast
+selection; Toko Tooling supplies declaration/graph checks and the existing fail-fast
 Make runner. A new shared adoption script or automatic affected-package detector
 is unnecessary. Consumers declare:
 

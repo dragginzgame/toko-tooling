@@ -82,7 +82,8 @@ only until their separately selected deletion succeeds.
 
 ## Adoption and qualification
 
-Adopt the helper and this guide through a reviewed committed snapshot. Replace
+Adopt the helper through a reviewed committed snapshot and read this guide
+at the same upstream revision. Replace
 the old Canic/IcyDB `.sh` implementation, update invocations to `perl` and require
 an explicit locally reviewed cutoff. IcyDB's old single-number shorthand must be
 spelled as a full minor cutoff, such as `0.210`. Keep product cutoff decisions

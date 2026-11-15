@@ -42,7 +42,10 @@ REPORT
         grep -F 'no installed LOC reporter' "$fixture/missing.log"
     )
 done
-if (cd "$fixture"; toko-cloc) > "$fixture/outside.log" 2>&1; then exit 1; fi
+# TMPDIR may be inside an enclosing repository. This negative case must stop
+# discovery at its own boundary rather than accidentally testing that parent.
+mkdir "$fixture/outside"
+if (cd "$fixture/outside"; GIT_CEILING_DIRECTORIES="$fixture" toko-cloc) > "$fixture/outside.log" 2>&1; then exit 1; fi
 grep -F 'run inside a repository' "$fixture/outside.log"
 fixture_complete=true
 echo 'LOC launcher selection, arguments, cwd, PATH and failure propagation passed'

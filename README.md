@@ -60,9 +60,9 @@ explains what belongs in Toko Tooling.
 | Metrics and logging | [IC Observability](https://github.com/dragginzgame/ic-observability): `ic-metrics` and `ic-logging`, required by the [shared rule](TOKO-TOOLING.md#metrics-and-logging); fleet discovery and dashboards remain here |
 | Product deployment, limits, release inputs and acceptance evidence | Each consuming repository |
 
-Shared distributes reviewed commands and source; consumers compile the standalone
+Toko Tooling distributes reviewed commands and source; consumers compile the standalone
 Rust scanner with locked dependencies. `ci/frontend` is a private formatting
-qualification fixture. Shared's release and snapshot lifecycle is independent
+qualification fixture. Toko Tooling's release and snapshot lifecycle is independent
 of the product workspaces.
 
 ## Consuming repositories
@@ -103,9 +103,9 @@ consumer behavior. Applicable workflows support macOS under the
 | Run selected Make checks with retained evidence | [Validation target runner](docs/validation/validation-runner.md) |
 | Reuse checksum, source, archive and publication checks | [Verification helper contracts](docs/validation/verification-helpers.md) |
 
-Shared's own integration fixtures additionally require its prepared IC Build
+Toko Tooling's own integration fixtures additionally require its prepared IC Build
 release editor; [local setup](docs/adoption/local-setup.md#toko-toolings-integration-editor)
-owns that selection. Shared does not activate Rust formatting hooks in this
+owns that selection. Toko Tooling does not activate Rust formatting hooks in this
 source-distribution crate. Installer pins, platform coverage and command options live
 in their guides rather than being repeated here.
 
@@ -126,18 +126,12 @@ principles](docs/principles/README.md), focused policies in `rules/` and the
 [shared audit methods](audits/README.md) support that baseline; product-specific
 choices and historical reports remain with consumers.
 
-For an identified subsystem stuck in incremental cleanup, invoke
-[whole-subsystem replacement](docs/principles/subsystem-replacement.md)
-("nuke and rewrite"): establish a coherent responsibility, then replace it in one
-complete deliverable with explicit behavior guarantees and deletion criteria.
-The guide includes a copyable agent prompt; it is not an automatic maintenance task.
-
 ## Contributing and validation
 
 Read [CONTRIBUTING.md](CONTRIBUTING.md) and this repository's [AGENTS.md](AGENTS.md).
 Only authorised Toko Studios personnel may contribute; outside contributions
 are not accepted.
-Prepare [Shared's pinned compiler](docs/adoption/local-setup.md#toko-toolings-own-compiler)
+Prepare [Toko Tooling's pinned compiler](docs/adoption/local-setup.md#toko-toolings-own-compiler)
 before installing Cargo tools. For ordinary changes, select the affected
 fixtures and checks; documentation-only changes use `make check-doc-links` and
 `git diff --check`. Normal releases use `make release-basic`; the complete

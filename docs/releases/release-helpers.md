@@ -197,7 +197,7 @@ authority, catalog overrides, runner ordering and Git-state custody.
 
 `cargo-release-metadata.sh check PRIMARY_PACKAGE --manifest-order` additionally
 runs `cargo sort --workspace --check` in the same source selected for metadata
-admission. With `RELEASE_COMMIT`, Shared owns the one immutable export, exact
+admission. With `RELEASE_COMMIT`, Toko Tooling owns the one immutable export, exact
 commit admission, cleanup and failure retention. Consumers retain the opt-in
 policy and prepare the Cargo tool; this check performs no installation or
 manifest mutation. Other check callers remain unchanged. The flag is rejected

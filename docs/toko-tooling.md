@@ -1,6 +1,6 @@
 # toko-tooling
 
-The actual source distribution of Dragginzgame development tooling: scripts,
+The source distribution of Toko Studios development tooling: scripts,
 Make interfaces, CI actions, catalogs, rules, licenses and guides. Its empty
 Rust library is dependency-free and `no_std`, with no build script.
 
@@ -8,11 +8,11 @@ The package's authoritative licence is provided in `LICENSE.md`. See
 [the licensing guide](https://github.com/dragginzgame/toko-tooling/blob/main/docs/licenses.md).
 
 Select an exact reviewed release once in repository-root Cargo.toml. The
-example below uses published 0.39.9; it is not an automatic latest-version selector:
+example below uses published 0.43.2; it is not an automatic latest-version selector:
 
 ```toml
 [workspace.dependencies]
-toko-tooling = "=0.39.9"
+toko-tooling = "=0.43.2"
 ```
 
 Every real workspace package inherits it as a dev-dependency:
@@ -28,9 +28,19 @@ ignored = ["toko-tooling"]
 Merge existing exemptions. A standalone package declares the exact version
 in its own dev-dependencies instead. No helper packages or Rust imports are needed.
 `cargo update -v` reports newer available releases; the exact pin keeps adoption
-intentional. After changing the root pin, run `cargo update -p toko-tooling`, then
-`make toko-tooling-update`. Cargo.lock supplies the selected version and checksum;
+intentional. For an installed consumer, change the pin in each maintained
+workspace, run `make deps-update DEPENDENCY_PACKAGE=toko-tooling`, then
+`make toko-tooling-preview` and `make toko-tooling-update`. This updates the root
+and independent qualification locks. Cargo.lock supplies the version and checksum;
 installation downloads and authenticates the actual crates.io source payload.
+
+For first installation, these Make commands are not available yet. Prepare the
+prerequisites and use the installer from a reviewed producer checkout or
+authenticated crate extraction, following the
+[initial adoption guide](https://github.com/dragginzgame/toko-tooling/blob/38a3b259453c56d9fb66e780e53957641f1e73b2/docs/adoption/consuming-snapshots.md#start-here).
+Install selected executables under `vendor/toko-tooling/` and include
+`vendor/toko-tooling/make/consumer.mk`. Reference guides stay upstream; the
+baseline and canonical licence/contribution files retain their root locations.
 
 `make toko-tooling-install` installs the existing Cargo.lock selection.
 Offline `make toko-tooling-check` validates every member's declaration, the root
@@ -38,7 +48,7 @@ pin, Cargo.lock and installed files. Common CI/release entrypoints require it;
 Cargo builds never install tools. The producer qualifies its source archive
 instead of depending on itself.
 
-Follow the [migration guide](https://github.com/dragginzgame/toko-tooling/blob/main/docs/adoption/consuming-snapshots.md#migration-from-cargo-dependencies)
+Follow the [migration guide](https://github.com/dragginzgame/toko-tooling/blob/38a3b259453c56d9fb66e780e53957641f1e73b2/docs/adoption/consuming-snapshots.md#migration-from-cargo-dependencies)
 to remove the 0.34–0.35 metadata tables and `toko-tooling.lock`, plus any old
 selection-only packages. Real tools and qualification packages remain.
 Releases before 0.33 contain only a marker; 0.36 introduces this Cargo-visible

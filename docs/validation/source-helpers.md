@@ -18,7 +18,7 @@ Tracked deletions are allowed. Failed Git/filesystem observations never pass.
 Inventory uses NUL delimiters and disables optional Git index writes; inherited
 Git directory/index overrides cannot select another source.
 
-Shared's `make check-no-symlinks` runs in its CI and release gate as a local choice.
+Toko Tooling's `make check-no-symlinks` runs in its CI and release gate as a local choice.
 Consumers choosing the same stricter inventory may adopt it as a snapshot
 entrypoint. Repositories using justified internal links should select checks for
 their packaging and filesystem security boundaries instead; do not add a second
@@ -229,8 +229,8 @@ cargo-machete ordering. Neither adapter should let cargo-audit fetch again and
 change the recorded database identity. The helper never invokes Cargo, selects
 exemptions or changes a shared advisory cache.
 
-Adopt `scripts/ci/prepare-rustsec-db.sh` and this guide from a reviewed committed
-snapshot before replacing consumer preparation bodies. It requires Bash 3.2+
+Adopt `scripts/ci/prepare-rustsec-db.sh` from a reviewed committed snapshot and
+read this guide upstream before replacing consumer preparation bodies. It requires Bash 3.2+
 and Git, with no shared-script dependencies. `test-rustsec-db.sh` covers simulated
 online/failure cases and real local isolation using existing Git history; it
 neither creates commits nor performs a live vulnerability audit. Consumer tests

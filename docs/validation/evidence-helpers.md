@@ -94,8 +94,8 @@ result unchanged; they are not successful usage measurements. Without these
 arguments no `du` scan runs. The helper has no built-in paths, SDK deletion list,
 installation, artifact cleanup or filesystem mutation.
 
-Adopt `scripts/ci/check-runner-disk-space.sh` and this guide through the reviewed
-snapshot workflow; there are no shared-script dependencies. The upstream
+Adopt `scripts/ci/check-runner-disk-space.sh` through the reviewed snapshot
+workflow and read this guide upstream; there are no shared-script dependencies. The upstream
 `test-runner-disk-space.sh` covers real host observation plus controlled failure
 and threshold cases, and runs in the portable Linux/macOS CI matrix. Consumers
 own step ordering, thresholds, filesystem selection, diagnostic paths and their
@@ -106,17 +106,38 @@ runner-image cleanup remains a separate, explicitly scoped consumer operation.
 
 ## Downloaded failure-evidence verification
 
-The optional host-side `failure_evidence.py` provides non-extracting archive
-indexing/regular reads and independent compact Shared tool receipt verification.
+The optional host-side `scripts/ci/FailureEvidence.pm` provides non-extracting
+archive indexing/regular reads and independent compact tool receipt verification.
 `verify_compact_tools` selects a nonempty set of `host`, `ic`, or both from the
 caller's `tool_pins` keys. Every selected bundle requires its caller pins, fresh
 check log and managed compact selection; unknown or empty selections refuse.
 IC selection additionally requires matching installer pins, native host and
 checksum receipts. Unselected bundles remain diagnostics and are not qualified.
-Consumers keep source/job/run identity and product assertions. The Python helper
-is selected only by download-verification consumers, not native shell setup.
-Run `python3 scripts/ci/test-failure-evidence.py` on the download-verification
-host; the portable shell suite does not introduce a Python prerequisite.
+Consumers keep source/job/run identity and product assertions. Select the module
+as an executable snapshot entrypoint; its declared AWK pin-parser companion is
+required. It uses Perl's `Archive::Tar` header decoder and `IO::Uncompress::Gunzip`
+and never extracts files. USTAR, GNU long names and PAX path records are supported;
+sparse layouts refuse. The member index retains archive contents in memory, so
+callers must admit archive size before opening large downloaded evidence.
+Run `perl scripts/ci/test-failure-evidence.pl` for the producer's rejection cases.
+
+In a consumer Perl script, load the installed module and pass its read closure:
+
+```perl
+use FindBin;
+use lib "$FindBin::Bin/../../vendor/toko-tooling/scripts/ci";
+use FailureEvidence qw(regular_evidence_archive verify_compact_tools);
+my ($members, $read) = regular_evidence_archive($archive_path);
+my $input = $read->('consumer/input.txt', 0640);
+verify_compact_tools($members, $read, {ic => $caller_pin_bytes}, 'Linux/X64');
+```
+
+The example assumes a caller in `scripts/ci/`; adapt the module path to its actual
+location. Reads return original bytes and optionally check an exact mode. Invalid
+archives, missing/nonregular files and verification failures throw exceptions;
+callers must not turn them into successful verification. See the
+[0.44 migration](../adoption/migrations.md#perl-evidence-verification-in-0440)
+before refreshing a consumer that used the retired Python imports.
 
 `qualify-hosted-failure.sh early|late CONSUMER EVIDENCE_PARENT HOST_CATALOG
 FAILURE_LOG_ROOT` requires explicit workflow dispatch and matching checkout
@@ -183,7 +204,7 @@ retain a diagnostic and report incomplete collection. This keeps independent
 logs eligible for archiving without traversing the redirected parent. The
 orchestrator does not repair an invalid caller selection or infer product paths.
 Keep consumer tests for these selections, original failures, completeness and
-upload/download bindings; Shared owns the generic selector/archiver regression
+upload/download bindings; Toko Tooling owns the generic selector/archiver regression
 matrix.
 
 ## Workflow run extraction

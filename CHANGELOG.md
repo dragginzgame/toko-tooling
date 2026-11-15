@@ -1,5 +1,58 @@
 # Changelog
 
+## [0.44.0] - Unreleased
+
+### ⚠️ Breaking
+
+- Replace the Python evidence-verifier import API with `FailureEvidence.pm`.
+  Migrate consumer imports and snapshot selections using the
+  [Perl evidence guide](docs/adoption/migrations.md#perl-evidence-verification-in-0440).
+  [#385 — Resolve existing Python evidence verifier against the no-Python tooling policy](https://github.com/dragginzgame/toko-tooling/issues/385).
+
+### ▶️ Try it
+
+From the Toko Tooling checkout, with Perl's `Archive::Tar` and gzip support installed:
+
+```sh
+perl scripts/ci/test-failure-evidence.pl
+bash scripts/ci/test-cargo-dependency-boundaries.sh --case bls-oracle
+```
+
+Both commands should exit successfully; the first prints the evidence verifier's
+test results and the second checks the BLS oracle's admission and refusals.
+
+### 🩹 Fixed
+
+- Reject malformed release timing records instead of reporting a missing status
+  as success; retain the original journal bytes for diagnosis.
+
+- Run CI shell lint through the canonical Make target so the extensionless
+  `toko-cloc` launcher receives the same checks as local validation.
+
+- Verify the complete gzip stream when reading retained evidence, rejecting
+  corrupt checksums, truncated trailers and payloads hidden after tar padding.
+
+- Admit Platform's private, native-only BLS development oracle under its exact
+  reviewed package, repository, path and dependency contract. Production and
+  unrelated external IC boundaries remain enforced.
+  [#384 — Admit Platform's native-only BLS qualification oracle without relaxing production IC boundaries](https://github.com/dragginzgame/toko-tooling/issues/384).
+
+- Isolate the LOC launcher's outside-repository test from an enclosing checkout,
+  fixing the portable CI context regression. Replay retained child logs when
+  the context fixture fails.
+
+### 📚 Documentation
+
+- Retire the special subsystem-replacement workflow and its invocation guidance;
+  ordinary scope, implementation and validation rules continue to apply.
+- Correct adoption instructions that still requested vendored reference docs,
+  mark superseded documentation migrations explicitly, and replace obsolete
+  repository naming in maintained guides and rules.
+- Refresh the crate README's installation/update sequence and align formatter
+  and lockfile examples with the independent `qualification/` workspace.
+- Align compiler-maintenance tasks with the approved Rust floor and pin;
+  upstream freshness alone no longer suggests lowering floors or drifting pins.
+
 ## [0.43.2] - 2026-11-14
 
 ### 🩹 Fixed
@@ -210,8 +263,8 @@ or the registry. Older batches without timing observations return `[]`.
 
 ### ✨ Added
 
-- Add whole-subsystem replacement guidance: "nuke and rewrite" means validating
-  the responsibility boundary and completing a working replacement in one batch,
+- Add whole-subsystem replacement guidance for validating the responsibility
+  boundary and completing a working replacement in one batch,
   with protected behavior and deletion-based completion criteria.
 
 ## [0.39.18] - 2026-11-12

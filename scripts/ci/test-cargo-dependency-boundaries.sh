@@ -3,8 +3,8 @@
 set -euo pipefail
 selection=all
 if [[ $# != 0 ]]; then
-    [[ $# == 2 && $1 == --case && ($2 == upstream-client || $2 == native-client || $2 == cbor || $2 == hashing || $2 == wire-oracle || $2 == runtime-ic0) ]] || {
-        echo 'usage: test-cargo-dependency-boundaries.sh [--case upstream-client|native-client|cbor|hashing|wire-oracle|runtime-ic0]' >&2; exit 2;
+    [[ $# == 2 && $1 == --case && ($2 == upstream-client || $2 == native-client || $2 == cbor || $2 == hashing || $2 == wire-oracle || $2 == runtime-ic0 || $2 == bls-oracle) ]] || {
+        echo 'usage: test-cargo-dependency-boundaries.sh [--case upstream-client|native-client|cbor|hashing|wire-oracle|runtime-ic0|bls-oracle]' >&2; exit 2;
     }
     selection="$2"
 fi
@@ -36,6 +36,54 @@ chmod +x "$FIXTURE/bin/cargo"
 export PATH="$FIXTURE/bin:$PATH"
 perl -MJSON::PP -e 'print encode_json({version => 1, workspace_root => $ARGV[0], workspace_members => ["consumer"], packages => [{id => "consumer", name => "consumer", dependencies => [{name => "substrate", rename => "hidden", kind => "dev", target => "cfg(windows)"}]}]})' "$FIXTURE" > "$FIXTURE/metadata.json"
 cp "$FIXTURE/metadata.json" "$FIXTURE/valid-metadata.json"
+if [[ $selection == all || $selection == bls-oracle ]]; then
+    oracle="$FIXTURE/qualification"
+    mkdir -p "$oracle/ci"
+    printf '[workspace]\n' > "$oracle/Cargo.toml"
+    for mode in valid normal build portable wasm other-target published owner repository path root alias source local version default-features extra-feature optional tightened; do
+        perl -MJSON::PP -e '
+          my ($root,$mode)=@ARGV;
+          my $d={name=>"ic-verify-bls-signature",kind=>"dev",target=>q{cfg(not(target_family = "wasm"))},
+            source=>"registry+https://github.com/rust-lang/crates.io-index",req=>"^0.6.0",
+            optional=>JSON::PP::false,uses_default_features=>JSON::PP::false,features=>["alloc"]};
+          my $p={id=>"member",name=>"bls-wrapper-probe",publish=>[],repository=>"https://github.com/dragginzgame/ic-platform",
+            manifest_path=>"$root/bls-probe/Cargo.toml",dependencies=>[$d]};
+          $d->{kind}=undef if $mode eq "normal";
+          $d->{kind}="build" if $mode eq "build";
+          $d->{target}=undef if $mode eq "portable";
+          $d->{target}=q{cfg(target_family = "wasm")} if $mode eq "wasm";
+          $d->{target}="cfg(windows)" if $mode eq "other-target";
+          $p->{publish}=undef if $mode eq "published";
+          $p->{name}="other" if $mode eq "owner";
+          $p->{repository}="https://github.com/dragginzgame/other" if $mode eq "repository";
+          $p->{manifest_path}="$root/other/Cargo.toml" if $mode eq "path";
+          $d->{rename}="hidden" if $mode eq "alias";
+          $d->{name}="ic-agent" if $mode eq "source";
+          $d->{path}="$root/local" if $mode eq "local";
+          $d->{req}="^0.7.0" if $mode eq "version";
+          $d->{uses_default_features}=JSON::PP::true if $mode eq "default-features";
+          push @{$d->{features}},"extra" if $mode eq "extra-feature";
+          $d->{optional}=JSON::PP::true if $mode eq "optional";
+          print encode_json({version=>1,workspace_root=>$root,workspace_members=>["member"],packages=>[$p]});
+        ' "$oracle" "$mode" > "$oracle/metadata.json"
+        printf '[{"dependency":"ic-verify-bls-signature","allowed_packages":["bls-wrapper-probe"]}]\n' > "$oracle/ci/cargo-dependency-boundaries.json"
+        if [[ $mode == tightened ]]; then
+            printf '[{"dependency":"ic-verify-bls-signature","allowed_packages":[]}]\n' > "$oracle/ci/cargo-dependency-boundaries.json"
+        fi
+        selected="$oracle"
+        if [[ $mode == root ]]; then
+            selected="$FIXTURE"
+            jq --arg root "$FIXTURE" '.workspace_root=$root | .packages[0].manifest_path=($root+"/bls-probe/Cargo.toml")' "$oracle/metadata.json" > "$FIXTURE/metadata.json"
+        fi
+        actual=reject
+        if bash "$root/scripts/ci/check-cargo-dependency-boundaries.sh" --consumer "$selected" --external-ic > "$FIXTURE/bls-$mode.log" 2>&1; then actual=pass; fi
+        expected=reject; [[ $mode != valid ]] || expected=pass
+        [[ $actual == "$expected" ]] || { cat "$FIXTURE/bls-$mode.log" >&2; exit 1; }
+        [[ $actual == pass ]] || grep -q 'Forbidden direct Cargo dependencies' "$FIXTURE/bls-$mode.log"
+    done
+    cp "$FIXTURE/valid-metadata.json" "$FIXTURE/metadata.json"
+    if [[ $selection == bls-oracle ]]; then fixture_complete=true; exit 0; fi
+fi
 # Native dev clients are admitted; normal clients retain their reviewed owners.
 if [[ $selection == all || $selection == upstream-client ]]; then
     for mode in native renamed private-driver dev build portable wasm other-owner other-sdk published-driver tightened driver-portable driver-dev consumer-dev consumer-renamed consumer-build consumer-portable-dev consumer-wasm-dev consumer-other-sdk-dev consumer-tightened-dev; do

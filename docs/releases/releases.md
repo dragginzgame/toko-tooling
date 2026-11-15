@@ -148,20 +148,20 @@ both files together; neither a version file nor a changelog heading proves
 that a tag was pushed. Pre-release versions require a separately selected release plan;
 these commands must reject ambiguous or unsupported version inputs.
 
-Shared's metadata adapter replaces `Cargo.toml` last. Failed preparation retains
+Toko Tooling's metadata adapter replaces `Cargo.toml` last. Failed preparation retains
 the original files and rendered candidates under the reported Git-owned scratch
 directory, including after a partial replacement. Retry uses the existing release
 reconciliation; it does not delete earlier evidence or automatically restore files.
 Successful attempts remove only their own scratch directory.
 
-Shared's own `release-verify` runs `make release-basic`: version and regular-file
+Toko Tooling's own `release-verify` runs `make release-basic`: version and regular-file
 admission, shell lint, pin declarations, documentation links, and an installation
 from the actual packaged source bundle. Its full portable/tool/recovery matrix
 remains in GitHub CI (`make ci`) or an explicitly requested full local check.
 This maintainer-selected gate applies to this source-distribution crate, which
 has no Rust runtime API; consumer projects retain their own complete gates.
 Publication checks the fresh package/version again before upload. A crates.io
-upload does not require replaying Shared's long-tail CI suite locally.
+upload does not require replaying Toko Tooling's long-tail CI suite locally.
 `make check-tooling-package` rebuilds the archive and selects
 `test-tooling-package.sh --installation-only`: checksum/version admission,
 installation of the selected payload, offline Cargo/snapshot agreement, installed
@@ -172,7 +172,7 @@ staged/unstaged-edit refusal, preview and diagnostic-identity regressions. CI's
 portable suite runs that default; run it locally for changes affecting these
 contracts, rather than replaying it for every publication.
 
-Shared selects `RELEASE_VERSION_MODE=pending` and supplies `release-base-version`.
+Toko Tooling selects `RELEASE_VERSION_MODE=pending` and supplies `release-base-version`.
 That read-only hook returns the preceding ledger version when package.version already
 matches an explicit pending heading, otherwise the current finalized version.
 Package.version and the top changelog version must agree for every lookup. The runner computes the requested increment from that base and still
@@ -976,11 +976,11 @@ partial-upload recovery, and release execution never invokes it implicitly.
 
 The Makefile pattern specifies a contract; adding this document does not install
 helpers or prove consumer adoption. Consumers implement or align their targets,
-vendor a clean reviewed Toko Tooling revision with this document,
+read this guide at their reviewed upstream revision and vendor
 `scripts/ci/run-release.sh`, `scripts/ci/validate-release-inputs.pl`, its
 `StableVersion.pm` companion and any selected
 changelog helper, together with `scripts/ci/check-make-execution.sh`, in the
-[governance snapshot](../adoption/consuming-snapshots.md), and qualify the workflow on their
+[executable snapshot](../adoption/consuming-snapshots.md), and qualify the workflow on their
 declared Linux and macOS hosts. PR adopters also include `scripts/ci/release-pr.sh`,
 add `release-merged-preflight`, and qualify fresh merged-source receipts and their
 complete gate from the retained checkout. Report upstream policy changes separately from
@@ -1009,7 +1009,7 @@ creating commits and exercises the actual adapter's failed-log retention.
 
 IC Build owns manifest and lockfile candidate rendering. The calling consumer
 adapter selects its released `ic-build-release-metadata` executable through the
-consumer's offline admission interface. Before dispatching Shared's low-level
+consumer's offline admission interface. Before dispatching Toko Tooling's low-level
 Cargo helper, it supplies `CARGO_RELEASE_METADATA_EDITOR` as that absolute
 executable path and `CARGO_RELEASE_METADATA_MAX_BYTES` as a positive per-document
 byte allowance. The low-level helper does not install or discover tools through
@@ -1031,7 +1031,7 @@ export CARGO_RELEASE_METADATA_MAX_BYTES=8388608
 ```
 
 The byte allowance above is a fixture example; consumers choose a limit for their
-own documents. Shared's Cargo adapter and saved-source context fixtures require
+own documents. Toko Tooling's Cargo adapter and saved-source context fixtures require
 these same explicit selections. Common tool setup does not install this optional
 release tool unless the consumer includes it in its local extensions. The
 published package requires Rust 1.91 or later.
@@ -1282,7 +1282,7 @@ projections. The existing lock editor already accepts a selected package set.
 Adopt a published supplying editor through the normal tool-selection mechanism;
 do not patch vendored scripts or silently use an unrelated executable. The
 `test-cargo-release-groups.sh` fixture is part of the portable CI roster and uses
-Shared's selected IC Build 0.73.0 editor with its explicit `cli` feature. Direct
+Toko Tooling's selected IC Build 0.73.0 editor with its explicit `cli` feature. Direct
 producer integration qualification may select a compiled candidate explicitly;
 that evidence is not registry delivery or installed-tool admission.
 

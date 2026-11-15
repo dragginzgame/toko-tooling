@@ -29,8 +29,7 @@ For these three repositories:
   from the legacy design or interpret a changing checkout as completed adoption.
   Product requirements and acceptance evidence remain with the product repository.
 
-Apply the existing [subsystem replacement guidance](../principles/subsystem-replacement.md)
-and [baseline](../../TOKO-TOOLING.md#complete-reviewable-changes). The desired
+Apply the [baseline](../../TOKO-TOOLING.md#complete-reviewable-changes). The desired
 deliverable is a coherent replacement, not repeated small changes that preserve
 the complexity the reconstruction was meant to remove.
 

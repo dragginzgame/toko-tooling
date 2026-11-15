@@ -11,7 +11,7 @@ be published.
 
 ## Consumer adoption
 
-Shared 0.31 is a hard cut: rename `RELEASE_FROZEN_GROUPS` to `RELEASE_GROUPS`,
+Toko Tooling 0.31 is a hard cut: rename `RELEASE_FROZEN_GROUPS` to `RELEASE_GROUPS`,
 `RELEASE_FROZEN_PUBLISH_TARGET` to `RELEASE_PUBLISH_TARGET`,
 `RELEASE_FROZEN_SETUP_TARGET` to `RELEASE_SETUP_TARGET`,
 `RELEASE_FROZEN_SETUP_MODE` to `RELEASE_SETUP_MODE`, and `FROZEN_RELEASE_ACTIVE`
@@ -51,7 +51,7 @@ RELEASE_SETUP_TARGET := release-candidate-setup
 ```
 
 The optional setup target runs inside the captured checkout before group-version
-lookup, and before resumed release/publication hooks. Shared passes
+lookup, and before resumed release/publication hooks. Toko Tooling passes
 `RELEASE_SETUP_MODE=prepare` for a fresh group, or `check` for recovery.
 Prepare only the selected tools needed by that group; recovery must admit the
 saved tool selection offline without installing from partially prepared metadata.
@@ -92,6 +92,8 @@ New execution attempts append observations to `timings.jsonl` beside the batch's
 group, source and phase. Finishes record status and monotonic elapsed seconds.
 Resuming appends a new attempt; it never overwrites earlier failures or fills in
 missing measurements. An unfinished span reports `incomplete` without a duration.
+Malformed finished records, including missing statuses and invalid or nonfinite
+durations, refuse readback without modifying the journal or inventing success.
 Timing records are observations, never proof admission or permission to retry.
 
 Read the observations without running setup, validation, publication or network

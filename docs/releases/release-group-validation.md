@@ -119,7 +119,7 @@ mapping and actual integration. This is implementation work, not a request to
 file supplier-release waiting issues.
 
 A migration must remove the superseded local mechanics and qualify the actual
-caller, including rejection and recovery. Shared owns generic adversarial schema,
+caller, including rejection and recovery. Toko Tooling owns generic adversarial schema,
 path and evidence fixtures; consumers own mapping, product and native acceptance.
 Small language-specific callers may consume shared machine-readable results;
 they need not reimplement the protocol in Rust, JavaScript or Perl.
@@ -263,7 +263,7 @@ source/inputs, missing evidence, interruption/recovery and preservation of other
 groups' versions and ledgers. Keep all required native hosts. Measure commands
 and elapsed time; do not promise a saving before real consumer qualification.
 
-Shared's `test-release-validation-plan.sh` exercises two synthetic groups,
+Toko Tooling's `test-release-validation-plan.sh` exercises two synthetic groups,
 shared-input expansion, full-roster command equivalence and refusal/recovery.
 It does not compile Platform or establish its macOS/installed qualification.
 Platform's adoption is the next step; Tooling and other grouped workspaces follow

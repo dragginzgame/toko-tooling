@@ -106,7 +106,7 @@ another stage. No saving is claimed before measurement.
 
 The consumer owns the stage name/revision, exact argv and working directory,
 complete input closure, environment policy, tool identities and native scope.
-Shared owns schema admission, comparison and preservation mechanics. IC Build's
+Toko Tooling owns schema admission, comparison and preservation mechanics. IC Build's
 managed editor remains the only owner of any Cargo version projection; a shell
 or JSON comparator must not implement a second TOML/lock editor.
 

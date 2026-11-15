@@ -57,6 +57,39 @@ my $text=do {local $/;<$out>};close $out or die $!;
 is(scalar(@{decode_json($text)}),7,'CLI collector reads all observations');
 is(-s $ENV{RELEASE_TIMING_JOURNAL},$before,'collector does not mutate evidence');
 {
+    local $/;
+    is(scalar(@{ReleaseTiming::report($ENV{RELEASE_TIMING_JOURNAL})}),7,
+        'caller slurp mode does not change journal framing');
+}
+for my $fault (qw(missing-status null-status text-status boolean-status negative-status large-status
+                  missing-duration null-duration negative-duration text-duration nan-duration infinite-duration
+                  invalid-event invalid-id)) {
+    my $start={schema=>1,event=>'started',id=>'corrupt'};
+    my $finish={schema=>1,event=>'finished',id=>'corrupt',status=>0,elapsed_seconds=>1};
+    delete $finish->{status} if $fault eq 'missing-status';
+    $finish->{status}=undef if $fault eq 'null-status';
+    $finish->{status}='not a status' if $fault eq 'text-status';
+    $finish->{status}=JSON::PP::false if $fault eq 'boolean-status';
+    $finish->{status}=-1 if $fault eq 'negative-status';
+    $finish->{status}=256 if $fault eq 'large-status';
+    delete $finish->{elapsed_seconds} if $fault eq 'missing-duration';
+    $finish->{elapsed_seconds}=undef if $fault eq 'null-duration';
+    $finish->{elapsed_seconds}=-1 if $fault eq 'negative-duration';
+    $finish->{elapsed_seconds}='not a duration' if $fault eq 'text-duration';
+    $finish->{elapsed_seconds}='NaN' if $fault eq 'nan-duration';
+    $finish->{elapsed_seconds}='1e9999' if $fault eq 'infinite-duration';
+    $start=[] if $fault eq 'invalid-event';
+    $start->{id}=[] if $fault eq 'invalid-id';
+    my $path="$dir/$fault.jsonl";
+    my $bytes=encode_json($start)."\n".encode_json($finish)."\n";
+    open my $file,'>',$path or die $!; print {$file} $bytes; close $file or die $!;
+    eval {ReleaseTiming::report($path)};
+    like($@,qr/invalid timing/,$fault.' refuses invented success');
+    open $file,'<',$path or die $!;
+    is(do {local $/;<$file>},$bytes,$fault.' preserves evidence');
+    close $file or die $!;
+}
+{
     no warnings 'redefine';
     local *ReleaseTiming::finish=sub {die "timing unavailable\n"};
     local $SIG{__WARN__}=sub {};

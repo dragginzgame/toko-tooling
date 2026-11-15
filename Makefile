@@ -11,11 +11,11 @@ TOKO_TOOLING_PRODUCER := 1
 CARGO_PUBLISH_PACKAGES := toko-tooling
 CARGO_PUBLISH_REGISTRY := crates-io
 CARGO_PUBLISH_VERIFY_TARGETS := check-version check-tooling-package
-# Shared qualifies IC executable provisioning and retained-tool integrity.
+# Toko Tooling qualifies IC executable provisioning and retained-tool integrity.
 LOCAL_TOOL_INSTALL_TARGETS += install-ic-tools install-release-editor
 LOCAL_TOOL_CHECK_TARGETS += ic-tools-check release-editor-check
 IC_TOOLS := didc ic-wasm icp quill wasm-opt
-# Shared's own integration fixtures use this optional product tool. Consumers
+# Toko Tooling's own integration fixtures use this optional product tool. Consumers
 # retain their release-tool selections; it is not part of the common Cargo set.
 RELEASE_EDITOR_VERSION := 0.73.0
 RELEASE_EDITOR_MAX_BYTES := 8388608
@@ -49,7 +49,7 @@ help:
 	@echo "Complete common host, IC and Rust toolset: install-tools; offline verification: tools-check"
 	@echo "Aggregate offline tool diagnostics: tools-report (no installation)"
 	@echo "Pinned Cargo tools: install-rust-tools; offline verification: rust-tools-check"
-	@echo "Shared integration editor: install-release-editor; offline verification: release-editor-check"
+	@echo "Integration editor: install-release-editor; offline verification: release-editor-check"
 	@echo "Cargo tool freshness (online, read-only): check-cargo-tool-versions"
 	@echo "Dependencies across root + qualification: deps-update (cargo update -v; changes locks)"
 	@echo "Local packages, versions and release groups: deps-list (offline, read-only)"

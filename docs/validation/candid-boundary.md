@@ -88,7 +88,7 @@ Export the checker through the normal snapshot closure; its lexer comes with it.
 Add one lightweight source-check target to the existing consumer validation owner.
 For group-selected checks, select affected roots and their corresponding policy
 file; entries outside the selected roots fail rather than silently disappearing.
-Do not run the same complete source inventory once per group or replay Shared's
+Do not run the same complete source inventory once per group or replay Toko Tooling's
 producer fixtures in consumers. Keep explicit source selection in reviewed Make/CI
 configuration, not a moving sibling checkout. Consumer adoption is separate from
 the supplying change; no automatic dependency refresh or release is required.

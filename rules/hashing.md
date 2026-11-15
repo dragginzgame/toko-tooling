@@ -1,7 +1,7 @@
 # Hashing choices and ownership
 <!-- Shared companions: ci/hash-dependencies.json -->
 
-Shared owns the approved algorithm/purpose inventory; consumers own their bytes,
+Toko Tooling owns the approved algorithm/purpose inventory; consumers own their bytes,
 domain separation, budgets and versioned formats. A common import facade is not
 required. Use root workspace dependency declarations and inherit them in members.
 

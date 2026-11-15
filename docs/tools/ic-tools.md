@@ -122,7 +122,7 @@ is owned by [IC Build](https://github.com/dragginzgame/ic-build/pull/62): its na
 matrix runs real `-O3`, `-Os` and `-Oz` transforms through retained artifact
 transactions, checks repaired cache reuse and executes the transferred Wasm oracle.
 Run its local `scripts/ci/qualify-wasm-opt.sh` with an explicitly admitted optimizer
-and a new absolute evidence directory. The former Shared qualification command
+and a new absolute evidence directory. The former Toko Tooling qualification command
 is removed; this does not replace product canister/deployment acceptance.
 Product build and deployment qualification stay with consumers;
 PocketIC compatibility and server admission belong to Testkit.
@@ -142,7 +142,7 @@ The historical [Testkit #38](https://github.com/dragginzgame/ic-testkit/issues/3
 original handoff evidence. Consumers select a qualified
 Testkit package; they do not duplicate its server catalog or version policy.
 
-Shared 0.2.0 removes PocketIC from the required IC matrix and removes
+Toko Tooling 0.2.0 removes PocketIC from the required IC matrix and removes
 `check-pocketic-alignment.sh`, `check-pocketic-binary.sh` and their dedicated
 fixture. The shared Make targets retain their names and now prepare/check the
 five-tool bundle only. This is a breaking adoption boundary:

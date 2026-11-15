@@ -112,7 +112,7 @@ editor used by its integration fixtures; `make tools-check` admits that selectio
 offline. The standalone targets are `make install-release-editor` and
 `make release-editor-check`. The latter prints the verified absolute executable
 path and never installs it. Its version, profile and fixture byte allowance are
-selected in Shared's root Makefile.
+selected in Toko Tooling's root Makefile.
 
 The selection is IC Build 0.73.0 with the explicit `cli` feature. Portable CI
 includes endpoint-only release-group preparation, rollback and delivery/resume
@@ -136,7 +136,7 @@ This editor is a Shared-local requirement, not an addition to every consumer's
 common Cargo tools. Consumer release adapters retain the explicit selections in
 [Cargo candidate rendering](../releases/releases.md#cargo-release-candidate-rendering).
 
-Shared's standard release commands prepare and check these tools after fresh
+Toko Tooling's standard release commands prepare and check these tools after fresh
 source/changelog admission, before validation. Reconciliation of saved preparation
 and standalone `release-preflight` only check prepared tools; neither installs
 against interrupted metadata. PR delivery prepares the exact merged checkout's
@@ -240,7 +240,7 @@ macOS supplies Bash, Git (through Command Line Tools), tar, gzip, Perl and shasu
 Homebrew GNU Make is available as `gmake`; use it where the system Make does not
 meet a consumer's requirements. These system packages follow the host's package
 manager updates; they are not claimed to be checksum-pinned shared binaries.
-Shared setup never invokes sudo or installs a package manager implicitly.
+Toko Tooling setup never invokes sudo or installs a package manager implicitly.
 The pinned local host set supplies ripgrep and cloc; neither is a bootstrap dependency.
 
 ### Toko Tooling's own compiler

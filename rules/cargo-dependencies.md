@@ -146,6 +146,15 @@ and [browser check](../docs/tools/node-tools.md) alongside Cargo declarations.
 
 ## External IC dependency boundary
 
+Platform's unpublished `qualification/bls-probe` package (`bls-wrapper-probe`,
+repository `https://github.com/dragginzgame/ic-platform`) may use the crates.io
+`ic-verify-bls-signature` oracle at `^0.6.0`, with only `alloc` and default
+features disabled. Admit it only as a nonoptional, unaliased dev dependency
+under `cfg(not(target_family = "wasm"))` in the independent qualification
+workspace. This supplier-owned comparison exception grants no production,
+normal/build, Wasm, other-target or other-SDK permission. Local policy may
+tighten it; changing its ownership or dependency contract requires review.
+
 The unpublished `ic-wire-benchmarks` package may select `candid` as an
 unconditional dev dependency solely for its independent codec oracle, including
 its Wasm measurement guest. This does not permit a production adapter, public
@@ -349,7 +358,7 @@ operations according to their purpose rather than applying one flag everywhere.
 - For an authorized version, source or feature change, trace every affected
   independent workspace graph, including examples, probes and test harnesses
   reached through path dependencies. A root library and an independent
-  `testing/` workspace that depends on it can both need lockfile updates even
+  `qualification/` workspace that depends on it can both need lockfile updates even
   when only the root library's dependency declaration changed.
 - Prepare every affected lockfile in the same change batch using the narrowest
   authorized dependency operation. Preserve unrelated selections and local
@@ -358,7 +367,7 @@ operations according to their purpose rather than applying one flag everywhere.
   This does not collapse approved workspace boundaries or authorize an otherwise
   unrequested dependency upgrade.
 - Before declaring dependency preparation complete, run each affected graph's
-  owning cheap locked metadata check, including both root and `testing/` checks
+  owning cheap locked metadata check, including both root and `qualification/` checks
   in the example above. Prepare selected caches explicitly when required and
   report any unavailable evidence. Metadata checks establish graph consistency,
   not build, test or native-host qualification; a full gate is not required just
@@ -461,7 +470,7 @@ release transaction or duplicate check in every repository.
 
 These rules follow Cargo's [Rust version contract](https://doc.rust-lang.org/cargo/reference/rust-version.html)
 and rustup's [toolchain selection order](https://rust-lang.github.io/rustup/overrides.html).
-Shared owns this support policy; repositories own implementation, focused commands
+Toko Tooling owns this support policy; repositories own implementation, focused commands
 and adoption evidence. Tool/cache preparation, sibling edits and publication
 retain their existing authorization boundaries. A pending shared rule does not
 prove that a consumer or previously published archive has adopted the new floor.

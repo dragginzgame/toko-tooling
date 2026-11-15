@@ -89,14 +89,14 @@ jobs:
       - name: Check shell and workflow sources
         shell: bash
         run: |
-          "$SHELLCHECK_BIN" scripts/ci/*.sh scripts/dev/*.sh scripts/distribution/*.sh scripts/release/*.sh .githooks/pre-commit
+          make check-shell SHELLCHECK="$SHELLCHECK_BIN"
           "$ACTIONLINT_BIN" .github/workflows/*.yml
           make check-no-symlinks
           make check-pins
           make check-doc-links
           make check-version
       - name: Qualify independent downloaded-evidence readers
-        run: python3 scripts/ci/test-failure-evidence.py
+        run: perl scripts/ci/test-failure-evidence.pl
       - name: Scan repository history for secrets
         shell: bash
         run: |

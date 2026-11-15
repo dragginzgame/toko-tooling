@@ -7,7 +7,7 @@ Type=oneshot
 EnvironmentFile=%h/.config/toko-tooling/stack-graph.env
 Environment=RUSTUP_AUTO_INSTALL=0
 Environment=CARGO_NET_OFFLINE=true
-# GNU env supplies a configurable cwd so Cargo selects Shared's pinned compiler.
+# GNU env supplies a configurable cwd so Cargo selects Toko Tooling's pinned compiler.
 ExecStart=/usr/bin/env --chdir=${TOKO_TOOLING_ROOT} /usr/bin/perl scripts/dev/stack-graph.pl --write --parent ${STACK_PROJECTS_ROOT}
 TimeoutStartSec=5min
 KillMode=control-group

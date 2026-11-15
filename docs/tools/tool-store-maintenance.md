@@ -1,7 +1,7 @@
 # Tool store retention and maintenance
 <!-- Shared companions: scripts/dev/tool-store-maintenance.pl scripts/dev/compiler-cache-maintenance.pl -->
 
-Shared owns the existing tool store and its exported setup helpers. Rust setup
+Toko Tooling owns the existing tool store and its exported setup helpers. Rust setup
 now discards successful `build/` and private `home/` scratch after executable and
 receipt admission, under the installation lock. Selected binaries, crate source,
 packaged lock, native observations and installation receipts remain available for
@@ -39,7 +39,7 @@ alone does not establish that a consumer has stopped needing an older version.
 
 ## Preview and reclamation
 
-Invoke the helper from the reviewed Shared snapshot. `STORE` below is the physical
+Invoke the helper from the reviewed Toko Tooling snapshot. `STORE` below is the physical
 store root, normally `$HOME/.local/share/toko-tooling/tools`; honor an existing
 `TOKO_TOOLING_STORE` or `XDG_DATA_HOME` selection. Resolve ancestor aliases such
 as macOS `/var` to their physical paths before invoking this interface.
@@ -138,9 +138,9 @@ copies, and preserve selected provider inputs, final binaries and receipts. Larg
 incremental and dependency trees are regenerable cache, not required provenance.
 Move new scratch beneath the owning `target/` unless the provider's technical
 contract requires another root; existing output requires explicit migration.
-Shared's Rust collector neither traverses those roots nor authorizes deleting
+Toko Tooling's Rust collector neither traverses those roots nor authorizes deleting
 their existing contents. Product-owned cache implementation and native Linux
-qualification remain separate from Shared's substitute installer fixtures and
+qualification remain separate from Toko Tooling's substitute installer fixtures and
 macOS host qualification.
 
 `scripts/dev/compiler-cache-maintenance.pl prepare|finish|preview ROOT OWNER LOCK

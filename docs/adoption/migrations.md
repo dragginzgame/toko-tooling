@@ -1,5 +1,26 @@
 # Consumer migration history
 
+## Perl evidence verification in 0.44.0
+
+The Python `failure_evidence.py` import API is removed. Consumers using it must
+select `scripts/ci/FailureEvidence.pm` and its declared companions, migrate their
+verification caller to Perl, and retire the old entrypoint through a complete
+exporter selection. Do not keep a Python compatibility copy in the new snapshot.
+Existing immutable older snapshots retain their original contract until adopted.
+
+`regular_evidence_archive($path)` returns a member hash reference and a read
+closure rather than a context manager. Call `$read->($name, $optional_mode)` for
+original bytes; pass those members and the closure to `verify_compact_tools` or
+`verify_hosted_scenario`. Failures throw exceptions. Preserve consumer-selected
+pins, source/job/run identities, archive selections and rejection tests. See the
+[caller example](../validation/evidence-helpers.md#downloaded-failure-evidence-verification).
+
+The producer's CI caller is migrated. Inspection of the non-excluded local
+sibling scripts and workflows found no imports of the retired API; this is not
+evidence about unpublished or remote consumers. Such consumers must migrate
+before adopting 0.44.0. The new module requires Perl's `Archive::Tar` with gzip
+support and the existing AWK pin parser; no Python prerequisite remains.
+
 ## LOC command in 0.43.0
 
 `make cloc` and its `CLOC_REPORT`, `CLOC_ROOT`, `CLOC_PARENT`, `CLOC_DEPTH` and
@@ -210,6 +231,9 @@ release implementation a consumer has enabled.
 
 ## Documentation organisation clarification in 0.39.4
 
+Historical policy, superseded by [online reference documentation in 0.39.5](#online-reference-documentation-in-0395).
+Do not apply the vendored-document namespace instructions below to current adoption.
+
 Every repository should organise product-owned docs by meaningful topic. That
 cleanup can proceed independently during authorised documentation work; no Toko
 Tooling update is needed to move native files and repair their local links.
@@ -223,6 +247,9 @@ does not move exported files. Preserve current receipt-owned paths until the
 qualified upstream migration is released, then adopt it through the exporter.
 
 ## Documentation ownership policy in 0.39.3
+
+Historical policy, superseded by [online reference documentation in 0.39.5](#online-reference-documentation-in-0395).
+Current consumers keep reference documentation upstream rather than creating this namespace.
 
 The baseline now specifies a reserved `docs/toko-tooling/` namespace for installed
 shared documentation, including rules, audit procedures and task guides. Native
@@ -257,7 +284,7 @@ remain usable until deliberately refreshed.
 
 ## Consumer Make changes in 0.39.0
 
-Shared release commands now require `TOKO_TOOLING_RELEASE := 1` before including
+Toko Tooling release commands now require `TOKO_TOOLING_RELEASE := 1` before including
 `make/consumer.mk`. Set it only for consumers with the required release adapters;
 otherwise shared release and cleanup targets are absent. Directly including
 `make/release.mk` remains an explicit selection. This is a breaking Make interface
@@ -297,6 +324,10 @@ that prior revision in its ancestry. Git-to-crate migration uses the installer's
 proof. Preview first and retain the old receipt until admission succeeds.
 
 ### Adoption choices and prerequisites
+
+The compiler minimum below records the 0.37.0 migration. Current adoption follows
+the [Rust 1.100.0 policy](../../rules/cargo-dependencies.md#minimum-supported-rust-version-msrv)
+rather than selecting that historical compiler.
 
 Adopting the crate also adopts its Rust 1.99.1 minimum. Its
 `package.rust-version = "1.99.1"` applies when Cargo builds it as a dev-dependency
@@ -406,7 +437,7 @@ No step depends on a local draft, sibling working tree or `/tmp` proposal.
 4. Review the production graph with the actual build target/features before
    deployment. Reuse the consumer's existing dependency-policy check to enforce
    any test-only exclusions, including transitive paths. If that enforcement is
-   missing, record the remaining consumer work explicitly: Shared's sorter and
+   missing, record the remaining consumer work explicitly: Toko Tooling's sorter and
    metadata helper do not enforce role classifications. A passing snapshot or format
    check must not be reported as automated deployment admission.
 
