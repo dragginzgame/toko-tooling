@@ -14,8 +14,7 @@ exact constraints, immutable Git revisions, lockfiles and external path inputs.
 Apply the baseline's
 [current dependency selection rule](../TOKO-TOOLING.md#current-dependencies-and-upstream-independence)
 when adding or updating dependencies. General-purpose selections are independent
-of older DFINITY transitive requirements; justified multiple versions are allowed,
-subject to the baseline's explicit `thiserror` v2 compatibility hold.
+of older DFINITY transitive requirements; justified multiple versions are allowed.
 
 External dependencies retain their own licences. Bringing their implementation
 into an owned package must follow the

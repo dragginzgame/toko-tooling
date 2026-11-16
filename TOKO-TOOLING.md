@@ -417,17 +417,11 @@ selection. Preserve real incompatibility refusals and required integration tests
   no freshness exception for our independent direct dependency; security
   findings still require remediation.
 
-**Approved compatibility hold (2026-11-16):** select `thiserror` v2 at `2.0.18`
-in product and qualification graphs, including native tools. Direct users declare
-`thiserror = "=2.0.18"` in their owning workspace catalog; retain the matching
-`thiserror-impl` lock selection. PocketIC 16.1.0 requires this exact version, and
-the maintainer has selected a common v2 hold rather than separate workspaces
-solely to avoid it. For transitive-only use, retain the reviewed lock selection;
-do not add unused direct dependencies to impose the hold. Check it after dependency
-updates. Existing upstream v1 dependencies are not subject to a forced major
-migration. Revisit the hold when the selected PocketIC permits a newer v2 and
-qualify the affected callers before lifting it. This is a specific exception to
-latest-version selection, not a general requirement to match DFINITY dependencies.
+`thiserror` follows the same independent selection rule: use compatible version
+requirements and let Cargo select the latest compatible release. PocketIC may
+constrain its own graph; do not propagate that constraint into independent
+workspaces or add unused dependencies to impose it. Align versions only for a
+demonstrated integration requirement. This supersedes the 0.44.7 fleet-wide hold.
 
 An unchanged release selection is not a new dependency adoption. The freshness
 review above may defer an optional upgrade to the next dependency-maintenance

@@ -69,9 +69,6 @@ def checks:
            ($spec | has("git") or has("path") | not) and
            ($spec.package? // $name) == "toko-tooling" and
            ($spec.version | test("^=[0-9]+\\.[0-9]+\\.[0-9]+$")) then empty
-        elif ($spec.package? // $name) == "thiserror" and $spec.version == "=2.0.18" then empty
-        elif ($spec.package? // $name) == "thiserror" and ($spec.version | test("^[=~^ ]*2([., ]|$)")) then
-          finding($file; "cargo-thiserror"; $name; $spec.version; "approved PocketIC hold requires thiserror =2.0.18")
         elif $spec.version | test("(^|,)\\s*=\\s*[0-9]") then
           finding($file; "cargo-exact"; $name; $spec.version; "exact version constraint requires a documented compatibility reason")
         elif $spec.version | contains("*") then

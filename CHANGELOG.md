@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.44.8] - Unreleased
+
+### 🩹 Fixed
+
+- Remove the fleet-wide thiserror hold and its special pin-check enforcement.
+  Independent workspaces use compatible requirements; PocketIC's constraint
+  stays in graphs that actually need it. Keep `deps-update` as plain Cargo updates.
+
 ## [0.44.7] - 2026-11-16
 
 ### 📚 Documentation
