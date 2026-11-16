@@ -76,9 +76,10 @@ do not invent completion estimates.
   Repair and qualify the failed boundary first. If existing machinery cannot admit
   earlier proof, state that limitation and the resulting cost before restarting;
   proceed under existing release authority without a routine permission prompt.
-- Hosted CI runs independently unless branch/release protections require waiting.
-  Do not add an extra local copy of its full matrix or wait for unrelated jobs.
-  Preserve required checks, and report registry delivery and hosted CI separately.
+- Apply the baseline's [hosted CI delivery policy](../../TOKO-TOOLING.md#validation-and-evidence)
+  during release and publication too. Distinguish the required local gate from
+  hosted observations; name any enforced protection or scoped qualification that
+  requires waiting. Report registry delivery and CI status separately.
 
 The intended outcome is one complete validation of the selected release plus
 necessary fresh admissions, not a new collection of skip flags, evidence ledgers

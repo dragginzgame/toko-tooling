@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.44.6] - Unreleased
+
+### 🩹 Fixed
+
+- Avoid a false failure in the shell-completion fixture when Make's printed
+  database contains the execution guard's unevaluated diagnostic text.
+
+### 📚 Documentation
+
+- Make asynchronous hosted CI explicit for releases and registry publication:
+  routine patches retain local checks and archive admission without waiting for
+  the hosted matrix. Require a named protection or scoped qualification for waits.
+
 ## [0.44.5] - 2026-11-16
 
 ### 🩹 Fixed

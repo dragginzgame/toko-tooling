@@ -76,9 +76,11 @@ chmod +x "$fixture/probe-bin/bash"
 : > "$FLOW_EVENTS"
 PATH="$fixture/probe-bin:$PATH" "$real_make" -n -f "$fixture/Makefile" preview > "$fixture/preview.log"
 status=0
-PATH="$fixture/probe-bin:$PATH" "$real_make" -npq -f "$fixture/Makefile" .DEFAULT > "$fixture/completion.log" 2>&1 || status=$?
+PATH="$fixture/probe-bin:$PATH" "$real_make" -npq -f "$fixture/Makefile" .DEFAULT > "$fixture/completion.log" 2> "$fixture/completion.err" || status=$?
 [[ ! -s "$FLOW_EVENTS" && "$status" -le 2 ]]
-if grep -F 'requires Make recipe execution' "$fixture/completion.log"; then exit 1; fi
+# The printed Make database includes the unevaluated guard's diagnostic text.
+# Only stderr can establish that completion actually triggered the guard.
+if grep -F 'requires Make recipe execution' "$fixture/completion.err"; then exit 1; fi
 cat > "$fixture/lint.mk" <<'MAKE'
 run:
 	@printf 'prepare\nlint\n' >> "$(MAKE_PROBE_EVENTS)"; exit "$(MAKE_PROBE_LINT_STATUS)"
