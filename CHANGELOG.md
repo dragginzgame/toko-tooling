@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.44.11] - Unreleased
+
+### 📚 Documentation
+
+- Require actionable CI setup failure diagnostics and bounded, sanitized evidence
+  retention on ephemeral runners, with original failure status and focused
+  failure-path validation. Fixes
+  [Toko Tooling #387](https://github.com/dragginzgame/toko-tooling/issues/387).
+
 ## [0.44.10] - 2026-11-16
 
 ### 📚 Documentation

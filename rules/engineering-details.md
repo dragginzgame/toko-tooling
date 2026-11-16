@@ -536,6 +536,10 @@ contracts; ordinary development does not require rereading these mechanics.
 
 ### Hosted tool setup
 
+Apply the baseline's [CI setup failure diagnostics contract](../TOKO-TOOLING.md#ci-setup-failure-diagnostics)
+to setup steps and their failure collectors, including failures before product
+qualification starts.
+
 Restore the shared pinned-download cache before the first host/CI tool install,
 then save after successful setup and before product checks. Use
 [the shared action](../.github/actions/cache-tool-downloads/action.yml) rather than
