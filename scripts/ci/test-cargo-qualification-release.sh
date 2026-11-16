@@ -121,7 +121,27 @@ if [[ $selection == inheritance ]]; then
         cp -R "$fixture/inheritance-original/." "$fixture/source/"
     done
     fixture_complete=true
-    echo 'Qualification inheritance: distinct private versions admitted; public, catalog, reverse-edge and undeclared exceptions refused'
+    # The same private versions also work without a product release-group catalog.
+    rm ci/cargo-release-groups.json
+    printf '\n[workspace.package]\nversion = "0.1.0"\n' >> Cargo.toml
+    for path in domain/product unused derive leaf; do
+        perl -pi -e 's/version = "0.1.0"/version.workspace = true/' "crates/$path/Cargo.toml"
+    done
+    pins
+    cp qualification/domain/second/Cargo.toml "$fixture/private-manifest"
+    perl -ni -e 'print unless /publish = false/' qualification/domain/second/Cargo.toml
+    refuse pins > "$fixture/independent-public.log" 2>&1
+    cp "$fixture/private-manifest" qualification/domain/second/Cargo.toml
+    cp Cargo.toml "$fixture/private-product"
+    cp crates/domain/product/Cargo.toml "$fixture/private-product-member"
+    # Even optional target-specific reverse edges must be refused.
+    perl -pi -e 's/\[workspace.dependencies\]/[workspace.dependencies]\nprobe = { path = "qualification\/domain\/probe" }/' Cargo.toml
+    printf '\n[target.\x27cfg(windows)\x27.dependencies]\nprobe = { workspace = true, optional = true }\n' >> crates/domain/product/Cargo.toml
+    refuse pins > "$fixture/independent-reverse.log" 2>&1
+    cp "$fixture/private-product" Cargo.toml
+    cp "$fixture/private-product-member" crates/domain/product/Cargo.toml
+    pins
+    echo 'Qualification inheritance: grouped and independent private versions admitted; public, catalog and reverse-edge violations refused'
     exit
 fi
 bash "$helper" plan product > "$fixture/plan.json"

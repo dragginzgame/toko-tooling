@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.44.5] - Unreleased
+
+### 🩹 Fixed
+
+- Admit the required exact workspace `toko-tooling` pin and independent private
+  qualification versions in the declaration checker without requiring product
+  release groups. Retain rejection of unrelated exact pins, public qualification
+  packages and reverse product dependencies. Fixes
+  [#386](https://github.com/dragginzgame/toko-tooling/issues/386).
+
+- Use fixed sibling GitHub dashboard colour bands at 0, 10, 25, 50 and 100
+  open issues, retaining grey for repositories with no open issues or PRs.
+
 ## [0.44.4] - 2026-11-15
 
 ### 📚 Documentation

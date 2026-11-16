@@ -36,7 +36,8 @@ Open PRs include drafts. Numeric padding starts at four characters and expands
 to fit repository counts. Totals grow independently; headings/errors also fit.
 Sort by open issues descending, then open PRs descending, then name; errors last.
 Rows with no open issues or PRs are grey. Otherwise fixed open-issue bands use
-pale green for 0–4, yellow for 5–24, orange for 25–99 and red for 100 or more.
+pale green for 0–9, yellow for 10–24, orange for 25–49, salmon for 50–99
+and red for 100 or more.
 Other repositories' counts do not affect the colour. Totals and errors stay uncoloured.
 NO_COLOR or TERM=dumb disables colour; redirected reports are always plain.
 Closed issues include duplicates and issues closed as not planned.
@@ -289,8 +290,9 @@ count_pr_today() {
 colour_open() {
     # Apply the pastel scale to foreground text, preserving the terminal background.
     if (( $1 >= 100 )); then printf '\033[38;2;238;180;180m'
+    elif (( $1 >= 50 )); then printf '\033[38;2;238;190;170m'
     elif (( $1 >= 25 )); then printf '\033[38;2;238;200;160m'
-    elif (( $1 >= 5 )); then printf '\033[38;2;238;220;160m'
+    elif (( $1 >= 10 )); then printf '\033[38;2;238;220;160m'
     else printf '\033[38;2;170;214;186m'
     fi
 }

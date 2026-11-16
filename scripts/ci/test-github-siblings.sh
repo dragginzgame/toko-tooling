@@ -405,7 +405,7 @@ if LC_ALL=C grep -q $'\033' "$fixture/output"; then exit 1; fi
 plain_script="$script"
 sed 's/^colour=false$/colour=true/' "$script" > "${script%.sh}-colour.sh"
 script="${script%.sh}-colour.sh"
-for scenario in 1 4 5 24 25 99 100 101 equal pr_only all_clear; do
+for scenario in 1 9 10 24 25 49 50 99 100 101 equal pr_only all_clear; do
     case "$scenario" in
         equal) filter='.data.r1.open.totalCount=10 | .data.r1.closed.totalCount=10000' ;;
         pr_only) filter='.data.r0.open.totalCount=0' ;;
@@ -438,8 +438,9 @@ if ($scenario eq 'all_clear') {
 } else {
     die "1000 issues must be red\n" unless $colours{alpha} eq '238;180;180';
     my $expected=$scenario >= 100 ? '238;180;180'
+        : $scenario >= 50 ? '238;190;170'
         : $scenario >= 25 ? '238;200;160'
-        : $scenario >= 5 ? '238;220;160' : '170;214;186';
+        : $scenario >= 10 ? '238;220;160' : '170;214;186';
     die "colour must follow fixed open-issue bands\n" unless $colours{beta} eq $expected;
 }
 PERL

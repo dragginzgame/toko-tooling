@@ -143,6 +143,22 @@ cmp "$FIXTURE/blocked-index" "$consumer/.git/index"
 rm "$blocked"
 check || { cat "$FIXTURE/output" >&2; exit 1; }
 
+# The canonical root tooling selection is exact by policy, including table form.
+for declaration in 'toko-tooling = "=0.44.4"' 'toko-tooling = { version = "=0.44.4" }'; do
+    cp "$FIXTURE/base.toml" "$consumer/Cargo.toml"
+    printf '%s\n' "$declaration" >> "$consumer/Cargo.toml"
+    check || { cat "$FIXTURE/output" >&2; exit 1; }
+done
+for declaration in 'toko-tooling = { package = "unrelated", version = "=0.44.4" }' 'toko-tooling = "=0.44.4, <0.45"'; do
+    cp "$FIXTURE/base.toml" "$consumer/Cargo.toml"
+    printf '%s\n' "$declaration" >> "$consumer/Cargo.toml"
+    reject cargo-exact
+done
+cp "$FIXTURE/base.toml" "$consumer/Cargo.toml"
+printf '\n[dev-dependencies]\ntoko-tooling = "=0.44.4"\n' >> "$consumer/Cargo.toml"
+reject cargo-exact
+cp "$FIXTURE/base.toml" "$consumer/Cargo.toml"
+
 # Full Git revs work in inline and ordinary TOML tables; floating choices fail.
 cat >> "$consumer/Cargo.toml" <<'TOML'
 example = { git = "https://example.invalid/repository", rev = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" }
