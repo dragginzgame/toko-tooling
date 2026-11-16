@@ -48,8 +48,9 @@ including repositories with only one package. The standard package locations
 are `crates/` for product packages, `apps/<fleet-name>/` for Canic fleets and
 their deployed components, and `qualification/` for separate qualification-only
 packages. Meaningful subdirectories are supported: both `crates/<package-name>/`
-and `crates/<domain>/<package-name>/` are standard, as are the corresponding
-qualification layouts. Toko's grouped product packages need no layout exception.
+and `crates/<domain>/<package-name>/` are standard. Qualification has one package
+tier, `qualification/<package-name>/`. Toko's grouped product packages need no
+layout exception.
 Repositories need only the trees they use. The baseline's
 [product and qualification rule](../TOKO-TOOLING.md#product-and-qualification-workspaces)
 owns this standard across repositories.
@@ -87,10 +88,6 @@ qualification/             # Only when separate qualification packages exist
   package-name/            # No qualification/crates/ directory
     Cargo.toml             # publish = false; no product release group
     src/
-  domain/                  # Optional meaningful qualification grouping
-    grouped-fixture/
-      Cargo.toml
-      src/
 ```
 
 - The repository root is a virtual workspace: its `Cargo.toml` declares
@@ -392,11 +389,11 @@ They do not assign release-group membership or change enabled dependency kinds.
 
 The standard is one product workspace plus one independent qualification
 workspace when separate qualification packages exist. Each has one catalog and
-lockfile. Qualification packages live under `qualification/`, optionally grouped
-by meaningful domain, never under a redundant `qualification/crates/` layer.
-Do not repeat the product directory convention inside the qualification root.
-Both roots are virtual workspaces. Nested package directories do not create
-nested workspaces or weaken the single-catalog rule for each root.
+lockfile. Follow the baseline's
+[single-tier qualification layout](../TOKO-TOOLING.md#product-and-qualification-workspaces):
+each package is a direct child of `qualification/`, named after its package.
+Both roots are virtual workspaces. Product domain grouping does not authorize
+nested qualification packages or additional workspace catalogs.
 
 Additional independent workspaces or a nonstandard package layout need a scoped
 maintainer exception naming the root, members, reason, lock and validation
@@ -469,7 +466,7 @@ In the owning repository's authorized change:
    Formatting, release inventories and source checks must cover all declared
    workspace members in both roots, using Cargo metadata or
    a verified member inventory rather than assuming every package matches
-   `crates/*`, `qualification/*` or `apps/*`. Retain meaningful nested grouping;
+   `crates/*`, `qualification/*` or `apps/*`. Retain supported product grouping;
    do not flatten supported paths merely to simplify a script. Keep required group qualification mapped explicitly,
    with atomic lock/metadata handling and rollback evidence. Demonstrate that an
    incompatible qualification selection refuses there without blocking independent

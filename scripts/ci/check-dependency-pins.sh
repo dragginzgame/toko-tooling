@@ -177,6 +177,13 @@ while IFS= read -r workspace_root; do
     lock="$workspace_root/Cargo.lock"
     [[ -f "$lock" && ! -L "$lock" ]] || fail "Cargo workspace requires a tracked lockfile: $workspace_root"
     git --literal-pathspecs ls-files --error-unmatch -- "${lock#"$ROOT/"}" >/dev/null || fail "Cargo lockfile is not tracked: $lock"
+    "$YQ" -p toml -o json '.' "$lock" > "$temporary/lock.json" || fail "cannot parse Cargo lockfile: $lock"
+    jq -c --arg file "${lock#"$ROOT/"}" '
+      .package[]? | select(.name == "thiserror" or .name == "thiserror-impl") |
+      select((.version | startswith("2.")) and .version != "2.0.18") |
+      {file:$file, rule:"cargo-thiserror", subject:.name, value:.version,
+       message:"approved PocketIC hold requires thiserror v2 and its derive implementation at 2.0.18"}
+    ' "$temporary/lock.json" >> "$temporary/findings" || fail "cannot inspect Cargo lockfile: $lock"
 done < "$temporary/unique-workspaces"
 
 if [[ -n "$npm_root" ]]; then

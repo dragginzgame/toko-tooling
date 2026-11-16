@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.44.7] - Unreleased
+
+### 📚 Documentation
+
+- Require one package tier directly under `qualification/`, without nested
+  domain/package trees or a `crates/` wrapper; retain product domain grouping.
+- Record the approved PocketIC compatibility hold on thiserror v2 at 2.0.18.
+  Admit its exact direct pin and check v2 lock selections during pin validation.
+
 ## [0.44.6] - 2026-11-16
 
 ### 🩹 Fixed

@@ -55,6 +55,35 @@ reject() {
 }
 check || { cat "$FIXTURE/output" >&2; exit 1; }
 
+# A named selection keeps the compatibility regression independent of the
+# unrelated workflow, npm and inheritance fixtures below.
+{
+    for declaration in 'thiserror = "=2.0.18"' 'errors = { package = "thiserror", version = "=2.0.18" }'; do
+        cp "$FIXTURE/base.toml" "$consumer/Cargo.toml"
+        printf '%s\n' "$declaration" >> "$consumer/Cargo.toml"
+        check || { cat "$FIXTURE/output" >&2; exit 1; }
+    done
+    for version in 2 2.0.18 '^2.0.21' '=2.0.21'; do
+        cp "$FIXTURE/base.toml" "$consumer/Cargo.toml"
+        printf 'thiserror = "%s"\n' "$version" >> "$consumer/Cargo.toml"
+        reject cargo-thiserror
+    done
+    cp "$FIXTURE/base.toml" "$consumer/Cargo.toml"
+    for package in thiserror thiserror-impl; do
+        for version in 1.0.69 2.0.18 2.0.21; do
+            printf 'version = 3\n[[package]]\nname = "%s"\nversion = "%s"\n' "$package" "$version" > "$consumer/Cargo.lock"
+            if [[ "$version" == 2.0.21 ]]; then reject cargo-thiserror
+            else check || { cat "$FIXTURE/output" >&2; exit 1; }; fi
+        done
+    done
+    printf 'version = 3\n' > "$consumer/Cargo.lock"
+    if [[ "${1:-}" == --thiserror ]]; then
+        fixture_complete=true
+        echo 'thiserror compatibility fixtures passed'
+        exit 0
+    fi
+}
+
 # Git inventory includes nested workflow names with spaces. Failed inventories,
 # including plausible partial output, must refuse and clean their scratch input.
 mkdir -p "$consumer/.github/workflows/nested" "$FIXTURE/inventory-bin" "$FIXTURE/inventory-tmp"
