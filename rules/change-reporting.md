@@ -6,6 +6,9 @@ issue-only outcomes. Default to the practical outcome, relevant verification and
 actionable blockers, with file or evidence links where useful. Report material
 compatibility and consumer actions. Keep routine reports brief.
 
+Apply the baseline's [issue-reference convention](../TOKO-TOOLING.md#feedback-and-handoff)
+when naming tracked work or blockers.
+
 Line metrics and symbol inventories are **opt-in** when the maintainer requests
 them or an explicitly selected audit requires that measurement. A cleanup task,
 inspection or completed batch alone does not activate them. Do not calculate

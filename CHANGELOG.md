@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.44.10] - Unreleased
+
+### 📚 Documentation
+
+- Require every issue reference to include its owning repository and number,
+  including same-repository references; permit display names without the IC prefix.
+
 ## [0.44.9] - 2026-11-16
 
 ### 📚 Documentation
