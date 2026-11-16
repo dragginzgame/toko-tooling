@@ -199,6 +199,11 @@ Avoid updating locks during qualification or after freezing release inputs.
 
 ## Dependency adoption planning
 
+Apply the baseline's
+[repository-wide adoption scope](../../TOKO-TOOLING.md#current-dependencies-and-upstream-independence)
+when interpreting a supplier adoption request, including its frozen-comparison
+exception and partial-adoption reporting requirement.
+
 The [product/qualification layout](../../rules/rust-workspaces.md#standard-layout)
 gives separate qualification packages an independent workspace and lock by
 default. Inspect both selected graphs; a product release group does not own the

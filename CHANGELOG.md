@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.44.9] - Unreleased
+
+### 📚 Documentation
+
+- Make named-supplier adoption repository-wide by default, including qualification
+  and native tooling. Preserve explicitly frozen comparison baselines and report
+  unfinished in-scope migrations as partial adoption.
+
 ## [0.44.8] - 2026-11-16
 
 ### 🩹 Fixed
