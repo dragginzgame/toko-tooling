@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.45.0] - Unreleased
+## [0.45.0] - 2026-11-17
 
 ### 🚀 Improvements
 
