@@ -32,9 +32,16 @@ admitted baseline, including outstanding changes since the last relevant
 qualification. It declares applicable packages, features, targets, native hosts,
 direct/reverse consumer contracts, generated inputs, public identities, runtime
 singletons, ABI/retained formats and installed behavior. Every omitted stage
-gets a concrete reason. The roster must correspond to the existing full gate;
+gets a concrete reason. The roster must correspond to the maintained full gate;
 adding a full-gate stage also updates that roster and its selection fixtures.
 The consumer must check that its group roster matches its Cargo release policy.
+
+The [baseline flow rules](../../TOKO-TOOLING.md#consistent-validation-and-delivery-flows)
+permit authorised reconstruction of that gate. Preserve its required guarantees,
+not its historical stage count or redundant fixtures. Reconcile full CI and
+selected rosters together; until the replacement is qualified, retain the old
+gate. A broad fallback is a disclosed qualification limit, not proof that every
+old stage remains necessary indefinitely.
 
 Shared implementation, compiler, CI/release scripts, relevant dependency locks,
 features, generators and public identity changes broaden the required stages.

@@ -218,9 +218,33 @@ an unavailable local directory fail before claiming a destination.
 The caller owns this directory and its evidence lifetime on both success and
 failure. Preserve failed attempts; choose a new destination when retrying. Do
 not attach an unconditional cleanup trap that deletes the only failed evidence.
-Retain `revision` beside the resulting audit evidence. Preparation success proves
-isolation and source identity, not database schema validity, advisory freshness
-or a passing security audit; Cargo audit remains the database reader.
+Retain `revision` and `prepare.log` beside the resulting audit evidence.
+Preparation success proves isolation and source identity, not database schema
+validity, advisory freshness or a passing security audit; Cargo audit remains the
+database reader.
+
+With `--no-fetch --json`, cargo-audit can omit Git identity even for a fresh,
+intact database checkout. For example, cargo-audit 0.22.2 was observed to emit
+these database metadata fields as part of its report:
+
+```json
+{"database":{"last-commit":null,"last-updated":null}}
+```
+
+These null fields mean the report does not supply that metadata; they do not
+prove staleness or distinguish isolated preparation from an ambient cache.
+Do not require `database.last-commit` to equal the helper's `revision` when it is
+null, invent a JSON revision, or remove `--no-fetch` to populate the fields.
+Another fetch could change the recorded database.
+
+Consumer receipts bind the helper's verified `revision` and preparation evidence
+to the exact audit output bytes, selected `Cargo.lock` bytes, audit command,
+cargo-audit version and exit status. Before and after the audit, verify that the
+prepared `db/` HEAD matches `revision`, its tracked and untracked contents are
+clean, and the selected lockfile bytes are unchanged. A sidecar beside an
+otherwise unbound report is insufficient; refuse missing or changed inputs.
+Preserve the original JSON bytes when recording identity separately. Receipt
+format, byte-digest mechanics and audit acceptance policy remain consumer-owned.
 
 Consumers must stop on preparation failure and invoke their audit with `--no-fetch`
 against the prepared `db/`. Canic retains dependency fetching, lockfile selection

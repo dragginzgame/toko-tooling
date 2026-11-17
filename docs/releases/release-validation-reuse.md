@@ -62,6 +62,17 @@ index, group policy, package archive, registry delivery or a complete gate.
 
 ## Explain execution and reuse decisions
 
+The stage runner records optional shared timing spans for initial observation,
+context serialization, proof lookup/canonical decoding, post-execution observation,
+final observation and custody checks. Initial observation and proof lookup precede
+the historical `validation-stage:NAME` interval; final observation and custody
+checks are inside it. Do not sum overlapping intervals or equate the inner stage
+time with total admission latency. Byte hashing remains fresh at each observation;
+streaming bounds memory without replacing hashes with timestamps or cached success.
+Canonical context bytes are serialized once per observation, and validated proof
+bytes supply their digest without an additional encode. Original proof/log custody,
+malformed/noncanonical JSON rejection and final drift checks remain mandatory.
+
 For each reusable stage, report whether it executed or reused admitted evidence.
 When reuse is unavailable, report the specific reason alongside the stage result:
 for example, an unqualified group scope, host, jobserver/parallel setting, custom
@@ -298,6 +309,22 @@ constants, checkpoints, build scripts and retained document fields. A later grou
 can reach the same candidate bytes after earlier supplier groups have shipped.
 It cannot reuse evidence merely because a diff appears to contain only versions.
 
+The producer uses `cargo-release-group.sh project-candidate REQUEST.json` on its
+disposable export. The request is an ordered array of `{name,version,date}` for
+every policy group; date is `Unreleased` or the existing finalized date. It emits
+the group's version/primary/member map only after the entire projection succeeds.
+Each pending group shares planning with its preparation admission, retaining
+fresh locked/offline Cargo checks before and after mutation, including declared
+qualification workspaces and unrelated graph identities. The canonical editor
+still owns all version edits. This is not an atomic multi-group live release:
+failure retains partial scratch and no successful projection; the caller discards
+or inspects it, never resumes it as delivered source.
+
+TOML decoding is reused only within that process when complete bytes match a
+captured input. The checksum is merely a lookup index; collisions require byte
+comparison and a fresh decode. There is no retained graph success cache or
+cross-attempt parser admission. Actual Cargo graph checks are never skipped.
+
 Candidate-only ledgers and group metadata files are replaced with fixed,
 non-authorizing stage fixtures. Those inputs must not carry application data.
 The consumer must qualify that its selected stages do not require their original
@@ -353,3 +380,38 @@ receipt, never an untrusted lookup. Re-admit the actual release source and exact
 primary closure as above; missing/damaged local evidence requires ordinary lint.
 This does not create a new generic exact-input admission, change the original
 qualification host or cache archive/registry checks.
+
+### Local performance qualification — 2026-11-17
+
+For [Toko Tooling #390](https://github.com/dragginzgame/toko-tooling/issues/390)
+and [Toko Tooling #391](https://github.com/dragginzgame/toko-tooling/issues/391),
+Linux comparisons used Query's retained four-group profiling fixture, prepared
+tools/cached dependencies and fresh candidate/proof namespaces. Only the probe's
+supplier route selected the before/after implementations; consumer source and
+delivered evidence stayed untouched. The final candidate's bytes, modes and
+versions matched identity
+`7b40a0d9812caa0668925884ca3ef31682d98422ba59bfa32798416a037e3b8f`.
+
+| Operation | Before (seconds) | After (seconds) |
+| --- | ---: | ---: |
+| Four-group candidate preparation | 9.65 | 5.35 |
+| Initial no-op admission over the native closure | 25.46 | 22.98 |
+| Reused admission of that original proof | 20.20 | 18.92 |
+
+All 26,359 observed paths, resolved routes, file digests and configuration matched
+across implementations. Each implementation reused its own original execution
+proof; changing verifier bytes does not admit old proofs. An earlier comparison
+also improved, but ran alongside regression checks and is not the table's sample.
+These sequential warm Linux observations are not cold-build, product-validation
+or end-to-end release savings. Most admission cost remains required observation
+and hashing; the no-op command proves no product behavior.
+
+Focused group/qualification regressions, actual native candidate execution/reuse,
+interrupted-editor diagnostics, original-source custody, parser failure/collision,
+proof/log corruption, input/route drift and interruption cases passed. ShellCheck,
+Perl syntax, links and version checks passed; native macOS execution remains
+CI-owned and was not run here. Compact timing journals and raw probe evidence
+remain under `target/delivery-contract-profile/`; regression logs are under
+`target/delivery-contract-before/`. The narrow candidate preparation fixture is
+`bash scripts/ci/test-cargo-stage-source.sh --case preparation`, with the same
+explicit prepared editor prerequisite as the full fixture.

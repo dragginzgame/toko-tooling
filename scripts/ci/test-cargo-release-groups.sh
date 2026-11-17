@@ -82,9 +82,9 @@ check_batched_admission() {
     cat > "$fixture/parse-bin/yq" <<'SH'
 #!/usr/bin/env bash
 set -euo pipefail
-if [[ ${!#} == */codec/Cargo.toml || ${!#} == */derive/Cargo.toml || ${!#} == */endpoint/Cargo.toml ]]; then
+if grep -q '^\[package\]$' "${!#}" && grep -Eq '^name = "(codec|derive|endpoint)"$' "${!#}"; then
     printf 'members\n' >> "$GROUP_PARSE_EVENTS"
-    if [[ ${GROUP_PARSE_FAULT:-} == short && ${!#} == */codec/Cargo.toml ]]; then exit 0; fi
+    if [[ ${GROUP_PARSE_FAULT:-} == short ]] && grep -q '^name = "codec"$' "${!#}"; then exit 0; fi
     if [[ ${GROUP_PARSE_FAULT:-} == failed ]]; then "$GROUP_REAL_YQ" "$@"; exit 37; fi
 fi
 exec "$GROUP_REAL_YQ" "$@"
@@ -115,6 +115,17 @@ SH
         git diff --exit-code -- > /dev/null || return
     done
     unset GROUP_PARSE_FAULT
+    # The parse index is not evidence: a checksum collision must compare bytes
+    # and decode again rather than substitute another manifest or lock.
+    printf '#!/usr/bin/env bash\nprintf "0 0\\n"\n' > "$fixture/parse-bin/cksum"
+    chmod +x "$fixture/parse-bin/cksum"
+    PATH="$fixture/parse-bin:$PATH" bash "$group_helper" plan endpoint > "$fixture/collision.plan" || return
+    cmp "$fixture/endpoint.plan" "$fixture/collision.plan" || return
+    for request in '[]' '[{"name":"endpoint","version":"0.2.0","date":"Unreleased"}]'; do
+        printf '%s\n' "$request" > "$fixture/request.json"
+        refuse bash "$group_helper" project-candidate "$fixture/request.json" > "$fixture/request.log" 2>&1 || return
+        git diff --exit-code -- > /dev/null || return
+    done
 }
 if [[ $selection != ordering ]]; then check_batched_admission || exit "$?"; fi
 if [[ $selection == admission ]]; then

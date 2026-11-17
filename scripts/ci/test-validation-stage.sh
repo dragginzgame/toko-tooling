@@ -185,6 +185,10 @@ run_stage > "$fixture/retention.log" 2>&1 || status=$?
 grep -F 'evidence publication also failed' "$fixture/retention.log" > /dev/null
 find "$state/attempts" -type d -exec chmod u+w {} +
 perl "$root/scripts/ci/release-timing.pl" report "$RELEASE_TIMING_JOURNAL" > "$fixture/timings.json"
+jq -e '[.[].phase] as $phases | all([
+    "initial-observation", "context-serialization", "proof-lookup",
+    "post-execution-observation", "final-observation", "custody-checks"][];
+    . as $suffix | $phases | index("validation-stage:fixture:" + $suffix))' "$fixture/timings.json" > /dev/null
 jq -e 'any(.[]; .mode == "executed" and .result == "passed") and
     any(.[]; .mode == "reused" and .result == "passed" and (.origin | contains("/attempts/"))) and
     any(.[]; .mode == "fallback") and any(.[]; .result == "failed")' "$fixture/timings.json" > /dev/null

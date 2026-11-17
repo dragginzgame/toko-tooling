@@ -40,6 +40,14 @@ validation targets in order, then delegates once to `run-cargo-publication.sh`.
 `publish-check` selects its `check` mode; `publish` selects upload mode. Neither
 command retries, discovers missing registry versions or uploads on release.
 
+Both commands execute the configured verification targets. This adapter does
+not turn a successful `publish-check` into reusable validation for `publish`.
+Follow the [flow ownership contract](releases.md#flow-ownership-and-consumer-adoption)
+when selecting those targets: retain fresh publication admission, avoid repeating
+full CI or unchanged tooling regressions by default, and qualify any earlier
+product-evidence handoff. Existing unqualified gates remain until their
+replacement is proven; a dry run is never registry delivery evidence.
+
 Optional structured declarations preserve explicit Cargo inputs:
 
 | Declaration | Effect |

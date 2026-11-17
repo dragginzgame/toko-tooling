@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.45.0] - Unreleased
+
+### 🚀 Improvements
+
+- Prepare final Cargo candidates through one grouped projection call, sharing
+  planning and byte-identical TOML decoding while preserving fresh graph checks
+  around each mutation. Addresses
+  [Toko Tooling #390](https://github.com/dragginzgame/toko-tooling/issues/390).
+- Stream stage input hashing, avoid redundant canonical serialization and expose
+  observation, proof lookup and custody timing spans without weakening evidence
+  admission. Addresses
+  [Toko Tooling #391](https://github.com/dragginzgame/toko-tooling/issues/391).
+
+### 📚 Documentation
+
+- Define consistent development, tooling, CI, release, publication and recovery
+  flows; require justified validation scope and qualified handling of repeated
+  work, with a concrete command/adapter ownership contract and coherent retirement
+  of obsolete delivery machinery.
+- Clarify that null cargo-audit no-fetch metadata can occur with a fresh RustSec
+  checkout, and explain how consumer receipts bind the prepared revision to audit
+  and lockfile bytes without fetching again. Fixes
+  [Toko Tooling #388 — Clarify null cargo-audit metadata](https://github.com/dragginzgame/toko-tooling/issues/388).
+
 ## [0.44.11] - 2026-11-16
 
 ### 📚 Documentation

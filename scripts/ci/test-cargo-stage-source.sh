@@ -2,11 +2,13 @@
 # Shared companions: scripts/ci/prepare-cargo-stage-source.pl scripts/ci/cargo-release-group.sh
 set -euo pipefail
 qualification=false
+preparation_only=false
 if [[ $# != 0 ]]; then
-    [[ $# == 1 && $1 == --qualification ]] || exit 2
-    qualification=true
+    if [[ $# == 2 && $1 == --case && $2 == preparation ]]; then preparation_only=true
+    elif [[ $# == 1 && $1 == --qualification ]]; then qualification=true
+    else exit 2; fi
 fi
-if [[ $qualification == false ]]; then bash "$0" --qualification; fi
+if [[ $qualification == false && $preparation_only == false ]]; then bash "$0" --qualification; fi
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd -P)"
 : "${CARGO_RELEASE_METADATA_EDITOR:?select the admitted IC Build editor}"
 mkdir -p "$root/target"
@@ -88,6 +90,20 @@ prepare() {
     [[ $(git rev-parse HEAD) == "$before" && -z $(git status --porcelain=v1 --untracked-files=all) ]]
 }
 prepare first
+# Interrupted rendering must leave original source untouched and no successful
+# candidate projection. This is a disposable editor fault, not a real release.
+printf '#!/usr/bin/env bash\necho "injected editor interruption" >&2\nkill -TERM "$$"\n' > "$fixture/interrupted-editor"
+chmod +x "$fixture/interrupted-editor"
+if CARGO_RELEASE_METADATA_EDITOR="$fixture/interrupted-editor" prepare interrupted > "$fixture/interrupted.log" 2>&1; then
+    echo 'interrupted candidate editor unexpectedly succeeded' >&2; exit 1
+fi
+[[ ! -s "$fixture/interrupted.json" && -z $(git status --porcelain=v1 --untracked-files=all) ]]
+grep -q 'retained log:' "$fixture/interrupted.log"
+grep -l 'injected editor interruption' target/stage-sources/attempts/*/preparation.log > /dev/null
+if [[ $preparation_only == true ]]; then
+    echo 'Candidate preparation, interrupted editor diagnostics and original-source custody passed.'
+    exit 0
+fi
 if [[ $qualification == true ]]; then
     candidate=$(jq -er .directory "$fixture/first.json")
     cmp qualification/probe/Cargo.toml "$candidate/qualification/probe/Cargo.toml"

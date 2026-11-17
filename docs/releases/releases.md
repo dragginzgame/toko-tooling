@@ -48,6 +48,82 @@ Preserve consumer wiring and recovery tests; generic tooling matrices stay with
 their producer. A workflow optimisation must qualify invalidation and fallback
 as well as the faster path, without adding another runner or recurring gate.
 
+### Flow ownership and consumer adoption
+
+The baseline's [consistent flow rules](../../TOKO-TOOLING.md#consistent-validation-and-delivery-flows)
+own the required separation. Apply them through existing entrypoints and local
+guidance, using this mapping to review actual nested commands:
+
+| Flow | Work and owner |
+| --- | --- |
+| Ordinary development | Consumer checks for changed behavior and directly affected callers; no implicit release preparation. |
+| Changed tooling | Focused consumer dispatch, admission and recovery qualification; generic helper regressions stay with Toko Tooling. |
+| Repository CI | Supported product/host coverage and selected tooling regressions; hosted execution remains asynchronous unless specifically required. |
+| Selected release or batch | Applicable product and integration obligations, with selection reaching leaves and qualified common-work execution/reuse. |
+| Publication | Fresh final-source/archive/destination admission and any product proof not already valid for those exact inputs. |
+| Recovery | Admit retained evidence and retry the failed phase; rerun only invalidated or unprovable obligations. |
+
+A consumer's full CI aggregate is not automatically its publication contract.
+Trace both `publish-check` and `publish`: the simple Make adapter executes its
+configured verification targets on each call and does not itself grant reuse.
+Avoid routinely running both expensive gates; qualify an evidence handoff when
+both operations are needed. Preserve Cargo's final package verification and
+registry readback rather than replacing them with an earlier dry-run result.
+
+For reconstruction, map old checks to current guarantees before choosing new
+commands. Delete obsolete work; keep deliberate product/native boundaries and
+qualify narrower scope or reuse only where inputs are complete. Do not preserve
+every historical fixture by moving it into a new caching framework. Review full
+fallbacks against real change scenarios, including shared/tooling changes and
+two-group batches, not only the easiest package-only path.
+
+Use the [group mapping contract](release-group-validation.md) and
+[reuse contract](release-validation-reuse.md) where applicable. A generic missing
+interface belongs at Toko Tooling; do not create a parallel consumer verifier.
+Update local overlays, commands and focused fixtures together. Consumers adopt
+reviewed committed/published tooling through the exporter; local upstream policy
+edits are not an adopted snapshot and do not change old proof semantics.
+
+### Common command and adapter boundary
+
+Use the existing interfaces below; this contract adds no workflow schema or
+execution engine. Standard names have standard meanings. Product leaves and
+their host/feature requirements remain local, and a deliberate broader product
+gate is valid when a narrower dependency closure has not been qualified.
+
+| Surface | Existing shared owner | Consumer declaration or callback |
+| --- | --- | --- |
+| `make install-tools`, `make tools-check` | `make/consumer.mk` and selected installers | Required tools and reviewed pins; installation is explicit, checks do not install. |
+| `make ci` and focused development targets | Consumer workflow and product commands; shared logging/setup helpers | Supported hosts and affected product checks. CI is not implicitly the release gate. |
+| Changed-tooling fixtures | Producer tests here; focused consumer fixtures locally | Actual adapter dispatch, invalidation and failure/recovery cases, selected by changed wiring or CI. No mandatory fixture target name or per-upload suite. |
+| `make release-patch`, `release-minor`, `release-major` | `make/release.mk`, `run-release.sh`, frozen batch runner | Existing group policy, explicit group roster, setup/publication targets and adapter callbacks. |
+| `make release-verify` | Shared adapter dispatch, validation plan/target runner and optional stage reuse | Product obligations from `ci/release-validation.json` where adopted; selectors must reach actual leaves. A whole-gate adapter may retain its documented fallback. |
+| Metadata preparation/check callbacks | Cargo group editor and metadata transaction helpers | `ci/cargo-release-groups.json`, exact owned files and product-specific metadata semantics. |
+| `make publish`, `make publish-check` | Cargo publication adapter | Exact package/group selection and fresh admission; `publish-check` is optional and does not grant reusable proof by itself. Unpublished products omit upload. |
+| `make release-resume`, `release-batch-resume` and reconciliation | Shared release/batch runner and publication attempt custody | Exact attempt identity and product receipt checks; no custom retry loop or automatic uncertain-upload replay. |
+
+The executable callback roster is `SHARED_RELEASE_TARGETS` in `make/release.mk`;
+use it rather than copying a second list. The [Makefile example](#makefile-example)
+and [adapter protocol](#adoption-and-verification) define wiring. The
+[group plan](release-group-validation.md) declares obligations and the
+[stage contract](release-validation-reuse.md) admits reuse: neither replaces the
+other. Do not infer that installing a helper establishes either adoption.
+
+Before migration, compare two materially different callers: a selected
+multi-package release and a broad product/installed-canister gate. Trace setup,
+validation, publication and recovery through their real leaves. Preserve
+product differences; remove competing implementations of common mechanics.
+Qualify one- and multi-group dispatch, missing/changed proof, failure before and
+after validation, and uncertain-delivery recovery only where that boundary is
+affected. Use disposable effects and existing fixtures, not live publication as
+an implementation test. Record any shared capability gap at its owning issue.
+
+Adoption updates commands, local guidance and affected fixtures together through
+a reviewed snapshot. It does not change an active attempt's adapter or proof
+semantics. Rule conflicts require the baseline's scoped maintainer exception;
+different product checks within this contract do not. Consumer adoption and
+native qualification are separate from upstream implementation.
+
 ### Plan once, recover the failed phase
 
 Before starting an expensive gate, inspect the existing attempt, selected groups,
