@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.45.2] - Unreleased
+## [0.45.2] - 2026-11-18
 
 - Seal non-Cargo stage admissions for composed validation receipts. [Toko Tooling #389](https://github.com/dragginzgame/toko-tooling/issues/389)
 - Select a validation log directory in the failure-evidence action. [Toko Tooling #392](https://github.com/dragginzgame/toko-tooling/issues/392)
