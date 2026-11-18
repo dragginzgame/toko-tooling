@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.45.11] - Unreleased
+
+### 🩹 Fixed
+
+- Omit setup diagnostic lines containing bare Bearer credentials or labelled
+  payload fields, including JSON keys. [#398](https://github.com/dragginzgame/toko-tooling/issues/398)
+
 ## [0.45.10] - 2026-11-18
 
 ### 🥾 Governance

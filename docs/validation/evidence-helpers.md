@@ -238,7 +238,8 @@ probing past the ceiling. `excerpt($handle)` and `run_setup` drain to EOF.
 
 The command's raw stream stays out of logs and artifacts. The excerpt retains
 up to 100 lines and 32 KiB, omits oversized input lines and filters common
-credential patterns, PEM blocks and known secret environment values, including
+credential patterns (including bare Bearer credentials), labelled payload
+fields, PEM blocks and known secret environment values, including
 unlabelled values from variables whose names contain `ACCESS_KEY`. The existing
 four-character minimum for environment values applies. Select
 commands whose remaining diagnostic content is appropriate for CI visibility.

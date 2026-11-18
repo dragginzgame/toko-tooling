@@ -30,6 +30,17 @@ unlike($log, qr/fixture-value|fixture-fragment|fixture-access-value|pem-body|hid
 unlike($log, qr/short-fixture-value|ordinary context/, 'bare and embedded environment access keys are redacted');
 ok(length($log) < 32768 && (() = $log =~ /\n/g) <= 100, 'bounded output');
 
+{
+    local %ENV;
+    my ($input) = tempfile(UNLINK => 1);
+    print {$input} "Bearer m4v8\nproxy: bEaReR\tp7w2\n",
+        qq({"payload":"n9x3"}\n), "installer: PAYLOAD = q2y5\n",
+        "::notice::payload accepted\n";
+    seek($input, 0, 0) or die $!;
+    is(excerpt($input), ("[sensitive line omitted]\n" x 4) . ": :notice: :payload accepted\n",
+        'omits Bearer credentials and labelled payloads while retaining ordinary diagnostics');
+}
+
 # The file grows after admission. Its read ceiling ends within an unlabelled
 # secret, after the tail has filled and after a multiline PEM block.
 my ($writer, $path) = tempfile(UNLINK => 1);
