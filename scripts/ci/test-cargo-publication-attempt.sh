@@ -123,7 +123,7 @@ refuse 143 run publish interrupted --package library@1.2.3
 [[ -s "$fixture/evidence/interrupted/dispatch" && ! -e "$fixture/evidence/interrupted/status" && -e "$fixture/evidence/.cargo-publication.lock/owner" ]] || exit 1
 unset PUBLICATION_SIGNAL
 perl "$ROOT/scripts/ci/release-timing.pl" report "$RELEASE_TIMING_JOURNAL" > "$fixture/timings.json"
-jq -e 'any(.[]; .phase == "cargo-check" and .result == "passed") and
-    any(.[]; .phase == "cargo-publish" and .status == 143)' "$fixture/timings.json" > /dev/null
+jq -e 'any(.[]; .phase == "cargo-check" and .result == "passed" and .origin == "packages=library@1.2.3,cli@2.0.0") and
+    any(.[]; .phase == "cargo-publish" and .status == 143 and .origin == "packages=library@1.2.3")' "$fixture/timings.json" > /dev/null
 fixture_complete=true
 echo 'Cargo publication intent, selection, status, interruption and no-replay fixtures passed'

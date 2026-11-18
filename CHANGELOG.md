@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.45.3] - Unreleased
+
+- Reduce canonical JSON processing during exact-input stage reuse and time observer commands, inventory parsing and file hashing separately. [Toko Tooling #394](https://github.com/dragginzgame/toko-tooling/issues/394)
+- Summarize frozen batch duration, slow phases, repeated checks and observed
+  package counts against the previous matching delivery. Document scope,
+  ownership and timing evidence for new release checks.
+
 ## [0.45.2] - 2026-11-18
 
 - Seal non-Cargo stage admissions for composed validation receipts. [Toko Tooling #389](https://github.com/dragginzgame/toko-tooling/issues/389)

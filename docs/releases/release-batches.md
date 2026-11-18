@@ -107,6 +107,22 @@ The command emits JSON. A batch predating instrumentation returns an empty array
 it does not reconstruct timings from old logs. It takes the existing batch queue
 lock, so readback waits while another invocation owns that batch queue.
 
+A successful batch prints its timing summary after completion. Read it again with
+`make release-batch-summary BATCH=batch-XXXXXXXX`. Wall time comes from the
+outer attempt. The three slowest phases aggregate its direct children across
+groups. Nested phases remain available in the detailed JSON. Repeated checks
+count successful executions of named validation stages and publication admission
+targets. Reused stages are counted separately. The Cargo uploader records its
+package selectors. Older journals and custom upload commands can lack that count.
+
+Comparison uses a retained earlier completed batch matching the repository,
+destination, branch, kind, ordered groups, setup and publication targets.
+Resumed batches are labelled separately. Changed observed check counts and
+reuse counts help explain scope changes. Cache warmth and uninstrumented
+product checks require consumer evidence. The advisory report uses existing
+timing events. Standalone release and publication commands have separate
+lifetimes and are outside the frozen-batch wall interval.
+
 Recorded boundaries include capture, setup preparation versus recovery checks,
 release preflight/validation/preparation/staging/commit/tag/push, publication
 admission targets, Cargo publication and exact-version registry observations.

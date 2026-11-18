@@ -69,8 +69,18 @@ the historical `validation-stage:NAME` interval; final observation and custody
 checks are inside it. Do not sum overlapping intervals or equate the inner stage
 time with total admission latency. Byte hashing remains fresh at each observation;
 streaming bounds memory without replacing hashes with timestamps or cached success.
-Canonical context bytes are serialized once per observation, and validated proof
-bytes supply their digest without an additional encode. Original proof/log custody,
+Each observation reports the observer command (including discovery, subprocesses
+and any Cargo cache wait), reading and parsing its JSON, and resolving and hashing
+its listed files. Check the retained observation stderr for reported lock waits.
+Within one invocation, an exact byte match with a previously decoded inventory
+allows reuse of its JSON parse. Every logical path is still resolved and hashed.
+The Cargo observer separately verifies candidate bytes and executable modes
+against the prepared identity. Resolved aliases retain independent reads because
+the file or its route can change between reads.
+
+Proof lookup compares the freshly serialized canonical context directly with the
+first member of the original canonical proof. It checks canonical encoding and
+schema for the remaining fields and digests the full original bytes. Original proof/log custody,
 malformed/noncanonical JSON rejection and final drift checks remain mandatory.
 
 For each reusable stage, report whether it executed or reused admitted evidence.
@@ -415,6 +425,32 @@ remain under `target/delivery-contract-profile/`; regression logs are under
 `target/delivery-contract-before/`. The narrow candidate preparation fixture is
 `bash scripts/ci/test-cargo-stage-source.sh --case preparation`, with the same
 explicit prepared editor prerequisite as the full fixture.
+
+### Query four-group qualification — 2026-11-18
+
+[Toko Tooling #394](https://github.com/dragginzgame/toko-tooling/issues/394)
+was qualified on Linux with Query at `65b7c8a`. Its four-group fixture ran real
+product validation and simulated the group metadata deliveries. Both runs used
+prepared tools, the same offline dependencies and fresh build and proof directories.
+Only the fixture's runner selection changed. Each run executed topology and
+reused that proof for SNS, Query and CLI. The candidate identity and all 26,361
+listed paths, resolved routes and digests matched after accounting for the two
+fixture roots.
+
+| Observed interval | Installed 0.45.0 | Updated runner |
+| --- | ---: | ---: |
+| Entire fixture, directory creation through completion message | 295.7s | 283.6s |
+| Product admission across four groups, including first execution | 134.58s | 121.70s |
+| Three reused product admissions | 54.13s | 42.91s |
+| Proof lookup across four groups | 8.95s | 0.09s |
+
+The intervals overlap. Across all nine updated observations, the observer
+commands took 9.02s, listed-file resolution and hashing took 49.14s, and
+inventory JSON handling took 3.60s. The five repeated inventories accounted
+for 0.014s of that JSON time. The historical umbrella observation reported a
+Cargo package-cache lock wait. Neither comparison run reported such a wait.
+This single sequential comparison measures offline qualification with prepared
+dependencies. Registry upload and remote CI time are outside the fixture.
 
 ### Sealing non-Cargo admissions
 

@@ -106,5 +106,34 @@ symlink "$dir/timings.jsonl","$dir/link" or die $!;
     eval {ReleaseTiming::begin('bad','executed','')};
     like($@,qr/symlink/,'symlink journal refused');
 }
+{
+    my @rows;
+    sub observed {
+        my ($id,$parent,$phase,$elapsed,$mode,$origin)=@_;
+        return {id=>$id, parent=>$parent, attempt=>'batch', phase=>$phase,
+            elapsed_seconds=>$elapsed, mode=>$mode//'executed', origin=>$origin//'',
+            started_unix=>100, result=>'passed'};
+    }
+    push @rows,observed('batch','','batch-attempt',30),
+        observed('release','batch','release',18),
+        observed('stage1','release','validation-stage:lint',5),
+        observed('stage2','release','validation-stage:lint',4,'fallback'),
+        observed('stage3','release','validation-stage:lint',0.1,'reused'),
+        observed('publication','batch','publication',10),
+        observed('upload1','publication','cargo-publish',5,'executed','packages=alpha@1.0.0,beta@1.0.0'),
+        observed('upload2','publication','cargo-publish',4,'executed','packages=beta@1.0.0');
+    my $metrics=ReleaseTiming::batch_metrics(\@rows);
+    is($metrics->{wall},30,'outer wall includes orchestration');
+    is_deeply($metrics->{phases},{release=>18,publication=>10},'nested observations never inflate phase totals');
+    is($metrics->{packages},2,'exact uploaded selectors counted once');
+    is($metrics->{reuse},1,'reuse counted separately');
+    my $prior={%$metrics,wall=>27,checks=>{}};
+    my $summary=ReleaseTiming::describe_batch($metrics,['engine'],$prior,'batch-old');
+    like($summary,qr/validation-stage:lint x2/,'fallback counts as execution');
+    like($summary,qr/change \+3\.0s/,'matching delivery has a signed wall time delta');
+    like($summary,qr/validation-stage:lint 0 -> 2/,'scope change appears beside wall time');
+    delete $rows[-1]{origin};
+    ok(!defined ReleaseTiming::batch_metrics(\@rows)->{packages},'partial package observation is unknown');
+}
 done_testing();
 if (Test::More->builder->is_passing) {remove_tree($dir)} else {warn "Timing fixture retained: $dir\n";}

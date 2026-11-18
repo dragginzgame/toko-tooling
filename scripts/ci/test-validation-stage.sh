@@ -68,6 +68,28 @@ find "$state/attempts" -name admission.json -exec cat {} + | jq -se '
     (map(.group) | sort) == ["core","logging","metrics"] and
     ([.[] | select(.mode == "reused")] | length) == 2 and
     (map(.execution_proof_sha256) | unique | length) == 1' > /dev/null
+# Corrupt either side of the canonical context/envelope boundary. Each
+# original is independently restored after its fallback execution.
+for damage in context-space duplicate-context envelope-space truncated; do
+    case "$damage" in
+        context-space) sed 's/^{"context":/{"context": /' "$fixture/proof.original" > "$original_proof" ;;
+        duplicate-context) sed 's/,"elapsed_seconds":/,"context":null,"elapsed_seconds":/' "$fixture/proof.original" > "$original_proof" ;;
+        envelope-space) sed 's/,"elapsed_seconds":/, "elapsed_seconds":/' "$fixture/proof.original" > "$original_proof" ;;
+        truncated) head -c 18 "$fixture/proof.original" > "$original_proof" ;;
+    esac
+    run_stage > "$fixture/$damage.log" 2>&1
+    grep -F 'stage fixture: executed;' "$fixture/$damage.log" > /dev/null
+    [[ "$(cat execution-count)" == 2 ]]
+    replacement="$(jq -r .execution_proof "$(sed -n 's/^Validation stage fixture: .*; admission //p' "$fixture/$damage.log")")"
+    [[ "$replacement" != "$original_proof" ]]
+    mv "$replacement" "$fixture/$damage.proof"
+    cp "$fixture/proof.original" "$original_proof"
+    printf '1\n' > execution-count
+done
+ln -s source inputs/route
+refuse
+grep -F 'symlink in stage state/input route' "$fixture/refused.stderr" > /dev/null
+mv inputs/route "$fixture/route.retained"
 # A fresh complete inventory detects newly introduced files as well as bytes,
 # feature/native configuration, command changes and the bounded environment.
 printf 'changed\n' >> inputs/source
@@ -187,7 +209,8 @@ find "$state/attempts" -type d -exec chmod u+w {} +
 perl "$root/scripts/ci/release-timing.pl" report "$RELEASE_TIMING_JOURNAL" > "$fixture/timings.json"
 jq -e '[.[].phase] as $phases | all([
     "initial-observation", "context-serialization", "proof-lookup",
-    "post-execution-observation", "final-observation", "custody-checks"][];
+    "post-execution-observation", "final-observation", "custody-checks",
+    "before-observer-command", "before-observation-json", "before-listed-files"][];
     . as $suffix | $phases | index("validation-stage:fixture:" + $suffix))' "$fixture/timings.json" > /dev/null
 jq -e 'any(.[]; .mode == "executed" and .result == "passed") and
     any(.[]; .mode == "reused" and .result == "passed" and (.origin | contains("/attempts/"))) and

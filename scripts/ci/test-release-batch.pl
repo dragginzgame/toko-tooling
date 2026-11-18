@@ -79,7 +79,7 @@ run('git','-C',$root,'add','.');run('git','-C',$root,'commit','-qm','Fixture sou
 run('git','-C',$root,'push','--quiet','selected','delivery');
 my $base=output('git','-C',$root,'rev-parse','HEAD');
 $ENV{DEVELOPMENT_ROOT}=$root; $ENV{PUBLICATION_TRACE}="$fixture/publications";
-run($^X,"$RealBin/run-release-batch.pl",'--root',$root,'--groups','alpha,beta','--publish-target','publish',
+my $delivery_log=output($^X,"$RealBin/run-release-batch.pl",'--root',$root,'--groups','alpha,beta','--publish-target','publish',
     '--setup-target','setup-candidate','--remote','selected','--branch','delivery');
 is(output('git','-C',$root,'rev-parse','HEAD'),$base,'normal branch remains intact');
 open my $f,'<',"$root/Cargo.lock" or die $!;is(<$f>,"deferred-cargo-update\n",'concurrent lock edit preserved');close $f;
@@ -90,9 +90,13 @@ my @intents=glob("$root/.git/release-state/frozen/batch-*/intent.json");is(scala
 open $f,'<',$intents[0] or die $!;my $record;{local $/;$record=decode_json(<$f>);}close $f;
 is($record->{phase},'complete','completion retained outside target');
 my ($id)=$intents[0] =~ m{/(batch-[^/]+)/intent.json};
+like($delivery_log,qr/Batch wall time [0-9.]+s/, 'completed delivery prints its timing summary');
+my @summary_command=($^X,"$RealBin/run-release-batch.pl",'--root',$root,'--summary',$id);
+my $original_summary=output(@summary_command);
 is(index($id,'batch-_'),0,'resume fixture contains a generated underscore');
 run($^X,"$RealBin/run-release-batch.pl",'--root',$root,'--resume',$id);
 open $f,'<',"$fixture/publications" or die $!;{local $/;is(<$f>,"alpha\nbeta\n",'complete resume never republishes');}close $f;
+is(output(@summary_command),$original_summary,'completed resume preserves the original delivery timing');
 my $status=system($^X,"$RealBin/run-release-batch.pl",'--root',$root,'--groups','gamma','--branch','delivery','--remote','selected');
 ok($status!=0,'new batch cannot silently absorb deferred uncommitted update');
 # Durable Git objects include release commits; disposable worktree loss must not
@@ -231,6 +235,8 @@ like(output('git','-C',$real,'diff','--','Cargo.lock'),qr/deferred update/,'real
 is(output('cat',$ENV{SETUP_TRACE}),"alpha prepare\nbeta prepare\nbeta check",'recovery selects offline setup admission rather than fresh preparation');
 my $timing_path="$real/.git/release-state/frozen/$real_id/timings.jsonl";
 my $timing_before=output('cat',$timing_path);
+like(output('make','--no-print-directory','-s','-C',$real,'release-batch-summary',"BATCH=$real_id"),
+    qr/Resumed batch .*uninterrupted wall time unavailable/,'Make summary distinguishes interrupted delivery');
 my $timing_rows=decode_json(output('make','--no-print-directory','-s','-C',$real,'release-batch-timings',"BATCH=$real_id"));
 is(output('cat',$timing_path),$timing_before,'collector does not rewrite timings or rerun release');
 my @validation=grep {$_->{phase} eq 'release-validate'} @$timing_rows;
