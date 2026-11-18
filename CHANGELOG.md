@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.45.8] - Unreleased
+## [0.45.8] - 2026-11-18
 
 ### 🥾 Governance
 
