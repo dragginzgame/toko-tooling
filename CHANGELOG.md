@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.45.1] - Unreleased
+## [0.45.1] - 2026-11-18
 
 - Add an opt-in Perl setup diagnostic helper that preserves command status and
   supplies a bounded, redacted excerpt to the consumer-owned failure collector.
