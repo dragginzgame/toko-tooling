@@ -83,7 +83,7 @@ for bootstrap, prerequisites and the hard-cut migration.
 
 Tooling adoption uses the [agent audit tasks](https://github.com/dragginzgame/toko-tooling/blob/08cd17240fd60dfd309e35eb131e73323e883e6f/docs/fleet-tools.md#tooling-adoption-audit),
 not a consumer LOC target or deployment gate. Rust LOC uses the separate
-[`toko-cloc` command](../fleet/fleet-tools.md#cargo-workspace-loc-report), with
+[`toko-cloc` command](https://github.com/dragginzgame/toko-tooling/blob/ac420bfb0082909e850c1a38e9ff24134a3f8782/docs/fleet/fleet-tools.md#cargo-workspace-loc-report), with
 ordinary command-line options; there is no Make target or alias.
 
 ## Keep product policy local

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Shared companions: scripts/ci/fixture-lifecycle.sh scripts/ci/test-snapshot-verifier.sh scripts/ci/prepare-script-fixture.sh scripts/ci/test-snapshot-transactions.sh scripts/ci/test-snapshot-revision.sh
+# Shared companions: scripts/ci/fixture-lifecycle.sh scripts/ci/test-snapshot-verifier.sh scripts/ci/prepare-script-fixture.sh scripts/ci/test-snapshot-transactions.sh scripts/ci/test-snapshot-revision.sh scripts/ci/cargo-publication-adapter.sh
 set -euo pipefail
 
 ROOT="$0"
@@ -14,8 +14,8 @@ case "$selection" in
 esac
 case "$selection" in
     revision|transactions) exec bash "$ROOT/scripts/ci/test-snapshot-$selection.sh" ;;
-    all|core|admission) ;;
-    *) echo 'usage: test-snapshot-distribution.sh [--case admission|core|revision|transactions]' >&2; exit 2 ;;
+    all|core|admission|publication-adapter) ;;
+    *) echo 'usage: test-snapshot-distribution.sh [--case admission|core|publication-adapter|revision|transactions]' >&2; exit 2 ;;
 esac
 FIXTURE="$(mktemp -d "${TMPDIR:-/tmp}/toko-tooling-snapshot-test.XXXXXX")"
 FIXTURE="$(CDPATH="" cd -P -- "$FIXTURE" && printf '%s/.' "$PWD")"
@@ -134,6 +134,23 @@ SCRIPT
 chmod +x "$FIXTURE/bin/git"
 export SNAPSHOT_TEST_REVISION_ROOT="$revision_root"
 export SNAPSHOT_TEST_SOURCE_ROOT="$source_root"
+
+if [[ "$selection" == all || "$selection" == publication-adapter ]]; then
+    adapter=scripts/ci/cargo-publication-adapter.sh
+    guide=docs/releases/cargo-publication.md
+    for tree in "$source_root" "$revision_root"; do
+        bash "$ROOT/scripts/ci/prepare-script-fixture.sh" "$ROOT" "$tree" "$adapter"
+        mkdir -p "$tree/docs/releases"
+        printf 'Reference-only fixture guide.\n' > "$tree/$guide"
+    done
+    adapter_consumer="$FIXTURE/publication-adapter"
+    git init -q "$adapter_consumer"
+    PATH="$FIXTURE/bin:$PATH" bash "$source_root/scripts/distribution/refresh-consumer.sh" \
+        --source "$source_root" --consumer "$adapter_consumer" --entrypoint "$adapter" > "$FIXTURE/adapter.log"
+    cmp "$ROOT/scripts/ci/run-cargo-publication.sh" "$adapter_consumer/scripts/ci/run-cargo-publication.sh"
+    [[ ! -e "$adapter_consumer/$guide" ]] || { echo "Unexpected reference guide in adapter export" >&2; exit 1; }
+    if [[ "$selection" == publication-adapter ]]; then fixture_complete=true; exit 0; fi
+fi
 
 printf 'ignored working-tree content\n' >"$source_root/ignored.txt"
 if PATH="$FIXTURE/bin:$PATH" \
@@ -808,7 +825,6 @@ scripts/ci/test-tool-catalogs.pl scripts/ci/check-tool-catalogs.pl
 scripts/ci/collect-native-diagnostics.sh scripts/ci/verify-file-checksum.sh
 scripts/ci/run-cargo-publication.sh scripts/ci/check-make-execution.sh
 scripts/ci/run-cargo-publication.sh scripts/ci/cargo-publication-paths.sh
-scripts/ci/cargo-publication-adapter.sh docs/releases/cargo-publication.md
 scripts/ci/test-cargo-publication-attempt.sh scripts/ci/run-cargo-publication.sh
 scripts/ci/run-release.sh scripts/ci/check-release-tag.sh
 scripts/ci/test-release-runner.sh scripts/ci/fixture-lifecycle.sh
@@ -857,7 +873,7 @@ PATH="$FIXTURE/bin:$PATH" bash "$source_root/scripts/distribution/refresh-consum
 printf 'include make/consumer.mk\n' > "$minimal_consumer/Makefile"
 cmp "$ROOT/ci/tool-versions.env" "$minimal_consumer/ci/tool-versions.env"
 cmp "$ROOT/ci/ic-tools.tsv" "$minimal_consumer/ci/ic-tools.tsv"
-for target in host-tools-check ic-tools-check rust-tools-check cloc; do
+for target in host-tools-check ic-tools-check rust-tools-check; do
     status=0
     TOKO_TOOLING_STORE="$FIXTURE/minimal-store" make -s -C "$minimal_consumer" IC_TOOLS=wasm-opt "$target" \
         > "$FIXTURE/minimal-$target.log" 2>&1 || status=$?
@@ -866,12 +882,19 @@ for target in host-tools-check ic-tools-check rust-tools-check cloc; do
         host-tools-check) diagnostic='reason=missing-bundle' ;;
         ic-tools-check) diagnostic='missing' ;;
         rust-tools-check) diagnostic='tool store directory must be physical' ;;
-        cloc) diagnostic='Cargo workspace manifest not found' ;;
     esac
     grep -F "$diagnostic" "$FIXTURE/minimal-$target.log" >/dev/null
     if grep -F 'No such file or directory' "$FIXTURE/minimal-$target.log"; then exit 1; fi
 done
-make -s -C "$minimal_consumer" toko-tooling-check > "$FIXTURE/minimal-integrity.log"
+status=0
+(cd "$minimal_consumer" && scripts/dev/toko-cloc) > "$FIXTURE/minimal-cloc.log" 2>&1 || status=$?
+[[ "$status" == 1 ]]
+grep -F "Cargo workspace manifest not found: $minimal_consumer/Cargo.toml" "$FIXTURE/minimal-cloc.log" >/dev/null
+# This Git-export fixture has no Cargo selection. Verify its installed bytes
+# directly and confirm the public Cargo admission refuses the missing manifest.
+bash "$minimal_consumer/$verifier_path" --consumer "$minimal_consumer" >/dev/null
+if make -s -C "$minimal_consumer" toko-tooling-check > "$FIXTURE/minimal-integrity.log" 2>&1; then exit 1; fi
+grep -F "expected regular file: $minimal_consumer/Cargo.toml" "$FIXTURE/minimal-integrity.log" >/dev/null
 [[ ! -e "$minimal_consumer/.tools" && ! -e "$FIXTURE/minimal-store" ]]
 
 # Complete focused selections must remain independently runnable, without

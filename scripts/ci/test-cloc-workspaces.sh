@@ -72,16 +72,17 @@ same_zero_depth() (
     bash "$reporter" -d 0 "$@" > "$FIXTURE/zero"
     cmp "$FIXTURE/implicit" "$FIXTURE/zero"
 )
-for mode in table wide json; do
-    flags=()
-    case "$mode" in wide) flags=(--wide) ;; json) flags=(--json) ;; esac
-    same_zero_depth "${flags[@]}"
-    same_zero_depth "${flags[@]}" "$repo"
-    same_zero_depth "${flags[@]}" --manifest "$repo/Cargo.toml"
-    same_zero_depth "${flags[@]}" --manifest "$repo/qualification/Cargo.toml"
-    same_zero_depth "${flags[@]}" same-name
-    same_zero_depth "${flags[@]}" same-name::shared
-done
+check_selections() {
+    same_zero_depth "$@"
+    same_zero_depth "$@" "$repo"
+    same_zero_depth "$@" --manifest "$repo/Cargo.toml"
+    same_zero_depth "$@" --manifest "$repo/qualification/Cargo.toml"
+    same_zero_depth "$@" same-name
+    same_zero_depth "$@" same-name::shared
+}
+check_selections
+check_selections --wide
+check_selections --json
 cmp "$repo/Cargo.lock" "$FIXTURE/product.lock"
 cmp "$repo/qualification/Cargo.lock" "$FIXTURE/qualification.lock"
 # Two scans observing different bytes must not silently discard either version.

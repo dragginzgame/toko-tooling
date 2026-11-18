@@ -1052,7 +1052,7 @@ recipes only after testing their actual callers and hook, following the
 
 `toko-cloc` reports the consumer's Cargo workspaces and requires its prepared
 Rust toolchain and host tools. Install the PATH launcher using the
-[LOC setup](../fleet/fleet-tools.md#cargo-workspace-loc-report); it selects the
+[LOC setup](https://github.com/dragginzgame/toko-tooling/blob/ac420bfb0082909e850c1a38e9ff24134a3f8782/docs/fleet/fleet-tools.md#cargo-workspace-loc-report); it selects the
 current checkout's installed reporter. Use `toko-cloc ..` for sibling summaries.
 Use the [tooling audit tasks](https://github.com/dragginzgame/toko-tooling/blob/08cd17240fd60dfd309e35eb131e73323e883e6f/docs/fleet-tools.md#tooling-adoption-audit) for snapshot
 integrity, applicable upstream changes and actual consumer wiring. The former

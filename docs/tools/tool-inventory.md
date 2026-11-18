@@ -85,7 +85,7 @@ installation authority to an inspection command or change the setup order.
 
 The installed `cloc` executable counts source; the separate `toko-cloc` PATH
 launcher selects the current checkout's classified Rust reporter. See
-[LOC setup](../fleet/fleet-tools.md#cargo-workspace-loc-report). Tooling adoption is reviewed through
+[LOC setup](https://github.com/dragginzgame/toko-tooling/blob/ac420bfb0082909e850c1a38e9ff24134a3f8782/docs/fleet/fleet-tools.md#cargo-workspace-loc-report). Tooling adoption is reviewed through
 the [agent audit tasks](https://github.com/dragginzgame/toko-tooling/blob/08cd17240fd60dfd309e35eb131e73323e883e6f/docs/fleet-tools.md#tooling-adoption-audit); consumers need no
 fleet reporter or its regression suites.
 

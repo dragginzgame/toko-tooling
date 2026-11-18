@@ -216,7 +216,7 @@ must work without this manual export. If the local executable is absent, run
 setup still omits cloc, adopt the reviewed shared installer, pins and complete
 Make/CI selection first. A PATH change cannot supply an uninstalled executable.
 For the classified Rust LOC report, install the separate `toko-cloc` PATH launcher
-as described in [LOC setup](../fleet/fleet-tools.md#cargo-workspace-loc-report).
+as described in [LOC setup](https://github.com/dragginzgame/toko-tooling/blob/ac420bfb0082909e850c1a38e9ff24134a3f8782/docs/fleet/fleet-tools.md#cargo-workspace-loc-report).
 It selects the current checkout's reporter and prepared host tools. There is no
 `make cloc` target.
 

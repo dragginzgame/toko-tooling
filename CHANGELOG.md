@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.45.4] - Unreleased
+
+- Exercise all LOC report modes on macOS Bash, including the default without flags.
+- Update snapshot fixtures to verify the publication adapter’s runtime dependencies,
+  the installed LOC launcher and Cargo admission for a minimal Git export. Link
+  exported setup references to the upstream LOC guide.
+
 ## [0.45.3] - 2026-11-18
 
 - Reduce canonical JSON processing during exact-input stage reuse and time observer commands, inventory parsing and file hashing separately. [Toko Tooling #394](https://github.com/dragginzgame/toko-tooling/issues/394)

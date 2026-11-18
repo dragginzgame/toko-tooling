@@ -30,7 +30,7 @@ directory or crate selector. The default reports the current repository; use
 `toko-cloc ..` for siblings.
 
 The common Make payload includes `scripts/dev/toko-cloc` and the reporter.
-Install the launcher once on PATH using the [LOC setup](../fleet/fleet-tools.md#cargo-workspace-loc-report).
+Install the launcher once on PATH using the [LOC setup](https://github.com/dragginzgame/toko-tooling/blob/ac420bfb0082909e850c1a38e9ff24134a3f8782/docs/fleet/fleet-tools.md#cargo-workspace-loc-report).
 It selects each current checkout's reporter, so refreshing a consumer updates
 the implementation without reinstalling the launcher. Consumers selecting the
 reporter independently should select the launcher explicitly too. Keep product
