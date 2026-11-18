@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Shared companions: scripts/ci/prepare-script-fixture.sh make/consumer.mk scripts/ci/check-make-execution.sh scripts/ci/verify-file-checksum.sh .githooks/pre-commit scripts/ci/check-pipe-jobserver.pl scripts/ci/fixture-lifecycle.sh
 set -euo pipefail
+unset CARGO_NET_OFFLINE
 unset MAKEFLAGS MFLAGS MAKEOVERRIDES GNUMAKEFLAGS MAKEFILES
 root="${BASH_SOURCE[0]}"
 [[ "$root" == /* ]] || root="$PWD/$root"
@@ -45,7 +46,7 @@ LOCK
 cat > "$fixture/bin/cargo" <<'CARGO'
 #!/usr/bin/env bash
 set -eu
-[[ $# == 8 && "$*" == "metadata --format-version 1 --no-deps --locked --offline --manifest-path $PWD/Cargo.toml" ]]
+[[ $# == 7 && "$*" == "metadata --format-version 1 --no-deps --locked --manifest-path $PWD/Cargo.toml" ]]
 perl -MJSON::PP -MEncode=decode -MCwd=getcwd -e '
     $p=decode("UTF-8",getcwd());
     print encode_json({workspace_root=>$p, workspace_members=>["app","helper"],
@@ -85,9 +86,9 @@ MAKE
 cat > "$consumer/.tools/rust/common/bin/fixture-cargo" <<'CARGO'
 #!/usr/bin/env bash
 set -eu
-[[ "$CARGO_NET_OFFLINE" == true && "$RUSTUP_AUTO_INSTALL" == 0 ]]
+[[ -z "${CARGO_NET_OFFLINE+x}" && "$RUSTUP_AUTO_INSTALL" == 0 ]]
 case "$*" in
-    'metadata --locked --offline --no-deps --format-version 1')
+    'metadata --locked --no-deps --format-version 1')
         [[ "${FIXTURE_METADATA_EMPTY:-0}" == 0 ]] || exit 0
         perl -MJSON::PP -MEncode=decode -MCwd=getcwd -e '
             $p=decode("UTF-8",getcwd());
@@ -182,7 +183,7 @@ cat > "$consumer/custom formatter.sh" <<'FORMAT'
 #!/usr/bin/env bash
 set -eu
 [[ "$CARGO_HOME" == "$PWD/selected cargo home" ]]
-[[ "$CARGO_NET_OFFLINE" == true && "$RUSTUP_AUTO_INSTALL" == 0 ]]
+[[ -z "${CARGO_NET_OFFLINE+x}" && "$RUSTUP_AUTO_INSTALL" == 0 ]]
 [[ $# == 2 && "$2" == 'workspace with spaces' ]]
 if [[ "${REQUIRE_JOBSERVER:-0}" == 1 ]]; then
     perl "$JOBSERVER_PROBE"

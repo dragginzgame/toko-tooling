@@ -122,7 +122,7 @@ for feature in all named; do
     printf '%s\0' publish --locked --registry crates-io --package library@1.2.3 --package cli@2.0.0 \
         --manifest-path "$manifest" --target-dir "$target_dir" "${feature_arguments[@]}" --allow-dirty --dry-run > "$fixture/expected-arguments"
     cmp "$fixture/expected-arguments" "$fixture/arguments"
-    printf '%s\0' metadata --no-deps --locked --offline --format-version 1 --manifest-path "$manifest" > "$fixture/expected-metadata"
+    printf '%s\0' metadata --no-deps --locked --format-version 1 --manifest-path "$manifest" > "$fixture/expected-metadata"
     cmp "$fixture/expected-metadata" "$fixture/metadata-arguments"
     [[ ! -e injected ]]
 done

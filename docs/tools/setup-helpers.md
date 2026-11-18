@@ -140,7 +140,7 @@ RUSTUP_TOOLCHAIN="$VALIDATION_TOOLCHAIN" \
 The helper requires an explicit exact cargo-sort version and accepts an optional
 Cargo executable path, defaulting to `cargo` on PATH. It requires successful
 `sort --version` with the exact expected output and successful `fmt --version`.
-It forces Cargo offline and disables rustup automatic installation for these
+It preserves Cargo network settings and disables rustup automatic installation for these
 probes; it never installs tools, formats files, resolves dependencies or builds.
 A command that prints the expected version but exits unsuccessfully is rejected.
 An executable path is one argument, not a shell command; use `RUSTUP_TOOLCHAIN`
@@ -230,8 +230,7 @@ Prerequisites must already be installed. The selected consumer's `.tools/host/bi
 and `.tools/rust/common/bin` precede inherited PATH for executable lookup;
 products requiring IC formatters explicitly publish their prepared IC PATH.
 Formatter inputs and configuration still come from the disposable checkout.
-Cargo is forced offline, rustup auto
-installation is disabled, and inherited Git/Make/logger checkout selections are
+Cargo inherits caller network settings, rustup auto-installation is disabled, and inherited Git/Make/logger checkout selections are
 cleared. The baseline must pass its real `fmt-check` before perturbation.
 
 Checks cover selected Rust refresh and manifest sorting, idempotence, partial

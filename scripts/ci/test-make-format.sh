@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Shared companions: make/rust-format.mk scripts/ci/prepare-script-fixture.sh scripts/ci/check-pipe-jobserver.pl scripts/ci/fixture-lifecycle.sh
 set -euo pipefail
+unset CARGO_NET_OFFLINE
 unset MAKEFLAGS MFLAGS MAKEOVERRIDES GNUMAKEFLAGS MAKEFILES
 root="${BASH_SOURCE[0]}"
 [[ "$root" == /* ]] || root="$PWD/$root"
@@ -33,7 +34,7 @@ set -eu
 if [[ "${JOBSERVER_TEST_REQUIRED:-0}" == 1 ]]; then
     perl "$JOBSERVER_PROBE"
 fi
-[[ "$CARGO_NET_OFFLINE" == true && "$RUSTUP_AUTO_INSTALL" == 0 ]] || exit 1
+[[ -z "${CARGO_NET_OFFLINE+x}" && "$RUSTUP_AUTO_INSTALL" == 0 ]] || exit 1
 case "$*" in
     metadata*) perl -MJSON::PP -MCwd=getcwd -e '$p=getcwd(); print encode_json({workspace_root=>$p,workspace_members=>["fixture"],packages=>[{id=>"fixture",name=>"fixture",manifest_path=>"$p/Cargo.toml"}]})'; exit 0 ;;
     'sort --version') echo "cargo-sort ${FORMAT_TEST_VERSION:-2.1.4}"; exit 0 ;;

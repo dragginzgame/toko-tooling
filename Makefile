@@ -26,7 +26,7 @@ include make/consumer.mk
 include make/cargo-dependencies.mk
 
 # Only the standard release request authorizes tool preparation. Standalone
-# metadata/check commands remain offline; the adapter consumes this selection.
+# metadata/check commands use the installed tools; the adapter consumes this selection.
 release-patch release-minor release-major release-resume: export SHARED_RELEASE_PREPARE_TOOLS := 1
 release-patch release-minor release-major release-resume: export RELEASE_VERSION_MODE := pending
 
@@ -52,7 +52,7 @@ help:
 	@echo "Integration editor: install-release-editor; offline verification: release-editor-check"
 	@echo "Cargo tool freshness (online, read-only): check-cargo-tool-versions"
 	@echo "Dependencies across root + qualification: deps-update (cargo update -v; changes locks)"
-	@echo "Local packages, versions and release groups: deps-list (offline, read-only)"
+	@echo "Local packages, versions and release groups: deps-list (read-only)"
 	@echo "Caller catalog agreement (offline, opt-in): check-tool-catalogs TOOL_CATALOG_BINDINGS=path"
 	@echo "Basic local release gate: release-basic (metadata, shell lint, pins, links, source package)"
 	@echo "Long-tail CI/explicit local checks: ci, test-portable"

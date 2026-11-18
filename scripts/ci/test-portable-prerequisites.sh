@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Shared companions: scripts/ci/fixture-lifecycle.sh
 set -euo pipefail
+unset CARGO_NET_OFFLINE
 ROOT="$0"
 [[ "$ROOT" == /* ]] || ROOT="$PWD/$ROOT"
 ROOT="$(cd -P "${ROOT%/*}/../.." && printf '%s/.' "$PWD")"
@@ -36,7 +37,7 @@ if grep -F 'fixture started' "$fixture/missing.log"; then exit 1; fi
 # Real available tools plus an unprepared formatter must fail offline before tests.
 cat > "$fixture/formatter/cargo" <<'SCRIPT'
 #!/usr/bin/env bash
-[[ "$CARGO_NET_OFFLINE" == true && "$RUSTUP_AUTO_INSTALL" == 0 ]] || exit 90
+[[ -z "${CARGO_NET_OFFLINE+x}" && "$RUSTUP_AUTO_INSTALL" == 0 ]] || exit 90
 [[ "$*" == 'sort --version' ]] || exit 91
 echo 'cargo-sort 0.0.0'
 SCRIPT

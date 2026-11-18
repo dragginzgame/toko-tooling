@@ -48,7 +48,7 @@ snapshot_input Cargo.lock
 # Cargo owns workspace discovery without resolving the incoherent local lock.
 # Both interruption orders may be observed. The caller owns exact input custody
 # and must re-observe after helpers/effects; this output is never a cached proof.
-RUSTUP_AUTO_INSTALL=0 CARGO_NET_OFFLINE=true cargo metadata --locked --no-deps --offline --format-version 1 > "$temporary/metadata.json"
+RUSTUP_AUTO_INSTALL=0 cargo metadata --locked --no-deps --format-version 1 > "$temporary/metadata.json"
 "${YQ:-yq}" -p toml -o json '.' "$temporary/inputs/Cargo.toml" > "$temporary/catalog.json"
 "${YQ:-yq}" -p toml -o json '.' "$temporary/inputs/Cargo.lock" > "$temporary/lock.json"
 jq -er '. as $m | .packages[] | select(.id as $id | $m.workspace_members | index($id)) |

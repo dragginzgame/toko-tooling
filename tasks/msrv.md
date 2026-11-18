@@ -23,7 +23,7 @@ Non-Rust repositories are `N/A`.
    ```bash
    RUSTUP_AUTO_INSTALL=0 rustc +VERSION --version
    RUSTUP_AUTO_INSTALL=0 cargo +VERSION --version
-   CARGO_NET_OFFLINE=true RUSTUP_AUTO_INSTALL=0 \
+   RUSTUP_AUTO_INSTALL=0 \
      cargo +VERSION check --locked -p PACKAGE
    ```
 

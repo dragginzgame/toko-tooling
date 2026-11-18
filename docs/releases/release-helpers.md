@@ -175,9 +175,8 @@ tracked in [Auth #12](https://github.com/dragginzgame/ic-auth/issues/12) and
 
 `scripts/ci/cargo-release-preflight.sh TOOL-ROOT PREPARE` accepts repeated
 `--pin PATH`, `--check TARGET` and `--prepare TARGET` pairs. Callers first admit
-source/recovery and consume their preparation authority. With PREPARE=0 it
-runs locked offline Cargo fetching followed by check targets; PREPARE=1 runs
-locked fetching followed by the caller's complete ordered preparation targets.
+source/recovery and consume their preparation authority. Both modes run `cargo fetch --locked` in the selected workspace.
+PREPARE=0 then runs check targets. PREPARE=1 runs the caller’s ordered preparation targets.
 Explicit Cargo offline policy remains authoritative. Cargo retains the caller's
 selected-source working directory; tool targets run with Make in TOOL-ROOT.
 `RELEASE_MAKE` selects one Make executable (including a path with spaces),
@@ -189,8 +188,9 @@ Focused coverage is `scripts/ci/test-cargo-release-preflight.sh`, including
 simulated cold/warm caches, offline policy, fetch failure, missing executables,
 setup/check failure and selected-pin drift. These use substituted Cargo/Make
 effects. A frozen one-dependency workspace additionally uses real Cargo with an
-empty cache to verify environment/configuration offline refusal before tool
-dispatch, preserving its manifest and lock. Consumers retain preparation
+isolated registry and empty cache to verify a normal download and explicit
+environment/configuration offline refusal before tool dispatch. Each case preserves
+the manifest and lock. Consumers retain preparation
 authority, catalog overrides, runner ordering and Git-state custody.
 
 ## Manifest ordering in selected release sources

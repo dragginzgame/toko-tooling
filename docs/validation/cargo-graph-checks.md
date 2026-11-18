@@ -67,7 +67,7 @@ records the selected `edges`. Feature-edge policy composes with either selection
 Select the edges according to the actual contract: a runtime-only pass says
 nothing about a separately selected host tool graph.
 
-The helper runs locked, offline Cargo tree with the selected edges and flat
+The helper runs locked Cargo tree with the selected edges and flat
 `{p}` labels. It admits output only after successful completion; a failed or
 signalled child cannot supply a successful observation. Empty/malformed output
 or missing selected roots fails. Names are Cargo's canonical package names,
@@ -158,7 +158,7 @@ cost in the actual consumer artifact, rather than rejecting duplicates by count.
 ## Repository dependency maintenance
 
 Use `make deps-list` for a read-only table of local packages, versions and release
-groups across the root and optional `qualification/` workspace. It runs offline
+groups across the root and optional `qualification/` workspace. It runs
 `cargo metadata --no-deps --locked`, joins members to each workspace's existing
 `ci/cargo-release-groups.json` when present, and does not compile, fetch, update
 locks or check publication status. Ungrouped packages show `-`; qualification
@@ -298,7 +298,7 @@ Run these phases sequentially, stopping at the first failure:
    manifest with its selected compiler and prepared cache, for example:
 
    ```sh
-   cargo metadata --locked --offline --format-version 1 \
+   cargo metadata --locked --format-version 1 \
      --manifest-path integrations/example/Cargo.toml > metadata.json
    ```
 

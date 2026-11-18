@@ -33,7 +33,7 @@ default for development commands does not silently narrow publication. Empty,
 duplicate, malformed or undeclared selections refuse. Package eligibility and
 the default roster remain consumer policy; Shared only interprets the declaration.
 
-The adapter observes locked offline Cargo metadata, admits every declared package
+The adapter observes locked Cargo metadata, admits every declared package
 as a local publishable workspace member for the selected registry, and resolves
 each selected name to its exact stable version. It invokes the consumer's named
 validation targets in order, then delegates once to `run-cargo-publication.sh`.

@@ -76,7 +76,7 @@ include vendor/toko-tooling/make/consumer.mk
 It supplies `format-tools-check`, `fmt` and `fmt-check`, using the shared
 [formatter prerequisite check](../docs/tools/setup-helpers.md#formatter-prerequisites)
 and the `RUST_TOOL_VERSIONS` pin file (the reviewed snapshot catalog by default).
-Formatting uses prepared tools offline and
+Formatting uses prepared tools and
 disables automatic rustup installation. `FORMAT_CARGO` selects one executable
 name or path, not a command string; export `RUSTUP_TOOLCHAIN` to select a compiler.
 The include preserves the default goal and never activates hooks or installs

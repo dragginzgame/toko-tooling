@@ -63,7 +63,7 @@ for mode in 0 1; do
     : > "$PREFLIGHT_EVENTS"
     run "$mode"
     if [[ "$mode" == 0 ]]; then
-        printf 'cargo:%s:fetch --locked --offline\nmake:offline-check\n' "$PWD" > "$fixture/expected"
+        printf 'cargo:%s:fetch --locked\nmake:offline-check\n' "$PWD" > "$fixture/expected"
     else
         printf 'cargo:%s:fetch --locked\nmake:install\nmake:offline-check\n' "$PWD" > "$fixture/expected"
     fi
@@ -108,7 +108,7 @@ cp Cargo.toml "$fixture/original.toml"
 cp Cargo.lock "$fixture/original.lock"
 # Scenario exports are intentionally private to each independent subshell.
 # shellcheck disable=SC2030
-for scenario in cold standalone-offline environment-offline config-offline fetch-failure warm-offline \
+for scenario in cold standalone-cold environment-offline config-offline fetch-failure warm-offline \
     tool-cold tool-install-failure tool-check-failure tool-standalone-missing tool-offline-missing; do (
     export PREFLIGHT_CACHE="$fixture/$scenario"
     mkdir "$PREFLIGHT_CACHE"
@@ -120,7 +120,7 @@ for scenario in cold standalone-offline environment-offline config-offline fetch
     unset CARGO_NET_OFFLINE PREFLIGHT_CONFIG_OFFLINE PREFLIGHT_FETCH_STATUS PREFLIGHT_FAIL_TARGET
     mode=1 expected=0
     case "$scenario" in
-        standalone-offline) mode=0; expected=43 ;;
+        standalone-cold) mode=0 ;;
         environment-offline) export CARGO_NET_OFFLINE=true; expected=43 ;;
         config-offline) export PREFLIGHT_CONFIG_OFFLINE=true; expected=43 ;;
         fetch-failure) export PREFLIGHT_FETCH_STATUS=47; expected=47 ;;
@@ -137,12 +137,10 @@ for scenario in cold standalone-offline environment-offline config-offline fetch
     status=0
     run "$mode" > "$fixture/$scenario.log" 2>&1 || status=$?
     [[ "$status" == "$expected" ]] || exit 1
-    expected_fetch='fetch --locked'
-    [[ "$mode" != 0 ]] || expected_fetch+=' --offline'
-    printf 'cargo:%s:%s\n' "$PWD" "$expected_fetch" > "$fixture/expected"
+    printf 'cargo:%s:fetch --locked\n' "$PWD" > "$fixture/expected"
     case "$scenario" in
-        standalone-offline|environment-offline|config-offline|fetch-failure) [[ ! -e "$PREFLIGHT_CACHE/input" ]] || exit 1 ;;
-        tool-standalone-missing) printf 'make:offline-check\n' >> "$fixture/expected" ;;
+        environment-offline|config-offline|fetch-failure) [[ ! -e "$PREFLIGHT_CACHE/input" ]] || exit 1 ;;
+        standalone-cold|tool-standalone-missing) printf 'make:offline-check\n' >> "$fixture/expected" ;;
         tool-install-failure|tool-offline-missing) printf 'make:install\n' >> "$fixture/expected" ;;
         *) printf 'make:install\nmake:offline-check\n' >> "$fixture/expected" ;;
     esac
@@ -242,10 +240,21 @@ for scenario in cold offline fetch-failure tool-install-failure tool-check-failu
     [[ ! -e .git/release-state/lock && -z "$(git tag --list)" ]]
     [[ -z "$(git ls-remote --refs origin)" ]]
 ); done
-# Real Cargo must honor both offline surfaces before a tool effect. Use a frozen
-# one-dependency workspace, independent of consumer history, source caches and
-# dependency graphs. Neither case prepares sources or accesses the network.
-for policy in environment config; do (
+# A private Git registry with file URLs exercises real Cargo downloads without
+# external network access. Each policy gets the same lock and a fresh Cargo home.
+registry="$fixture/registry"
+package='fixture-input'
+mkdir -p "$registry/index/fi/xt" "$registry/$package-1.0.0/src"
+printf '[package]\nname = "%s"\nversion = "1.0.0"\nedition = "2021"\n' "$package" > "$registry/$package-1.0.0/Cargo.toml"
+printf '#![no_std]\n' > "$registry/$package-1.0.0/src/lib.rs"
+tar -czf "$registry/$package-1.0.0.crate" -C "$registry" "$package-1.0.0"
+checksum="$(bash "$ROOT/scripts/ci/verify-file-checksum.sh" --print sha256 "$registry/$package-1.0.0.crate")"
+printf '{"name":"%s","vers":"1.0.0","deps":[],"cksum":"%s","features":{},"yanked":false}\n' "$package" "$checksum" > "$registry/index/fi/xt/$package"
+printf '{"dl":"file://%s/{crate}-{version}.crate"}\n' "$registry" > "$registry/index/config.json"
+git -C "$registry/index" init --quiet
+git -C "$registry/index" add .
+git -C "$registry/index" -c user.name=Fixture -c user.email=fixture@example.invalid commit --quiet -m 'Publish fixture input'
+for policy in environment config ordinary; do (
     unset CARGO_NET_OFFLINE PREFLIGHT_FETCH_STATUS PREFLIGHT_CACHE
     export PREFLIGHT_REAL_FETCH=1 CARGO_HOME="$fixture/real-cargo-home-$policy"
     workspace="$fixture/real-cargo-$policy"
@@ -257,28 +266,29 @@ version = "0.0.0"
 edition = "2021"
 [workspace]
 [dependencies]
-cfg-if = "=1.0.5"
+fixture-input = "=1.0.0"
 TOML
     printf '#![no_std]\n' > "$workspace/src/lib.rs"
-    cat > "$workspace/Cargo.lock" <<'LOCK'
+    cat > "$workspace/Cargo.lock" <<LOCK
 version = 4
 
 [[package]]
-name = "cfg-if"
-version = "1.0.5"
+name = "fixture-input"
+version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4e7648175b45a9a48536d676f68d918270699102aa8dab5496df06904c914600"
+checksum = "$checksum"
 
 [[package]]
 name = "offline-policy-fixture"
 version = "0.0.0"
 dependencies = [
- "cfg-if",
+ "fixture-input",
 ]
 LOCK
     cp "$workspace/Cargo.toml" "$workspace/original.toml"
     cp "$workspace/Cargo.lock" "$workspace/original.lock"
-    if [[ "$policy" == config ]]; then printf '[net]\noffline = true\n' > "$CARGO_HOME/config.toml"; fi
+    printf '[source.crates-io]\nreplace-with = "fixture"\n[source.fixture]\nregistry = "file://%s/index"\n' "$registry" > "$CARGO_HOME/config.toml"
+    if [[ "$policy" == config ]]; then printf '[net]\noffline = true\n' >> "$CARGO_HOME/config.toml"; fi
     cd "$workspace"
     : > "$PREFLIGHT_EVENTS"
     status=0
@@ -287,8 +297,16 @@ LOCK
     else
         run 1 > "$workspace/preflight.log" 2>&1 || status=$?
     fi
-    [[ "$status" == 101 ]] || exit 1
     printf 'cargo:%s:fetch --locked\n' "$PWD" > "$workspace/expected-events"
+    if [[ "$policy" == ordinary ]]; then
+        [[ "$status" == 0 ]] || { cat "$workspace/preflight.log" >&2; exit 1; }
+        cmp "$registry/$package-1.0.0.crate" "$CARGO_HOME"/registry/cache/*/"$package-1.0.0.crate"
+        printf 'make:install\nmake:offline-check\n' >> "$workspace/expected-events"
+    else
+        [[ "$status" == 101 ]]
+        grep -F "$package" "$workspace/preflight.log" | grep -F 'error:' > /dev/null
+        grep -F 'offline' "$workspace/preflight.log" > /dev/null
+    fi
     cmp "$workspace/expected-events" "$PREFLIGHT_EVENTS"
     cmp original.toml Cargo.toml
     cmp original.lock Cargo.lock

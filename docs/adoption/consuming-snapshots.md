@@ -1149,8 +1149,8 @@ bound to the recorded commit.
 ## Cargo dependency boundaries
 
 Adopt `scripts/ci/check-cargo-dependency-boundaries.sh` as a snapshot entrypoint
-and run it with `--consumer /absolute/repository/path`. The checker uses locked,
-offline Cargo metadata; prepare the selected toolchain and lockfile first. It
+and run it with `--consumer /absolute/repository/path`. The checker uses locked
+Cargo metadata; prepare the selected toolchain and lockfile first. It
 requires Perl with JSON::PP. Policy lives in `ci/cargo-dependency-boundaries.json`:
 
 ```json

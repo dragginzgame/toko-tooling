@@ -205,6 +205,11 @@ file or separate review framework.
 
 ## Validation and evidence
 
+- Cargo may retrieve missing locked dependencies during normal work and releases.
+  Offline mode requires explicit authorization for the invocation or job. Preserve
+  the caller’s Cargo settings and report Cargo’s error if a selected package is
+  unavailable. Complete dependency preparation before sealing reusable evidence.
+
 - Ordinary coding and cleanup end after the relevant focused checks pass. Do not
   turn that handoff into release preparation, fleet adoption or qualification of
   every supported host. Those are separately requested workflows; missing broad

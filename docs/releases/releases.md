@@ -270,7 +270,7 @@ independent; do not create a release group merely to classify a test harness.
 
 Before selecting release commands, compare the proposed source with the last
 published source for each affected public group. Use existing Cargo metadata,
-package file inventories (`cargo package --list -p PACKAGE --locked --offline`),
+package file inventories (`cargo package --list -p PACKAGE --locked`),
 normalized package manifests and archive/provenance tooling where necessary.
 Review the actual changes and dependency contracts; a file's directory or
 `publish = false` alone is not proof that it cannot affect a public package.
@@ -644,40 +644,28 @@ consumer's release guide. An explicit request for that documented release
 includes this network preparation, but never dependency upgrades or lock repairs.
 Cargo's explicit offline environment/configuration settings remain authoritative.
 Authorized development and validation also include separate locked source-cache
-preparation under the Cargo network policy below. Deliberately offline gates and
-standalone adapter commands retain their offline contract; a missing cache does
-not enable an implicit online retry inside them.
-Do not hard-code `--offline` onto the authorized preparation step or export an
-offline setting across both preparation and validation. `--locked` preserves
-the selected dependency graph while allowing missing inputs to be downloaded.
+preparation under the Cargo network policy below. Standalone adapters and validation inherit the same Cargo network policy.
 The same separation applies to authorized deployment preparation. See the
 [Cargo network policy](../../rules/cargo-dependencies.md#cargo-network-policy):
 an expressly requested dependency update may resolve online before qualification,
 whereas an ordinary release/deployment fetches its existing lockfile and does not
-upgrade dependencies. Offline local-version synchronization and test fixtures
+upgrade dependencies. Explicitly offline local-version synchronization and test fixtures
 are separate from dependency updates that need new registry inputs.
 
 If an adapter must compile before it can read the version or run preflight,
 prepare its selected cache before compilation. Keep this within the runner's
 normal adapter dispatch: select fresh source or explicit saved recovery first; never add a fetch
 prerequisite that runs against possibly interrupted metadata before recovery
-selection. A consumer can pass an internal preparation selection from its
-release entry points to its launcher; do not infer permission from an adapter
-name or enable it globally for ordinary checks.
-Remove that internal selection before dispatching the compiled adapter so its
-validation children cannot inherit online preparation permission.
+selection. Keep executable installation scoped to the authorized preparation targets.
 
-For example, a Cargo launcher selected by an authorized release uses
-`cargo +TOOLCHAIN fetch --locked`, followed by `cargo run --locked --offline`.
-Its ordinary invocation uses `cargo +TOOLCHAIN fetch --locked --offline` before
-the same offline compilation. Retain Cargo's original diagnostics and status
-on failure, name the consumer's explicit fetch command, and stop before further
-release effects. Do not switch an explicitly offline caller online on failure.
+A Cargo launcher can use `cargo +TOOLCHAIN fetch --locked` followed by
+`cargo +TOOLCHAIN run --locked`. Both inherit the selected Cargo network policy.
+Retain Cargo’s diagnostics and status on failure and stop before release effects.
 
 Interrupted manifest/lock writes may require a coherent scratch workspace for
 compilation. Prepare that same scratch graph with the copied selected lock;
 do not fetch against inconsistent tracked metadata or change its dependency
-selection. Later qualification remains offline and bound to the selected source,
+selection. Later qualification remains bound to the selected source,
 inputs and receipts. A locked fetch does not qualify the source or reconcile
 release effects.
 
@@ -1136,7 +1124,7 @@ The Shared Cargo adapter delegates these operations using the selections above.
 The command uses TOML-owned literal spans and complete context admission. It
 preserves unrelated bytes, source-qualified lock references, saved-source
 identities and simple local requirement precision. Toko Tooling retains source
-admission, originals, changelog preparation, independent locked/offline Cargo
+admission, originals, changelog preparation, independent locked Cargo
 graph checks and restoration on renderer or graph failure. Keep saved-byte
 comparison separate from parsed semantic equality at its owning boundary.
 
@@ -1158,7 +1146,7 @@ directories under the printed preparation path.
 
 The caller supplies `RELEASE_PREVIOUS`, `RELEASE_VERSION`, `RELEASE_DATE`, prepared
 Cargo, Perl, jq, Mike Farah yq and the explicitly selected IC Build editor and
-byte allowance above. Preparation uses the locked offline graph and the editor.
+byte allowance above. Preparation uses the locked graph and the editor.
 It independently parses the candidate before installation, preserves manifest layout, file modes and external lock selections,
 restores all three original files on failure and retains failure custody. It does
 not run Cargo-edit or Cargo-sort; consumer ordering gates remain separate.
@@ -1322,7 +1310,7 @@ bash scripts/ci/cargo-release-group.sh plan endpoint   # admitted JSON for consu
 ```
 
 The plan and files include the root manifest/lock, selected group ledger and
-literal-version member manifests. Full locked/offline resolution admits every
+literal-version member manifests. Full locked resolution admits every
 group and local lock record before and after preparation. Only the selected
 versions, declared local requirements and selected ledger are rendered; existing
 transaction mechanics restore all selected files on failure. Failed checks retain
@@ -1415,7 +1403,7 @@ It does not rely on default-feature resolve membership or enable/compile every
 research feature. An unmatched product lock identity refuses preparation rather
 than permitting a name-only rewrite.
 
-Preparation admits both locked/offline graphs, renders every candidate before
+Preparation admits both locked graphs, renders every candidate before
 installation, and validates both resulting graphs in one
 `release_metadata_prepare` transaction. Only selected product versions and their
 requirements change; private versions and unrelated package identities remain
@@ -1514,7 +1502,7 @@ source-only policy after common shape, path and unique-membership admission.
 It does not run Cargo or establish filesystem/graph ownership. Native consumers
 can project it instead of maintaining a parallel policy validator.
 
-The `observe` operation additionally uses locked, offline Cargo `metadata --no-deps` for
+The `observe` operation additionally uses locked Cargo `metadata --no-deps` for
 workspace/member discovery and the prepared yq TOML parser for the root catalog
 and lock. It accepts a virtual workspace with literal package versions, including
 partially changed member manifests and coherent per-group local lock versions.

@@ -451,7 +451,7 @@ for failure in type export missing-version missing-date wrong-version wrong-date
                 printf 'sort --workspace --check\n' > "$attempts/expected-events"
                 printf 'locate-project --workspace --message-format plain --manifest-path %s/source/Cargo.toml\n' \
                     "${retained[0]}" >> "$attempts/expected-events"
-                [[ "$failure" != metadata ]] || printf 'metadata --locked --offline --format-version 1\n' >> "$attempts/expected-events"
+                [[ "$failure" != metadata ]] || printf 'metadata --locked --format-version 1\n' >> "$attempts/expected-events"
                 cmp "$attempts/expected-events" "$events"
             fi ;;
     esac
@@ -481,7 +481,7 @@ for mode in default ordered sort-failure grouped grouped-failure; do
         cmp "$fixture/committed-manifest" "$events.manifest"
         if [[ "$mode" == ordered || "$mode" == grouped ]]; then
             [[ "$status" == 0 && ! -e "$(cat "$events.root")" ]] || exit 1
-            grep -Fxq 'metadata --locked --offline --format-version 1' "$events"
+            grep -Fxq 'metadata --locked --format-version 1' "$events"
         else
             [[ "$status" == 24 && -d "$(cat "$events.root")" ]] || exit 1
             if grep -q '^metadata ' "$events"; then exit 1; fi

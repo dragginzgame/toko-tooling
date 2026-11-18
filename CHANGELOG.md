@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.45.6] - Unreleased
+
+- Let shared Cargo checks and release helpers retrieve missing locked dependencies.
+  Offline mode requires explicit selection for the invocation or job. [#395](https://github.com/dragginzgame/toko-tooling/issues/395)
+
 ## [0.45.5] - 2026-11-18
 
 - Restore production, mixed-use and test/tooling headings for mixed-role Cargo

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Shared companions: scripts/ci/check-cargo-dependency-boundaries.sh scripts/ci/fixture-lifecycle.sh ci/examples/platform-owner-boundaries.json
 set -euo pipefail
+unset CARGO_NET_OFFLINE
 selection=all
 if [[ $# != 0 ]]; then
     [[ $# == 2 && $1 == --case && ($2 == upstream-client || $2 == native-client || $2 == cbor || $2 == hashing || $2 == wire-oracle || $2 == runtime-ic0 || $2 == bls-oracle) ]] || {
@@ -27,7 +28,7 @@ cat > "$FIXTURE/bin/cargo" <<'MOCK'
 #!/usr/bin/env bash
 set -euo pipefail
 [[ "$*" == 'metadata --no-deps --locked --format-version 1' ]]
-[[ "$CARGO_NET_OFFLINE" == true && "$RUSTUP_AUTO_INSTALL" == 0 ]]
+[[ -z "${CARGO_NET_OFFLINE+x}" && "$RUSTUP_AUTO_INSTALL" == 0 ]]
 printf 'metadata\n' >> "$BOUNDARY_CALLS"
 cat metadata.json
 case "$BOUNDARY_MODE" in failed) exit 29 ;; signal) kill -TERM "$$" ;; esac

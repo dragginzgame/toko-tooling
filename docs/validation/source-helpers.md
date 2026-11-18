@@ -70,7 +70,7 @@ bash scripts/ci/read-cargo-workspace-version.sh --stable /path/to/repo/Cargo.tom
 ```
 
 The additive `--cargo-inheritance` check reuses the pin checker's Git inventory,
-TOML parser and offline Cargo workspace discovery. It checks every inventoried
+TOML parser and Cargo workspace discovery. It checks every inventoried
 Cargo manifest against its owning root: member package versions inherit
 `workspace.package.version`; ordinary, development, build and target dependencies
 inherit catalog entries by alias. Root packages also inherit their dependencies.
@@ -89,7 +89,7 @@ The version reader requires Cargo, jq and Mike Farah yq v4.47.2+. It accepts one
 explicit `Cargo.toml` path and prints its `workspace.package.version` as canonical
 SemVer, including prerelease/build components unless `--stable` is selected.
 It rejects missing/non-string versions and malformed manifests, with no accepted
-version on failure. Cargo's offline `locate-project --workspace` validates the
+version on failure. Cargo's `locate-project --workspace` validates the
 manifest first, including duplicate keys that yq alone accepts. It neither
 resolves dependencies nor builds; the selected Cargo toolchain must be prepared.
 Keep root-package targets available when reading an exported manifest, since
@@ -265,7 +265,7 @@ must retain policy/order checks and prove audit cannot run after preparation fai
 Use the explicitly prepared IC Build release editor for manifest and local lock
 versions. Its lock renderer changes only selected unsourced package versions and
 exact unqualified local references. Toko Tooling retains originals and runs
-locked/offline Cargo graph validation before completing preparation.
+locked Cargo graph validation before completing preparation.
 
 See [Cargo candidate rendering](../releases/releases.md#cargo-release-candidate-rendering) for
 the required executable and byte-allowance selections. Candidate bytes are never
@@ -275,7 +275,7 @@ authorization remain consumer-owned.
 ## Coordinated Cargo graph admission
 
 `cargo-release-metadata.sh check-graph PRIMARY_PACKAGE` validates regular root
-Cargo inputs, locked/offline resolution and the complete coordinated workspace/
+Cargo inputs, locked resolution and the complete coordinated workspace/
 local-lock roster without requiring release notes or dates. It performs no
 version writes, fetching or compilation. The existing `check` operation adds
 release-note/date admission; both retain selected-commit and failed-evidence

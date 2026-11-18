@@ -17,6 +17,7 @@ cat > observe.sh <<'SH'
 #!/usr/bin/env bash
 # Deliberate fault injection below qualifies mechanisms, not a reusable contract.
 set -euo pipefail
+printf '%s\n' "${CARGO_NET_OFFLINE-unset}" > observer-policy
 phase=0
 [[ ! -f observation-count ]] || phase="$(cat observation-count)"
 phase=$((phase+1))
@@ -33,6 +34,7 @@ SH
 cat > command.sh <<'SH'
 #!/usr/bin/env bash
 set -euo pipefail
+printf '%s\n' "${CARGO_NET_OFFLINE-unset}" > command-policy
 count=0
 [[ ! -f execution-count ]] || count="$(cat execution-count)"
 printf '%s\n' "$((count+1))" > execution-count
@@ -54,6 +56,25 @@ refuse() {
     if run_stage > "$fixture/refused.stdout" 2> "$fixture/refused.stderr"; then echo 'unexpected stage admission' >&2; exit 1; fi
 }
 admission_count() { find "$state/attempts" -name admission.json | wc -l | tr -d ' '; }
+# The bounded stage observes and executes with the invocation's Cargo policy.
+cargo_policy_case() {
+    local state="$fixture/cargo-policy-state"
+    mkdir "$fixture/policy-workspace"
+    cp -R inputs configuration.json observe.sh command.sh environment.json "$fixture/policy-workspace/"
+    cd "$fixture/policy-workspace"
+    for policy in unset true true; do
+        unset CARGO_NET_OFFLINE
+        if [[ "$policy" == true ]]; then export CARGO_NET_OFFLINE=true; fi
+        run_stage > "$fixture/policy.log" 2>&1
+        [[ "$(cat command-policy)" == "$policy" && "$(cat observer-policy)" == "$policy" ]]
+    done
+    [[ "$(cat execution-count)" == 2 ]]
+    jq -cS '.CARGO_NET_OFFLINE="false"' environment.json > "$fixture/conflict.json"
+    cp "$fixture/conflict.json" environment.json
+    refuse
+    grep -F 'conflicting invocation and stage CARGO_NET_OFFLINE' "$fixture/refused.stderr" > /dev/null
+}
+(cargo_policy_case)
 run_stage > "$fixture/first.log" 2>&1
 [[ "$(cat execution-count)" == 1 && "$(admission_count)" == 1 ]]
 proofs=("$state"/proofs/*.json)

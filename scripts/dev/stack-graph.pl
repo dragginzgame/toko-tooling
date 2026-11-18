@@ -17,7 +17,7 @@ GetOptions('parent=s' => \$parent, 'catalog=s' => \$catalog_file,
     'help' => \$help) or die "Use --help for usage\n";
 if ($help) {
     print "Usage: perl scripts/dev/stack-graph.pl (--write | --check) [--parent DIR]\n",
-        "Read catalogued sibling manifests offline, then update or check the README\n",
+        "Read catalogued local sibling manifests, then update or check the README\n",
         "overview and docs/fleet/stack.md evidence. No builds, downloads or sibling edits.\n",
         "Advanced: --catalog FILE --output-root DIR (defaults to this checkout).\n";
     exit 0;
@@ -87,7 +87,7 @@ for my $repo (@{$catalog->{repositories}}) {
     # Keep the caller's prepared Cargo/toolchain and configuration. --no-deps
     # reads declarations, not a resolved feature or version graph.
     open my $cargo, '-|', 'cargo', 'metadata', '--manifest-path', "$workspace/Cargo.toml",
-        '--format-version', '1', '--no-deps', '--offline', '--locked'
+        '--format-version', '1', '--no-deps', '--locked'
         or die "Cannot start Cargo: $!\n";
     my $json = do { local $/; <$cargo> };
     close $cargo or die "Cargo metadata failed for $name (status $?)\n";

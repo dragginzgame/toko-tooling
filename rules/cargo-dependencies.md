@@ -27,7 +27,7 @@ Consumers can adopt the reviewed inventory in `ci/external-ic-dependencies.txt`
 through `bash scripts/ci/check-cargo-dependency-boundaries.sh --consumer "$PWD"
 --external-ic`. This checks canonical dependency names, including aliases,
 optional, build, development and target-specific declarations, using locked
-offline Cargo metadata. The sole allowed direct package owner for the listed
+Cargo metadata. The sole allowed direct package owner for the listed
 external IC dependencies is `ic-platform`, subject to the narrow identity and
 native implementation exceptions below. Its canonical `ic-platform-types`
 identity supplier additionally owns only the optional `ic_principal` dependency
@@ -299,8 +299,8 @@ availability is separate evidence; a cached offline build or a `version` beside
   and read-only helpers; do not add automatic fetches to every check target.
 - An authorized dependency update includes normal registry/Git access needed to
   resolve and obtain the selected dependencies. Agents and helpers must not add
-  `--offline`, `--frozen` or `CARGO_NET_OFFLINE=true` to `cargo update` merely
-  because ordinary validation is offline. Do not require another permission
+  `--offline`, `--frozen` or `CARGO_NET_OFFLINE=true` to `cargo update` without
+  explicit authorization for the invocation or job. Do not require another permission
   request for network access already inherent in that authorized operation;
   actual execution-environment network restrictions still apply.
 - Scope the update to the requested packages/versions and affected workspaces.
@@ -331,7 +331,7 @@ availability is separate evidence; a cached offline build or a `version` beside
   includes those selected installations, never an unrelated tool upgrade.
 - Keep `--locked` on validation and artifact builds; it preserves dependency
   selection without prohibiting downloads. Add `--offline` or `--frozen` only
-  where the workflow deliberately validates against an already prepared cache.
+  when the maintainer explicitly authorizes offline operation for that invocation or job.
   Scope offline environment settings to those commands, rather than exporting
   them across a workflow that must also prepare dependencies.
 - Honour an explicit caller-selected offline mode, including Cargo environment
@@ -341,7 +341,7 @@ availability is separate evidence; a cached offline build or a `version` beside
   offline. Do not repeatedly retry the same cache-only resolution when registry
   access is required.
 - Offline dependency-free fixtures and qualified local workspace-version
-  synchronization may stay offline when the external dependency graph is
+  synchronization may select offline mode with that authorization when the external dependency graph is
   unchanged and the required inputs are prepared. They do not establish the
   policy for adopting newly published dependencies.
 
@@ -415,8 +415,8 @@ archives locally through its existing packaging check:
    original name/version/source selections for external dependencies and the
    consumer's feature/target and forbidden-dependency checks. A fixture lock may
    project the selected graph and add its own root, without dependency upgrades.
-   Build that admitted graph with `--offline --locked` using prepared caches;
-   missing inputs or mismatched selections fail without an online fallback.
+   Build that admitted graph with `--locked`. Complete dependency preparation before recording
+   evidence. An explicitly offline job fails if any required input is missing.
 4. Require the build and final integrity checks to finish successfully. Verify
    unchanged archive and unpacked-source hashes and original manifests/lockfiles;
    retain logs, selected identities and failed artifacts. Keep the existing full

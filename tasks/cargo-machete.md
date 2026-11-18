@@ -8,7 +8,7 @@ Use the prepared consumer-qualified cargo-machete executable and record its
 version. From each selected workspace root, the basic source scan is:
 
 ```bash
-CARGO_NET_OFFLINE=true RUSTUP_AUTO_INSTALL=0 cargo machete
+RUSTUP_AUTO_INSTALL=0 cargo machete
 ```
 
 Read existing targets before using them: a combined dependency target may also

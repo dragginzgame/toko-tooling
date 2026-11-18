@@ -11,7 +11,7 @@ my $json=JSON::PP->new->canonical->utf8;
 sub graph {
     my ($root)=@_; $root=abs_path($root)//die "missing closure root\n";
     my $original=getcwd(); chdir $root or die $!;
-    open my $in,'-|','cargo','metadata','--offline','--locked','--all-features','--format-version','1' or die $!;
+    open my $in,'-|','cargo','metadata','--locked','--all-features','--format-version','1' or die $!;
     local $/; my $raw=<$in>; close $in or die "closure metadata failed\n";
     chdir $original or die $!;
     # Rebase only Cargo-owned path/ID fields. Do not normalize arbitrary package

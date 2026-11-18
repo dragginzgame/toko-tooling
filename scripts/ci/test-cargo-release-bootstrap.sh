@@ -179,7 +179,7 @@ BOOTSTRAP_REAL_CARGO="$(command -v cargo)"
 cat > "$fixture/bin/cargo" <<'SH'
 #!/usr/bin/env bash
 set -euo pipefail
-[[ "$1" == metadata && "$*" == *--no-deps* && "$*" == *--locked* && "$*" == *--offline* ]]
+[[ "$1" == metadata && "$*" == *--no-deps* && "$*" == *--locked* && "$CARGO_NET_OFFLINE" == true ]]
 "$BOOTSTRAP_REAL_CARGO" "$@"
 exit 29
 SH

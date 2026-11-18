@@ -18,7 +18,9 @@ exact-input contract; a not-applicable stage is neither executed nor reused.
 
 The caller supplies an executable observer, an explicit bounded environment as
 canonical JSON, a byte allowance for each input/log, the exact command, a trusted
-exclusive state directory and fresh source/group identities. For example:
+exclusive state directory and fresh source/group identities. An invocation-level `CARGO_NET_OFFLINE` is
+included in the effective environment for observation, execution and proof lookup.
+A conflicting value in the stage environment fails before dispatch.
 
 The source identifier is a caller-admitted 40- or 64-digit hexadecimal content
 identity, such as a Git commit or a retained source-projection digest. This tool
@@ -307,7 +309,7 @@ failure propagation, not native acceptance, archive qualification or a speedup.
 `prepare-cargo-stage-source.pl --root DIR --state target/STAGE-CANDIDATES
 --source COMMIT --editor ABSOLUTE` is an opt-in source producer, not a release
 runner or an equivalence rule for old binaries. It requires clean committed
-source/index, regular tracked files, the admitted IC Build editor, locked offline
+source/index, regular tracked files, the admitted IC Build editor, locked
 resolution and the ordinary Cargo configuration. Build/configuration overrides
 require ordinary execution rather than being silently discarded.
 
@@ -324,7 +326,7 @@ disposable export. The request is an ordered array of `{name,version,date}` for
 every policy group; date is `Unreleased` or the existing finalized date. It emits
 the group's version/primary/member map only after the entire projection succeeds.
 Each pending group shares planning with its preparation admission, retaining
-fresh locked/offline Cargo checks before and after mutation, including declared
+fresh locked Cargo checks before and after mutation, including declared
 qualification workspaces and unrelated graph identities. The canonical editor
 still owns all version edits. This is not an atomic multi-group live release:
 failure retains partial scratch and no successful projection; the caller discards

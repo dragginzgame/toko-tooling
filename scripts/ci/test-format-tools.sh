@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Shared companions: scripts/ci/check-format-tools.sh scripts/ci/fixture-lifecycle.sh
 set -euo pipefail
+unset CARGO_NET_OFFLINE
 ROOT="$0"
 [[ "$ROOT" == /* ]] || ROOT="$PWD/$ROOT"
 ROOT="$(cd -P "${ROOT%/*}/../.." && printf '%s/.' "$PWD")"
@@ -17,7 +18,7 @@ mkdir "$fixture/bin"
 cat > "$fixture/bin/cargo" <<'SCRIPT'
 #!/usr/bin/env bash
 set -euo pipefail
-[[ "$CARGO_NET_OFFLINE" == true && "$RUSTUP_AUTO_INSTALL" == 0 ]] || exit 1
+[[ -z "${CARGO_NET_OFFLINE+x}" && "$RUSTUP_AUTO_INSTALL" == 0 ]] || exit 1
 [[ "${RUSTUP_TOOLCHAIN:-}" == consumer-toolchain ]] || exit 1
 printf '%s\n' "$*" >> "$FORMAT_TOOLS_FIXTURE/calls"
 case "$*" in

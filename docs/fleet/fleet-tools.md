@@ -40,7 +40,7 @@ toko-cloc --json
 toko-cloc --help
 ```
 
-The workspace report discovers members through locked, offline Cargo metadata.
+The workspace report discovers members through locked Cargo metadata.
 It shows Library/app, Tests, Examples, Benchmarks, Build/tooling, Unclassified
 and Total columns. Nested members, Git internals, `.tools/`, `.tmp/`, `.cache/`
 and `node_modules/` are excluded. Workspace/package-root `target/`, `build/`,

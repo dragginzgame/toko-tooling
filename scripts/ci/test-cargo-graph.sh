@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Shared companions: scripts/ci/check-cargo-graph.pl scripts/ci/fixture-lifecycle.sh
 set -euo pipefail
+unset CARGO_NET_OFFLINE
 root="${BASH_SOURCE[0]}"
 [[ "$root" == /* ]] || root="$PWD/$root"
 root="$(CDPATH='' cd -P "${root%/*}/../.." && printf '%s/.' "$PWD")"
@@ -17,8 +18,8 @@ export GRAPH_CALLS="$fixture/calls" GRAPH_INPUT="$fixture/graph" GRAPH_MODE=pass
 cat > "$fixture/bin/cargo" <<'CARGO'
 #!/usr/bin/env bash
 set -euo pipefail
-[[ "$*" == 'tree --locked --offline --color never --target wasm32-unknown-unknown --edges normal,build --prefix none --format {p} --package consumer'* || "$*" == 'tree --locked --offline --color never --target wasm32-unknown-unknown --edges normal,build,features --prefix none --format {p} --package consumer'* || "$*" == *$'--format {p}\t{f} --package consumer'* ]]
-[[ "$CARGO_NET_OFFLINE" == true && "$RUSTUP_AUTO_INSTALL" == 0 ]]
+[[ "$*" == 'tree --locked --color never --target wasm32-unknown-unknown --edges normal,build --prefix none --format {p} --package consumer'* || "$*" == 'tree --locked --color never --target wasm32-unknown-unknown --edges normal,build,features --prefix none --format {p} --package consumer'* || "$*" == *$'--format {p}\t{f} --package consumer'* ]]
+[[ -z "${CARGO_NET_OFFLINE+x}" && "$RUSTUP_AUTO_INSTALL" == 0 ]]
 printf '%s\n' "$*" >> "$GRAPH_CALLS"
 cat "$GRAPH_INPUT"
 case "$GRAPH_MODE" in failed) exit 29 ;; signal) kill -TERM "$$" ;; esac

@@ -116,8 +116,7 @@ make check-stack-graph
 make stack-graph STACK_PARENT=/path/to/projects
 ```
 
-The command uses Perl core modules and `cargo metadata --no-deps --offline
---locked`. It keeps the caller's prepared toolchain and Cargo configuration;
+The command uses Perl core modules and `cargo metadata --no-deps --locked`. It keeps the caller's prepared toolchain and Cargo configuration;
 it neither builds nor edits siblings. Prepare the compiler first, as required
 above, so invoking Cargo does not trigger Rustup toolchain installation.
 It updates only the marked blocks in the [overview](overview.md) and this document after every
@@ -139,7 +138,7 @@ credentials. It reads the existing local checkouts, including pending work;
 it does not fetch newer branches or registry packages.
 
 The service uses Toko Tooling's already prepared compiler, disables Rustup
-automatic installation and runs Cargo offline. It does not stage, commit, push
+automatic installation and preserves Cargo network settings. It does not stage, commit, push
 or edit siblings. Unchanged output is left untouched; changed generated blocks
 appear as working-tree edits for the next normal commit. Handwritten content
 outside those blocks is preserved. Missing/broken inputs fail with journal

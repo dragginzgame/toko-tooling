@@ -20,7 +20,7 @@ trap 'fixture_finish "$?" "$fixture" "Tooling source-package fixture retained"' 
 version="$(perl "$ROOT/scripts/ci/shared-package-version.pl" "$ROOT/Cargo.toml")"
 # Cargo's archive verification is owned by publish-check/publish; this check
 # qualifies the actual bundled scripts and documentation without compiling twice.
-(cd "$ROOT" && cargo package --locked --offline --allow-dirty --no-verify)
+(cd "$ROOT" && cargo package --locked --allow-dirty --no-verify)
 archive="$ROOT/target/package/toko-tooling-$version.crate"
 checksum="$(bash "$ROOT/scripts/ci/verify-file-checksum.sh" --print sha256 "$archive")"
 perl "$ROOT/scripts/distribution/registry-package.pl" extract "$archive" "$checksum" "$version" "$fixture/package"
