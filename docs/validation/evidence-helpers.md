@@ -228,12 +228,19 @@ The callback receives the numeric status and a bounded, redacted excerpt of
 combined stdout and stderr. Exit with the returned status. Success skips the
 collector. A collector exception reports a generic diagnostic and preserves the
 failed command's status. Consumers own the artifact location, path admission,
-upload and any separately selected installer logs. Use `excerpt($handle)` on
-each such log from its beginning to retain multiline redaction context.
+upload and any separately selected installer logs. Open each admitted file in
+raw mode and read from its beginning to retain multiline redaction context.
+For a 1 MiB read ceiling, use `excerpt($handle, 1048576)`. The optional
+nonnegative byte limit bounds input independently of the retained tail, even
+if the file grows. Reaching it reports truncation and discards any unfinished
+line. An exact-size file gets the same notice because the reader stops without
+probing past the ceiling. `excerpt($handle)` and `run_setup` drain to EOF.
 
 The command's raw stream stays out of logs and artifacts. The excerpt retains
 up to 100 lines and 32 KiB, omits oversized input lines and filters common
-credential patterns, PEM blocks and known secret environment values. Select
+credential patterns, PEM blocks and known secret environment values, including
+unlabelled values from variables whose names contain `ACCESS_KEY`. The existing
+four-character minimum for environment values applies. Select
 commands whose remaining diagnostic content is appropriate for CI visibility.
 The producer regression is `perl scripts/ci/test-setup-diagnostics.pl`.
 

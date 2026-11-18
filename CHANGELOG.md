@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.45.9] - Unreleased
+
+### 🩹 Fixed
+
+- Redact bare and embedded values from `ACCESS_KEY` environment variables in
+  setup diagnostics. [#396](https://github.com/dragginzgame/toko-tooling/issues/396)
+
+### ➕ Added
+
+- Installer-log excerpts accept an optional byte ceiling that holds if the file
+  grows. Command output still drains to EOF. [#397](https://github.com/dragginzgame/toko-tooling/issues/397)
+
 ## [0.45.8] - 2026-11-18
 
 ### 🥾 Governance
