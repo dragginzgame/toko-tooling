@@ -11,8 +11,17 @@ architecture on another.
 - Give each behavior one clear owner and expose intentional APIs from that
   owner boundary.
 - Prefer narrow visibility. Widen a symbol only for a demonstrated consumer.
-- Keep imports at file top and group them consistently with the consumer's
-  documented house style.
+- Keep module imports at the top of the file and follow the consumer's import
+  order. Prefer one `use` declaration per crate for imports with the same scope,
+  visibility and attributes. Nest shared paths and let rustfmt wrap long groups.
+  For example, combine an existing prelude import and two named signup imports:
+
+  ```rust
+  use toko::schema::{
+      prelude::*,
+      signup::{DisplayName, Status},
+  };
+  ```
 - In code that requires `std`, use `std::...` instead of `core::...` whenever
   the equivalent API is available through `std` at the package's supported MSRV.
   Apply this to imports, fully qualified paths, tests and examples.
@@ -61,6 +70,17 @@ transport and endpoint projection.
 
 ## Documentation and comments
 
+- Separate imports, item-level macro invocations, guards and endpoint functions
+  with a blank line. Place an endpoint's doc comment immediately above its
+  attributes. Give each named argument its own line in a multi-argument
+  endpoint mount or attribute so reviewers can see the handler, guard, codecs
+  and request limit individually.
+- Require a purpose comment on each endpoint mount and a doc comment on each
+  endpoint and guard, including private Rust functions exported by attributes.
+  Describe what a caller can do and which authority the guard requires. For
+  example, a refresh endpoint could say `/// Refreshes enrollment on a controller's request.`
+  and its guard `/// Restricts this operation to controllers of this canister.`
+  Apply the same layout and comments to generated endpoint modules at their source.
 - Public APIs document purpose, ownership, invariants, and caller-visible
   failure behavior.
 - Public APIs with reachable panic paths include a `# Panics` section; prefer a

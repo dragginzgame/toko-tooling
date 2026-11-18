@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.45.7] - Unreleased
+
+- Prefer one grouped Rust `use` declaration per crate for imports with matching
+  scope, visibility and attributes.
+- Require spacing, multiline endpoint configuration and purpose comments for
+  handwritten and generated Rust endpoint modules.
+
 ## [0.45.6] - 2026-11-18
 
 - Let shared Cargo checks and release helpers retrieve missing locked dependencies.
