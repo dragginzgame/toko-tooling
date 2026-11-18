@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.45.5] - Unreleased
+
+- Restore production, mixed-use and test/tooling headings for mixed-role Cargo
+  workspace dependency catalogs. Release-group rosters stay in the release policy.
+
 ## [0.45.4] - 2026-11-18
 
 - Exercise all LOC report modes on macOS Bash, including the default without flags.

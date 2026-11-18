@@ -256,9 +256,8 @@ Use `make deps-list` for the complete package/version/group view; do not add unu
 dependencies or suppress unused-dependency lints merely to maintain that display.
 The qualification catalog
 separately owns its private members and references to the product packages.
-Cargo.toml does not need release-group blocks, changelog comments or dependency-role
-sections. Use ordinary sorted declarations; optional comments may explain a
-non-obvious constraint without duplicating the group policy.
+Organize used catalog entries by their [dependency roles](cargo-dependencies.md#dependency-roles-and-deployment-checks).
+Keep release-group rosters and changelog paths in the group policy.
 
 Members inherit used dependencies with `workspace = true`. Remove unused
 display-only declarations and their group dependency aliases together; retain group

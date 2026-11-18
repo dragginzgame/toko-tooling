@@ -37,14 +37,11 @@ the independent, non-mutating formatting gate.
   versions, workspace inheritance, comments and selected lockfiles; it is not a
   dependency upgrade or release bump. See the
   [cargo-sort documentation](https://github.com/DevinR528/cargo-sort).
-- The formatter preserves any optional comment blocks with
-  `cargo sort --workspace --grouped` for writing and add `--check` for checking.
-  Apply the same selection to hooks, CI and selected-source release checks;
-  the shared defaults already select grouped mode. Use the
-  [dependency role guidance](cargo-dependencies.md#dependency-roles-and-deployment-checks);
-  it does not require group blocks, role headers or display-only dependencies.
-  Sorting checks order; it does not verify dependency roles or registry
-  publication.
+- Preserve [dependency-role headings](cargo-dependencies.md#dependency-roles-and-deployment-checks)
+  with `cargo sort --workspace --grouped` for writing and add `--check` for
+  checking. Use the same grouped mode in hooks, CI and selected-source release
+  checks. Review dependency roles against member declarations when usage changes.
+
 - Additional formatting steps, such as derive sorting, may
   belong in those targets. They must have matching non-mutating checks, preserve
   dependency/version selections and work from tracked inputs in an isolated

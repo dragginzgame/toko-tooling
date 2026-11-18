@@ -909,8 +909,12 @@ unused alias from its group's dependency roster when removing its declaration;
 retain the package in the group's member roster. Private product dependencies
 may use path-only entries; qualification owns its own workspace catalog.
 Remove unused workspace dependencies and their obsolete aliases; do not allow
-the unused-dependency lint merely to preserve a display catalog. Cargo.toml needs
-no release-group blocks, role sections or changelog comments. Keep group ownership
+the unused-dependency lint merely to preserve a display catalog. When
+`[workspace.dependencies]` contains multiple roles, group the used entries
+under `# Production`, `# Production and tests`, and `# Tests and tooling`,
+in that order. Omit empty groups and sort within each. Production includes
+normal and build dependencies across supported targets and features. Use the
+mixed heading for entries also declared for tests or tooling. Keep group ownership
 in the existing JSON policy under the
 [workspace versioning rules](https://github.com/dragginzgame/toko-tooling/blob/626da7cd9626cc2e152594862a2d82ea82ef51da/rules/rust-workspaces.md#coordinated-versions-and-workspace-boundaries).
 Dependency adoption must distinguish required compatibility/security changes from

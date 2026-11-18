@@ -136,9 +136,11 @@ Use `make deps-list` to view local package versions and release groups. Remove
 unused display-only workspace dependencies and their aliases from group
 `dependencies` rosters, retaining every package in its group's `members` roster.
 Remove lint allowances introduced solely to preserve those unused declarations.
-No Cargo.toml group blocks, role sections or changelog comments are required;
-this supersedes the older grouping migration below. Existing grouped formatter
-support may preserve optional comments without requiring any sections.
+The 0.40.2 migration removed the requirement to mirror release groups and
+changelog paths in Cargo.toml. When adopting the current baseline, label the
+remaining declarations in mixed-role workspace catalogs according to the
+[current role headings](../../rules/cargo-dependencies.md#dependency-roles-and-deployment-checks).
+This supersedes the historical two-section layout below.
 Adopt the updated release checker before removing catalog-only aliases: older
 snapshots require complete display catalogs. Check actual member inheritance
 and release graph admission after cleanup; preserve versions and lock selections.
@@ -412,14 +414,10 @@ No step depends on a local draft, sibling working tree or `/tmp` proposal.
 1. Identify the actual production packages and supported target/feature
    combinations from the consumer's build and deployment entrypoints. Review
    member normal, build, development and target-specific dependency tables.
-   Split the root dependency catalog into two sections with the
-   [canonical comment headers](../../rules/cargo-dependencies.md#dependency-roles-and-deployment-checks):
-   `# Production dependencies` and `# Tests and tooling only`. Put each header
-   once above its section, with a blank line between sections; remove repeated
-   role annotations after individual dependencies. Entries shared by production
-   and tests belong in production; the catalog remains one owner. These headers
-   belong only in `[workspace.dependencies]`, never in `[workspace]`, `members`
-   or other tables. Remove role headers added outside the dependency catalog.
+   The original 0.24.0 layout used two headings and included mixed-use entries
+   in production. For current adoption, apply the
+   [dependency-role headings](../../rules/cargo-dependencies.md#dependency-roles-and-deployment-checks)
+   inside `[workspace.dependencies]`.
 2. The shared formatting defaults preserve those sections with grouped sorting.
    Remove local `FORMAT_WRITE_COMMAND`/`FORMAT_CHECK_COMMAND` overrides that only
    repeat root-workspace Cargo sort and rustfmt. Keep complete paired adapters

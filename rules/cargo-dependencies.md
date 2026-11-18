@@ -238,27 +238,25 @@ from domain, persistence and RPC models under that encoding contract.
 
 ## Dependency roles and deployment checks
 
-No release-group or dependency-role sections are required in Cargo.toml.
-Keep only used dependency declarations, sort them with the selected formatter,
-and use `make deps-list` for package versions and release groups. Remove unused
-entries instead of suppressing their lint. Optional comments should explain
-constraints, not reproduce the release-group policy.
-Dependency roles describe use within this workspace, not whether a selected
-version is published to a registry.
+When a `[workspace.dependencies]` catalog contains more than one of the roles
+below, group its used declarations under these comment headings in this order.
+Omit empty groups. A single-role catalog can omit its heading. Leave a blank
+line between groups and sort entries alphabetically within each group.
 
-- A production dependency is needed by a production package through normal or
-  build dependencies, including supported optional features and targets. Label
-  external entries shared with tests/tooling as mixed when documenting roles; they still belong to the
-  production graph. Production build dependencies also belong here even though
-  their code need not enter the artifact.
-- Tests and tooling entries are used only through development dependencies or
-  non-production packages. A package can be published elsewhere and still serve
-  only this role here. Workspace membership and `package.publish` do not prove
-  deployment use or successful registry publication.
-- Keep one catalog and child inheritance. Annotations do not select dependencies;
-  Cargo's manifests and resolved graph remain authoritative. Preserve the sections
-  through the [formatting contract](git-hooks.md), using Cargo sort's grouped mode
-  consistently in formatting, hooks, CI and release checks.
+- `# Production` covers dependencies declared for a product's normal or build
+  use, including supported optional features and target-specific builds.
+- `# Production and tests` covers those same dependencies when they are also
+  declared directly for tests, qualification or development tooling. Running
+  tests against a product does not by itself make all its dependencies mixed.
+- `# Tests and tooling` covers entries used only as dev-dependencies or by
+  qualification packages and development tools in this workspace.
+
+Classify local and external declarations by their use in the owning workspace.
+Keep one declaration per alias and preserve member inheritance. The headings
+belong only in `[workspace.dependencies]`. Keep release groups in the existing
+release policy and use `make deps-list` for package versions and group membership.
+The [grouped formatter](git-hooks.md) preserves these headings. Cargo's resolved
+graph determines what a particular target and feature selection builds.
 
 Before deployment, inspect the production package's locked graph with the same
 target and feature selection as its build. For example, for a default-feature
