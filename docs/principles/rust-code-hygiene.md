@@ -11,13 +11,16 @@ architecture on another.
 - Give each behavior one clear owner and expose intentional APIs from that
   owner boundary.
 - Prefer narrow visibility. Widen a symbol only for a demonstrated consumer.
-- Put target selection at the narrowest module boundary that owns the
-  target-specific work. For example, guard `mod canister;` once and keep its
-  runtime imports, callbacks and store access together. Leave portable domain
-  logic in the shared module so native tests and editor tooling can see it.
-  Likewise, a native-only test module can own its fixture imports under a single
-  guard. Preserve the target predicate, API visibility and Cargo dependency
-  selection when regrouping code.
+- Before adding `#[cfg(target_arch = "wasm32")]`, its host inverse or an
+  equivalent conditional, identify the operation that requires different code
+  on the supported targets. If the same implementation works on both, compile
+  it on both. This also applies to generated endpoints and testable helpers.
+- For example, expiry calculation can take a timestamp, and identifier
+  generation can take random bytes. If an existing runtime API already
+  supplies those inputs on both targets, call it directly. If the IC and host
+  must acquire them differently, put the guard around that acquisition alone.
+  Guard a whole module only when every item in it requires the same target
+  restriction. Shared behavior stays visible in editors and runs in native tests.
 - Leave a blank line between adjacent functions, including methods, tests and
   test helpers. If the next function has doc comments or attributes, put the
   blank line before them.

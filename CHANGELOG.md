@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.45.10] - Unreleased
+
+### 🥾 Governance
+
+- Require a concrete platform difference before adding Wasm or host target
+  guards. Keep shared Rust code unconditional, including generated code.
+
 ## [0.45.9] - 2026-11-18
 
 ### 🩹 Fixed
