@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.45.4] - Unreleased
+## [0.45.4] - 2026-11-18
 
 - Exercise all LOC report modes on macOS Bash, including the default without flags.
 - Update snapshot fixtures to verify the publication adapter’s runtime dependencies,
