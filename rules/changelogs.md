@@ -104,6 +104,7 @@ root release entry, following IcyDB's format:
 | Removals | `### 🗑️ Removed` |
 | Internal simplification | `### 🧹 Cleanup` |
 | Test tooling or coverage | `### 🧪 Testing` |
+| Release behavior demonstrated or limits measured under stated conditions | `### 🎯 Qualification` |
 | Documentation | `### 📚 Documentation` |
 | Runnable CLI quick start | `### ▶️ Try it` |
 | Migration instructions | `### 🧭 Migration Notes` |

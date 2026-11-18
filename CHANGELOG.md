@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.45.8] - Unreleased
+
+### 🥾 Governance
+
+- Standardize `🎯 Qualification` as the changelog heading for demonstrated
+  release behavior and measured limits.
+- Place Rust test module declarations at the top of their parent and leave a
+  blank line between adjacent functions, including test helpers.
+- Group Wasm-specific Rust code behind module declarations so shared logic
+  stays visible on native targets.
+
 ## [0.45.7] - 2026-11-18
 
 - Prefer one grouped Rust `use` declaration per crate for imports with matching

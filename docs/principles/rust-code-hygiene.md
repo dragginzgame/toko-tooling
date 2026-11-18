@@ -11,6 +11,16 @@ architecture on another.
 - Give each behavior one clear owner and expose intentional APIs from that
   owner boundary.
 - Prefer narrow visibility. Widen a symbol only for a demonstrated consumer.
+- Put target selection at the narrowest module boundary that owns the
+  target-specific work. For example, guard `mod canister;` once and keep its
+  runtime imports, callbacks and store access together. Leave portable domain
+  logic in the shared module so native tests and editor tooling can see it.
+  Likewise, a native-only test module can own its fixture imports under a single
+  guard. Preserve the target predicate, API visibility and Cargo dependency
+  selection when regrouping code.
+- Leave a blank line between adjacent functions, including methods, tests and
+  test helpers. If the next function has doc comments or attributes, put the
+  blank line before them.
 - Keep module imports at the top of the file and follow the consumer's import
   order. Prefer one `use` declaration per crate for imports with the same scope,
   visibility and attributes. Nest shared paths and let rustfmt wrap long groups.
@@ -168,7 +178,9 @@ or section banners.
   test modules over large inline `#[cfg(test)] mod tests { ... }` blocks so
   file-based tools such as `cloc` can distinguish test source from production
   source. Keep only small wiring declarations such as `#[cfg(test)] mod tests;`
-  in production files.
+  in production files. Place `mod tests;` with the module declarations at the
+  top, after module documentation and inner attributes and before implementation
+  items. Move its existing `cfg` attributes with it.
 - Use ordinary module discovery: `foo/mod.rs` can declare tests in `foo/tests.rs`
   or `foo/tests/mod.rs`. Move a standalone `foo.rs` to `foo/mod.rs` before adding
   `foo/` test files. Choose either `tests.rs` or `tests/mod.rs`, never `tests.rs`
