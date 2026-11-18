@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.45.7] - Unreleased
+## [0.45.7] - 2026-11-18
 
 - Prefer one grouped Rust `use` declaration per crate for imports with matching
   scope, visibility and attributes.
