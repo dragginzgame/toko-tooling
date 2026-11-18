@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.45.3] - Unreleased
+## [0.45.3] - 2026-11-18
 
 - Reduce canonical JSON processing during exact-input stage reuse and time observer commands, inventory parsing and file hashing separately. [Toko Tooling #394](https://github.com/dragginzgame/toko-tooling/issues/394)
 - Summarize frozen batch duration, slow phases, repeated checks and observed
