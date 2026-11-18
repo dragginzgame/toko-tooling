@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# Shared companions: scripts/ci/fixture-lifecycle.sh scripts/ci/prepare-script-fixture.sh scripts/ci/run-validation-targets.sh scripts/ci/validation-evidence.pl scripts/ci/fixtures/validation-evidence-caller.rs rust-toolchain.toml
+# Shared companions: scripts/ci/fixture-lifecycle.sh scripts/ci/prepare-script-fixture.sh scripts/ci/run-validation-targets.sh scripts/ci/validation-evidence.pl scripts/ci/fixtures/validation-evidence-caller.rs rust-toolchain.toml scripts/ci/seal-validation-stage.pl
 set -euo pipefail
 selection=all
 if [[ $# != 0 ]]; then
-    [[ $# == 2 && $1 == --case && $2 == utf8 ]] || { echo 'usage: test-validation-evidence.sh [--case utf8]' >&2; exit 2; }
-    selection=utf8
+    [[ $# == 2 && $1 == --case && ( $2 == utf8 || $2 == generic ) ]] || { echo 'usage: test-validation-evidence.sh [--case utf8|generic]' >&2; exit 2; }
+    selection=$2
 fi
 root="$(cd -P "${BASH_SOURCE[0]%/*}/../.." && pwd -P)"
 # shellcheck source=scripts/ci/fixture-lifecycle.sh
@@ -96,6 +96,45 @@ run_plan() {
 }
 verify() { perl "$helper" verify "$PWD" plan.json "$RELEASE_SOURCE" "$RELEASE_GROUP" "$run" context.json; }
 check() { perl "$helper" check "$PWD" plan.json "$RELEASE_SOURCE" "$RELEASE_GROUP" "$run" context.json proof.json; }
+if [[ $selection == generic || $selection == all ]]; then
+    make_plan group
+    run_plan composition
+    verify > proof.json
+    cat > observer <<'OBS'
+#!/bin/sh
+printf '%s\n' '{"configuration":{"purpose":"source check"},"files":["source.txt"],"schema":1}'
+OBS
+    chmod +x observer
+    jq -cn --arg path "$PATH" '{PATH:$path}' > env.json
+    stage() {
+        perl "$root/scripts/ci/run-validation-stage.pl" --state "$fixture/state" --stage source-check \
+            --contract check/1 --source "$1" --group "$2" --observe observer --environment env.json --max-bytes 8388608 \
+            --admission-output "$fixture/$2.json" -- cat source.txt
+    }
+    seal() {
+        perl "$root/scripts/ci/seal-validation-stage.pl" --generic "$fixture/$2.json" "$1" "$2" source-check "${3:-check/1}"
+    }
+    stage "$baseline" runtime
+    seal "$baseline" runtime | jq -e '.admission.mode=="executed"' >/dev/null
+    stage "$RELEASE_SOURCE" client
+    refuse seal "$RELEASE_SOURCE" client wrong/1
+    compose() {
+        check > "$fixture/plan-part" && seal "$RELEASE_SOURCE" client > "$fixture/stage-part" &&
+            jq -cnS --slurpfile plan "$fixture/plan-part" --slurpfile stage "$fixture/stage-part" \
+                '{kind:"consumer-group-receipt",plan:$plan[0],stage:$stage[0]}'
+    }
+    compose > "$fixture/receipt"
+    jq -e '.stage.kind=="sealed-stage-admission" and .stage.admission.mode=="reused" and .stage.origin.group=="runtime"' "$fixture/receipt" >/dev/null
+    for path in "$(jq -r '.stage.admission.execution_proof' "$fixture/receipt")" \
+        "$(jq -r '.stage.origin.attempt' "$fixture/receipt")/command.stdout"; do
+        cp "$path" "$fixture/original"
+        printf 'changed' >> "$path"
+        refuse compose
+        mv "$fixture/original" "$path"
+        compose | cmp - "$fixture/receipt"
+    done
+    if [[ $selection == generic ]]; then fixture_complete=true; exit 0; fi
+fi
 if [[ $selection == utf8 ]]; then
     make_plan group
     jq -cS '.stages[0].reason = "Latin-1 \u00e9" | .stages[1].reason = "Quote \u2019" |

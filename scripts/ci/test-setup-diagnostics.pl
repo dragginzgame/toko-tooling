@@ -17,11 +17,13 @@ is(run_setup($collector, $^X, '-e', q{
     print "progress\n" x 5000, "x" x 8190, "-----BEGIN PRIVATE KEY-----\n",
           "pem-body\n-----END PRIVATE KEY-----\n", "$ENV{CI_TEST_TOKEN}\n",
           "https://user:password\@example.invalid/\n", "::notice::injected\n";
+    print "UNCLASSIFIED_SETTING=fixture-value\nhttps://example.invalid/file#fixture-fragment\n";
+    print qq({"access_key":"fixture-access-value"}\n);
     print STDERR "download failed\n";
     exit 37;
 }), 37, 'command status survives collection');
 like($log, qr/download failed/, 'retains stderr diagnostic');
-unlike($log, qr/pem-body|hidden-value|user:password|::notice::/, 'sensitive bytes and workflow commands omitted');
+unlike($log, qr/fixture-value|fixture-fragment|fixture-access-value|pem-body|hidden-value|user:password|::notice::/, 'sensitive bytes and workflow commands omitted');
 ok(length($log) < 32768 && (() = $log =~ /\n/g) <= 100, 'bounded output');
 my $warning = '';
 {

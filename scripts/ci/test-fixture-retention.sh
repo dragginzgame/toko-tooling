@@ -14,8 +14,49 @@ source "$ROOT/scripts/ci/fixture-lifecycle.sh"
 source "$ROOT/scripts/ci/fixture-retention-probes.sh"
 fixture_complete=false
 trap 'fixture_finish "$?" "$fixture" "Retention fixtures retained"' EXIT
+validation_directory_case() (
+    cd "$fixture"
+    mkdir repo temp
+    cd repo
+    printf 'broken:\n\t@echo diagnostic\n\t@exit 7\nlater:\n\t@touch should-not-run\n' > Makefile
+    export RUNNER_TEMP="$fixture/temp" VALIDATION_REPOSITORY_ROOT="$PWD"
+    export VALIDATION_LOG_DIR="$RUNNER_TEMP/validation" GITHUB_STEP_SUMMARY="$fixture/summary"
+    if bash "$ROOT/scripts/ci/run-validation-targets.sh" --fail-fast broken later; then exit 1; fi
+    [[ ! -e should-not-run ]]
+    action="$ROOT/.github/actions/retain-failure-evidence"
+    yq -o=json '.runs.steps' "$action/action.yml" > "$fixture/steps.json"
+    bash "$ROOT/scripts/ci/extract-workflow-step.sh" "$fixture/steps.json" archive > "$fixture/archive.sh"
+    export EVIDENCE_TEMP_ROOT="$RUNNER_TEMP" EVIDENCE_REPOSITORY_ROOT="$PWD" EVIDENCE_ACTION_ROOT="$action"
+    export GITHUB_OUTPUT="$fixture/output"
+    collect() { EVIDENCE_VALIDATION_DIRECTORY="$1" bash -eo pipefail "$fixture/archive.sh"; }
+    collect validation
+    archive="$(sed -n 's/^path=//p' "$GITHUB_OUTPUT")"
+    mkdir "$fixture/unpacked"
+    tar -xzf "$archive" -C "$fixture/unpacked"
+    diff -r "$VALIDATION_LOG_DIR" "$fixture/unpacked/validation"
+    runs=("$fixture/unpacked/validation"/validation.*)
+    grep -q FAIL "${runs[0]}/timings.tsv"
+    cmp "$GITHUB_STEP_SUMMARY" "${runs[0]}/github-summary.md"
+    mkdir "$fixture/failing-bin"
+    printf '#!/bin/sh\nexit 13\n' > "$fixture/failing-bin/tar"
+    chmod +x "$fixture/failing-bin/tar"
+    : > "$GITHUB_OUTPUT"
+    if PATH="$fixture/failing-bin:$PATH" collect validation; then exit 1; fi
+    [[ ! -s "$GITHUB_OUTPUT" ]]
+    ln -s validation "$RUNNER_TEMP/redirect"
+    mkdir "$RUNNER_TEMP/portable-fixtures"
+    for invalid in missing redirect ../temp portable-fixtures; do
+        : > "$GITHUB_OUTPUT"
+        if collect "$invalid"; then exit 1; fi
+        [[ ! -s "$GITHUB_OUTPUT" ]]
+    done
+)
+if [[ ${1:-} == --validation-directory || $# == 0 ]]; then
+    validation_directory_case
+    if [[ $# == 1 ]]; then fixture_complete=true; exit 0; fi
+fi
 if [[ $# != 0 && ! ( $# == 1 && "$1" == --vendor-only ) ]]; then
-    echo 'usage: test-fixture-retention.sh [--vendor-only]' >&2; exit 2
+    echo 'usage: test-fixture-retention.sh [--vendor-only|--validation-directory]' >&2; exit 2
 fi
 # Keep consumer identity distinct from the installed helper owner. Source the
 # helper relatively, then change cwd before probing consumer-owned initialization.

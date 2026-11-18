@@ -415,3 +415,24 @@ remain under `target/delivery-contract-profile/`; regression logs are under
 `target/delivery-contract-before/`. The narrow candidate preparation fixture is
 `bash scripts/ci/test-cargo-stage-source.sh --case preparation`, with the same
 explicit prepared editor prerequisite as the full fixture.
+
+### Sealing non-Cargo admissions
+
+Use `seal-validation-stage.pl --generic ADMISSION SOURCE GROUP STAGE CONTRACT`
+with the expected source, group, stage and contract supplied by the caller's
+plan. The runner first observes the current inputs and issues a fresh admission.
+The sealer then checks custody of that admission, its original execution proof
+and both logs. It emits one canonical `sealed-stage-admission` JSON object on
+success. The proof digest binds the complete execution context, including the
+observer's configuration. The seal records the original source/group separately
+from the fresh admission and its executed/reused mode.
+
+For a composed receipt, check the existing group-plan proof with
+`validation-evidence.pl check`, then seal each required generic admission.
+Embed both outputs under a distinct consumer receipt kind and publish it only
+after every operation succeeds. On resume regenerate those components from
+their bound paths and expected identities and compare to the retained receipt.
+A failed seal leaves the prior receipt intact. Retry from the original evidence
+after resolving the failure. Changed inputs require fresh runner observation.
+The executable consumer composition example is
+`bash scripts/ci/test-validation-evidence.sh --case generic`.

@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.45.2] - Unreleased
+
+- Seal non-Cargo stage admissions for composed validation receipts. [Toko Tooling #389](https://github.com/dragginzgame/toko-tooling/issues/389)
+- Select a validation log directory in the failure-evidence action. [Toko Tooling #392](https://github.com/dragginzgame/toko-tooling/issues/392)
+- Redact environment assignments, URL fragments and access-key fields from setup diagnostics. [Toko Tooling #393](https://github.com/dragginzgame/toko-tooling/issues/393)
+
 ## [0.45.1] - 2026-11-18
 
 - Add an opt-in Perl setup diagnostic helper that preserves command status and

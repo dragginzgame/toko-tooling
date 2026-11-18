@@ -236,3 +236,29 @@ up to 100 lines and 32 KiB, omits oversized input lines and filters common
 credential patterns, PEM blocks and known secret environment values. Select
 commands whose remaining diagnostic content is appropriate for CI visibility.
 The producer regression is `perl scripts/ci/test-setup-diagnostics.pl`.
+
+### Retaining validation runner logs in hosted CI
+
+Point the vendored runner at the consumer checkout and a dedicated directory.
+Select logs whose contents are appropriate for the artifact audience.
+
+```yaml
+- name: Validate
+  env:
+    VALIDATION_REPOSITORY_ROOT: ${{ github.workspace }}
+    VALIDATION_LOG_DIR: ${{ runner.temp }}/validation
+  run: bash vendor/toko-tooling/scripts/ci/run-validation-targets.sh --fail-fast lint test
+- name: Retain failed validation
+  if: failure()
+  uses: ./vendor/toko-tooling/.github/actions/retain-failure-evidence
+  with:
+    name: validation-${{ github.job }}-${{ runner.os }}-${{ runner.arch }}-${{ github.run_attempt }}
+    repository-root: ${{ github.workspace }}
+    temp-root: ${{ runner.temp }}
+    validation-log-directory: validation
+```
+
+The optional directory name selects one existing immediate child of `temp-root`.
+Missing directories, symlink directories and overlapping archive selections
+fail collection. Use the input only in collection mode. Matrix jobs sharing a
+host must add their distinguishing matrix values to the artifact name.
