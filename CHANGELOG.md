@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.45.5] - Unreleased
+## [0.45.5] - 2026-11-18
 
 - Restore production, mixed-use and test/tooling headings for mixed-role Cargo
   workspace dependency catalogs. Release-group rosters stay in the release policy.
