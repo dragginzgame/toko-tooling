@@ -775,12 +775,12 @@ These rules apply to handwritten and generated Rust.
   `tests/`. Move their references with them, retain the test module’s existing
   conditional attributes and declare fixture-only package roles explicitly.
 
-For examples, test layout and endpoint documentation, see the [Rust hygiene guide](https://github.com/dragginzgame/toko-tooling/blob/a9288d708b339a8349c9c27c58de765d7dc660d9/docs/principles/rust-code-hygiene.md).
+For examples, test layout and endpoint documentation, see the [Rust hygiene guide](https://github.com/dragginzgame/toko-tooling/blob/4c6e6165b422ef3c68cd2e14b59bedb14852bacd/docs/principles/rust-code-hygiene.md).
 
 Prefer `#[expect(..., reason = "...")]` over `#[allow(...)]` for Rust lint
 suppressions. Repositories must review every `allow` for conversion and retain
 one only with a concrete reason why an expectation cannot work. Follow the
-[lint suppression rule](https://github.com/dragginzgame/toko-tooling/blob/a9288d708b339a8349c9c27c58de765d7dc660d9/docs/principles/rust-code-hygiene.md#lint-suppressions).
+[lint suppression rule](https://github.com/dragginzgame/toko-tooling/blob/4c6e6165b422ef3c68cd2e14b59bedb14852bacd/docs/principles/rust-code-hygiene.md#lint-suppressions).
 
 ### Common Rust lint policy
 
@@ -985,7 +985,7 @@ framework dependencies on core development. Follow the
 Do not add Python tooling. Read the applicable
 [workspace/tooling contracts](https://github.com/dragginzgame/toko-tooling/blob/a716b501274678a8ebf163ef576bbb549e974acd/rules/engineering-details.md#rust-workspaces-and-portable-tooling)
 for manifests, dependencies, hooks, installers or shared snapshots, and the
-[Rust hygiene guide](https://github.com/dragginzgame/toko-tooling/blob/a9288d708b339a8349c9c27c58de765d7dc660d9/docs/principles/rust-code-hygiene.md) for Rust implementation.
+[Rust hygiene guide](https://github.com/dragginzgame/toko-tooling/blob/4c6e6165b422ef3c68cd2e14b59bedb14852bacd/docs/principles/rust-code-hygiene.md) for Rust implementation.
 
 ## Host support
 
