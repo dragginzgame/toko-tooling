@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.45.12] - Unreleased
+
+### 🥾 Governance
+
+- Put Rust module declarations after file-level comments and before grouped
+  imports. Separate the import block from surrounding items with a blank line.
+
 ## [0.45.11] - 2026-11-18
 
 ### 🩹 Fixed

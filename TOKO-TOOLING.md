@@ -731,7 +731,10 @@ storage allocation, admission, backing access or persistence integrations.
 
 ## Rust workspaces and portable tooling
 
-Prefer one grouped `use` declaration per crate in each scope. Factor out shared
+Start handwritten and generated Rust files with any module comments and inner
+attributes, followed by the `mod` declarations. Leave one blank line between
+the module declarations and the `use` block, and one between the imports and
+the next item. Prefer one grouped `use` declaration per crate in each scope. Factor out shared
 path prefixes with nested braces. Group imports that share visibility and
 attributes, and preserve the names each import brings into scope.
 

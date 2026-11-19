@@ -24,8 +24,12 @@ architecture on another.
 - Leave a blank line between adjacent functions, including methods, tests and
   test helpers. If the next function has doc comments or attributes, put the
   blank line before them.
-- Keep module imports at the top of the file and follow the consumer's import
-  order. Prefer one `use` declaration per crate for imports with the same scope,
+- Start with any file-level comments, module docs and inner attributes, then
+  declare child modules, including `mod tests;`. Follow the declarations with
+  one blank line, the imports, and one blank line before the next item or its
+  documentation. Keep item-specific comments and attributes attached to their
+  declarations. Within the import block, follow the consumer's import order.
+  Prefer one `use` declaration per crate for imports with the same scope,
   visibility and attributes. Nest shared paths and let rustfmt wrap long groups.
   For example, combine an existing prelude import and two named signup imports:
 
