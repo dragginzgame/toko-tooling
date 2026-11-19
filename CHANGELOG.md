@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.45.14] - Unreleased
+
+### 📚 Documentation
+
+- Clarify when a Wasm-only canister can guard its private state module and
+  exercise that same implementation in native unit tests.
+
 ## [0.45.13] - 2026-11-19
 
 ### 📚 Documentation

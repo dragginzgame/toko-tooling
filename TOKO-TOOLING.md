@@ -748,13 +748,18 @@ These rules apply to handwritten and generated Rust.
   to their item. Give each named argument its own line in multi-argument endpoint
   mounts and attributes. Document each mount’s role, each guard’s access policy
   and each endpoint’s caller-visible purpose.
-- Compile shared logic on all supported targets. Use a target guard only for an
+- Compile shared logic on all supported targets. Within that logic, use a target guard only for an
   operation that requires a target-exclusive API or a different implementation.
   Prefer an existing portable API. For example, isolate IC-specific clock or
   entropy acquisition and keep the callers unconditional.
   The same rule applies to `#[cfg(any(test, target_arch = "wasm32"))]`.
   A helper having only test and canister callers is insufficient reason to
   hide it from ordinary host builds.
+- A Wasm-only canister may guard its private state module with
+  `#[cfg(any(target_arch = "wasm32", test))]` when native unit tests exercise
+  the same implementation and an ordinary host build has no state API.
+  Put the guard on the module declaration so storage dependencies can stay
+  scoped to Wasm builds and tests.
 - Use ordinary module discovery. The prohibition on `#[path]` includes
   conditional path overrides. Use either `foo.rs` or `foo/mod.rs` for a module.
   When adding a `foo/` directory for children, tests or fixtures, move `foo.rs`
