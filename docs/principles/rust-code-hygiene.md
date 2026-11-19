@@ -37,6 +37,18 @@ architecture on another.
 - Leave a blank line between adjacent functions, including methods, tests and
   test helpers. If the next function has doc comments or attributes, put the
   blank line before them.
+- Separate the returned value from preceding statements with one blank line.
+  Keep a comment explaining the return attached to it, with the blank line
+  above the comment. For example:
+
+  ```rust
+  fn parse_count(input: &str) -> Result<u32, std::num::ParseIntError> {
+      let count = input.trim().parse()?;
+
+      Ok(count)
+  }
+  ```
+
 - Start with any file-level comments, module docs and inner attributes, then
   declare child modules, including `mod tests;`. Follow the declarations with
   one blank line, the imports, and one blank line before the next item or its
@@ -85,8 +97,11 @@ architecture on another.
   as JSON, SQL and expected output. Rust snippets used as parser/scanner input or
   compiler qualification cases remain legitimate test data; they must not be
   used to patch an application's executable implementation.
-- Keep a type, its inherent implementation, and its trait implementations near
-  one another when that improves navigation.
+- Group a type declaration with its implementations. Put inherent blocks
+  first, then trait blocks in alphabetical order by trait name. For example,
+  a request to format just `Shard` covers its header, declaration and
+  implementation blocks. Preserve method bodies and the order of methods
+  within each block.
 
 ## CLI applications
 
@@ -123,6 +138,21 @@ transport and endpoint projection.
   )]
   pub struct AddressBook {}
   ```
+
+- Use the same header for a handwritten entity adapter, including a unit struct:
+
+  ```rust
+  ///
+  /// Shard
+  /// Maps the shard’s retained user row to Canic’s provisioning contract.
+  ///
+
+  pub struct Shard;
+  ```
+
+  For this adapter, `impl Record for Shard` comes before
+  `impl ShardRecord for Shard`. If `Shard` has inherent methods, its
+  `impl Shard` block goes immediately after the declaration.
 
 - Separate imports, item-level macro invocations, guards and endpoint functions
   with a blank line. Give each named argument its own line in a multi-argument

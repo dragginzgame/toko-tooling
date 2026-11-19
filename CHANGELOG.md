@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.45.20] - Unreleased
+
+### 🥾 Governance
+
+- Give handwritten entity and adapter structs the schema-style header. Group
+  their implementations with inherent blocks first and trait blocks in
+  alphabetical order. Existing code can adopt the layout one type at a time.
+- Require a blank line between preceding statements and an explicit return
+  or implicit return value in Rust functions and methods.
+
 ## [0.45.19] - 2026-11-19
 
 ### 🥾 Governance
