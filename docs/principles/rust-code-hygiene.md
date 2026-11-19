@@ -127,6 +127,8 @@ transport and endpoint projection.
   readiness and metrics mounts and the greeting query and update together
   after the imports. The reply type, greeting formatter, readiness callback
   and metrics snapshot can follow below. This example needs no extra directories.
+  In a larger canister with `src/endpoints/lib.rs`, the sibling operations
+  directory is `src/ops/`.
 - Use the shared endpoint header for handwritten and generated endpoints,
   including private functions exported by attributes. For example:
 

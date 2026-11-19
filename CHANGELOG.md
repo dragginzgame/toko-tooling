@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.45.18] - Unreleased
+
+### 📚 Documentation
+
+- Clarify that `endpoints/` and `ops/` are sibling directories when both exist.
+
 ## [0.45.17] - 2026-11-19
 
 ### 🥾 Governance

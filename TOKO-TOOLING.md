@@ -760,6 +760,7 @@ These rules apply to handwritten and generated Rust.
   a dedicated `endpoints/` directory, use `endpoints/lib.rs` as the canister
   library root (set Cargo’s `[lib] path` when needed). Introduce `ops/` when
   operations have enough independent behavior to warrant their own modules.
+  When both directories exist, place `endpoints/` and `ops/` under the same parent.
 - Immediately above each canister endpoint’s attributes, write an ordinary
   `//` comment block. Put the exact Rust function name alone on the first line
   and its caller-visible behavior on the second. Follow with `// scope  :`
