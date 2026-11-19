@@ -25,7 +25,12 @@ where applicable; consumers supply other language conventions and commands.
    the maintained configurations, and require a concrete limitation for any
    retained allowance. Keep unfulfilled expectations visible to the owning gate.
    For canister target guards, apply the [Wasm target guard rule](../TOKO-TOOLING.md#wasm-target-guards)
-   to the configurations the product supports.
+   to the configurations the product supports. Inspect paired IC/native
+   implementations, including re-exported modules. Flag trap-only host stubs
+   and trace each retained target distinction to the failing primitive and
+   the supported caller that needs it. When guards depend on each other,
+   evaluate their removal together, including macro output and target-specific
+   manifest entries. Record what still fails with the relevant feature enabled.
 3. Inspect boundary validation and negative tests. Errors should retain actionable
    typed context through callers. Golden-path tests, rendered-string matching,
    and tests of private layout do not substitute for the maintained contract.

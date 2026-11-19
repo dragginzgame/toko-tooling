@@ -21,6 +21,11 @@ architecture on another.
   Expiry calculation, database mutations and their callers stay unconditional.
   Use an existing portable runtime API directly wherever it supplies the same
   behavior.
+- For example, a shard handler can call `canic::method::call` directly and
+  await its result. Check that path on the IC target and exercise delivery in
+  an installed-canister test. A native test of routing can exercise the route
+  selection itself. A host implementation that only reports “requires the IC
+  runtime” exercises neither behavior.
 - For a canister's private state, check the claimed failure using the Wasm
   artifact and the native unit tests that exercise it. If the repo also ships a
   host library, include its contract in the decision. For example, an unresolved
@@ -135,13 +140,17 @@ transport and endpoint projection.
   ```rust
   // my_shard
   // Returns the signed-in user's shard once confirmed, otherwise None.
-  // scope  : read, restricted to the session's issuer and subject
-  // limits : route lookup work limit of 1
+  // scope  : read
+  // limits : default
   #[canic::query(scope = "read")]
   fn my_shard(session: SessionView) -> Option<Principal> {
       // ...
   }
   ```
+
+  A controller-only endpoint declared with `guard = controller` and no
+  session scope lists `// guard  : canister controller` immediately before
+  the limits line.
 - Public APIs document purpose, ownership, invariants, and caller-visible
   failure behavior.
 - Public APIs with reachable panic paths include a `# Panics` section; prefer a

@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.45.19] - Unreleased
+
+### 🥾 Governance
+
+- Include session scope and admission guard lines in endpoint headers only
+  when each applies.
+  Write `limits : default` when the framework supplies both Wire budgets.
+- Require direct IC calls in IC-only application code. Reject dummy native
+  implementations added for host checks and confine necessary target guards
+  to the failing platform primitive. Review interdependent guards together
+  across macros, APIs and Cargo dependencies before retaining an exception.
+
 ## [0.45.18] - 2026-11-19
 
 ### 📚 Documentation
