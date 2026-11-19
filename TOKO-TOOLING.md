@@ -43,7 +43,7 @@ crate or vendoring this file grants no exception and does not activate audits.
 - During adoption, remove redundant or conflicting overlay wording; retain only
   local choices and documented exceptions. Do not turn a general prohibition
   into a new permission prompt when the common rule already authorizes the task.
-  See [adoption details](https://github.com/dragginzgame/toko-tooling/blob/626da7cd9626cc2e152594862a2d82ea82ef51da/rules/engineering-details.md#adoption-and-local-authority).
+  See [adoption details](https://github.com/dragginzgame/toko-tooling/blob/a716b501274678a8ebf163ef576bbb549e974acd/rules/engineering-details.md#adoption-and-local-authority).
 
 ## Documentation ownership boundary
 
@@ -153,7 +153,7 @@ When a starter or style guide supplies a complete Rust example, use the same
 source for the example people copy and the checks that exercise it. Short
 illustrative snippets can stay inline.
 New modes and abstractions need a demonstrated requirement and simpler-alternative
-check. See [ownership details](https://github.com/dragginzgame/toko-tooling/blob/626da7cd9626cc2e152594862a2d82ea82ef51da/rules/engineering-details.md#ownership-and-simplification)
+check. See [ownership details](https://github.com/dragginzgame/toko-tooling/blob/a716b501274678a8ebf163ef576bbb549e974acd/rules/engineering-details.md#ownership-and-simplification)
 when changing component boundaries.
 
 ## Complete, reviewable changes
@@ -161,7 +161,7 @@ when changing component boundaries.
 Finish the accepted coherent outcome, including directly required callers,
 fixtures, docs and cleanup. Split independent outcomes, not compiler fallout or
 each proof of the same change. Stop at new independent scope or a release boundary.
-Maintain meaningful [changelog notes](https://github.com/dragginzgame/toko-tooling/blob/e873b124c1b23fa8e25718c6931b596e908c640f/rules/changelogs.md) once per completed batch;
+Maintain meaningful [changelog notes](https://github.com/dragginzgame/toko-tooling/blob/a716b501274678a8ebf163ef576bbb549e974acd/rules/changelogs.md) once per completed batch;
 governance-only edits need no note unless they change a maintained surface or one
 is requested. Exclude all legal and licensing content from changelogs, including
 adoption notices and notes about this policy or its cleanup. This exclusion overrides
@@ -169,7 +169,7 @@ general changelog coverage and fixed-issue-link requirements.
 Report outcome, relevant evidence and actionable blockers.
 Detailed line metrics and symbol inventories are optional under the
 [reporting rules](https://github.com/dragginzgame/toko-tooling/blob/626da7cd9626cc2e152594862a2d82ea82ef51da/rules/change-reporting.md), not a routine completion step.
-See [contract-change details](https://github.com/dragginzgame/toko-tooling/blob/626da7cd9626cc2e152594862a2d82ea82ef51da/rules/engineering-details.md#complete-reviewable-changes)
+See [contract-change details](https://github.com/dragginzgame/toko-tooling/blob/a716b501274678a8ebf163ef576bbb549e974acd/rules/engineering-details.md#complete-reviewable-changes)
 when changing interfaces, persistence or installation/recovery behavior.
 
 ### Post-push review
@@ -212,7 +212,7 @@ file or separate review framework.
   Offline mode requires explicit authorization for the invocation or job. Preserve
   the caller’s Cargo settings and report Cargo’s error if a selected package is
   unavailable. Complete dependency preparation before sealing reusable evidence.
-  See the [Cargo network policy](https://github.com/dragginzgame/toko-tooling/blob/e873b124c1b23fa8e25718c6931b596e908c640f/rules/cargo-dependencies.md#cargo-network-policy).
+  See the [Cargo network policy](https://github.com/dragginzgame/toko-tooling/blob/a716b501274678a8ebf163ef576bbb549e974acd/rules/cargo-dependencies.md#cargo-network-policy).
 
 - Ordinary coding and cleanup end after the relevant focused checks pass. Do not
   turn that handoff into release preparation, fleet adoption or qualification of
@@ -250,7 +250,7 @@ file or separate review framework.
   releases; after changing the pin and Cargo.lock, run `make toko-tooling-update`.
   Offline admission checks every member, Cargo.lock and installed bytes together.
   See the
-  [tooling selection rule](https://github.com/dragginzgame/toko-tooling/blob/e873b124c1b23fa8e25718c6931b596e908c640f/rules/cargo-dependencies.md#toko-tooling-during-dependency-updates).
+  [tooling selection rule](https://github.com/dragginzgame/toko-tooling/blob/a716b501274678a8ebf163ef576bbb549e974acd/rules/cargo-dependencies.md#toko-tooling-during-dependency-updates).
 - When adding or widening a release check, record the failure it detects, the
   changes that require it, its existing callers and its observed elapsed cost in
   the owning release plan or review. Use existing timing evidence. If the cost
@@ -258,10 +258,10 @@ file or separate review framework.
 - Give repeated validation one execution owner: selected group scope must reach
   the leaf commands, and aggregate gates must not repeat full lint/setup through
   nested targets. Reuse unchanged release-stage evidence only through the
-  qualified contract; see [validation mechanics](https://github.com/dragginzgame/toko-tooling/blob/626da7cd9626cc2e152594862a2d82ea82ef51da/rules/engineering-details.md#validation-and-evidence).
+  qualified contract; see [validation mechanics](https://github.com/dragginzgame/toko-tooling/blob/a716b501274678a8ebf163ef576bbb549e974acd/rules/engineering-details.md#validation-and-evidence).
 - Run Gitleaks once per repository CI run, outside host/package/release-group
   matrices. Do not repeat it during deployment or publication; follow the
-  [repository secret-scanning contract](https://github.com/dragginzgame/toko-tooling/blob/626da7cd9626cc2e152594862a2d82ea82ef51da/rules/engineering-details.md#repository-secret-scanning).
+  [repository secret-scanning contract](https://github.com/dragginzgame/toko-tooling/blob/a716b501274678a8ebf163ef576bbb549e974acd/rules/engineering-details.md#repository-secret-scanning).
 - Reserve local full repository/workspace suites and broad gates for an explicitly
   authorized release or explicit request for those checks. Implementation,
   continuation, PR delivery and readiness wording do not authorize them. Focused
@@ -289,7 +289,7 @@ file or separate review framework.
 - Toko Tooling owns its general regression matrix. Consumers check snapshot integrity,
   actual caller wiring and their product/native contracts. Do not replay generic
   producer fixtures by default; retain one only for a named missing consumer proof.
-  Use [consumer qualification selection](https://github.com/dragginzgame/toko-tooling/blob/e873b124c1b23fa8e25718c6931b596e908c640f/docs/adoption/consuming-snapshots.md#consumer-qualification-selection)
+  Use [consumer qualification selection](https://github.com/dragginzgame/toko-tooling/blob/a716b501274678a8ebf163ef576bbb549e974acd/docs/adoption/consuming-snapshots.md#consumer-qualification-selection)
   before changing existing rosters.
 - Documentation-only changes need link, consistency and diff checks, not code
   suites. Inspection-only work does not activate tests. Test maintained behavior,
@@ -298,7 +298,7 @@ file or separate review framework.
   preserve unrelated artifacts. Bind evidence to actual inputs and commands;
   distinguish review, substitutes, local execution and live observations. Pending,
   cancelled or failed checks are not passes. Report limitations without inventing
-  qualification. Read [validation mechanics](https://github.com/dragginzgame/toko-tooling/blob/626da7cd9626cc2e152594862a2d82ea82ef51da/rules/engineering-details.md#validation-and-evidence)
+  qualification. Read [validation mechanics](https://github.com/dragginzgame/toko-tooling/blob/a716b501274678a8ebf163ef576bbb549e974acd/rules/engineering-details.md#validation-and-evidence)
   for release ordering, Cargo preparation and external-effect recovery.
 
 ### CI setup failure diagnostics
@@ -341,7 +341,7 @@ not by themselves fix the underlying setup failure or authorize blind retries.
 ## DFINITY dependencies: own the solution
 
 Do not submit DFINITY PRs or depend on future DFINITY work. Use available qualified
-dependencies or own the solution under the [maintenance contract](https://github.com/dragginzgame/toko-tooling/blob/626da7cd9626cc2e152594862a2d82ea82ef51da/rules/engineering-details.md#dfinity-dependencies-own-the-solution).
+dependencies or own the solution under the [maintenance contract](https://github.com/dragginzgame/toko-tooling/blob/a716b501274678a8ebf163ef576bbb549e974acd/rules/engineering-details.md#dfinity-dependencies-own-the-solution).
 
 ## Independently owned implementations
 
@@ -516,7 +516,7 @@ package outside its supplier's supported range merely to remove a duplicate.
 ## Repository files: self-contained source and packages
 
 Keep source and distributions self-contained; prefer regular files. Read the
-[file and symlink contract](https://github.com/dragginzgame/toko-tooling/blob/626da7cd9626cc2e152594862a2d82ea82ef51da/rules/engineering-details.md#repository-files-no-symlinks)
+[file and symlink contract](https://github.com/dragginzgame/toko-tooling/blob/a716b501274678a8ebf163ef576bbb549e974acd/rules/engineering-details.md#repository-files-no-symlinks)
 for justified internal links, packaging and filesystem security boundaries.
 
 ## CLI applications
@@ -540,7 +540,7 @@ do not rewrite historical entries or add a release gate for presentation.
 Use Clap for as much Rust CLI behavior as its supported APIs can own, including
 typed values, validation, argument relationships, defaults, help and diagnostics.
 Check its built-ins and extension points before writing custom CLI mechanics.
-Read the [CLI contract](https://github.com/dragginzgame/toko-tooling/blob/626da7cd9626cc2e152594862a2d82ea82ef51da/rules/engineering-details.md#cli-applications) when adding,
+Read the [CLI contract](https://github.com/dragginzgame/toko-tooling/blob/a716b501274678a8ebf163ef576bbb549e974acd/rules/engineering-details.md#cli-applications) when adding,
 changing or reviewing commands.
 
 ## Metrics and logging
@@ -550,7 +550,7 @@ tree, reported through the shared endpoint owned by Canic's metrics adapter.**
 It is not a general math, statistics or validation library; do not depend on it
 or re-export its helpers for those purposes. Use `ic-logging` for logging.
 Read the
-[observability contract](https://github.com/dragginzgame/toko-tooling/blob/626da7cd9626cc2e152594862a2d82ea82ef51da/rules/engineering-details.md#metrics-and-logging)
+[observability contract](https://github.com/dragginzgame/toko-tooling/blob/a716b501274678a8ebf163ef576bbb549e974acd/rules/engineering-details.md#metrics-and-logging)
 when adding, changing or reviewing metrics and logging.
 
 ## IC application encoding
@@ -573,7 +573,7 @@ for owned RPC; keep unavoidable Candid in dedicated external-protocol boundary
 types, not our domain, state or RPC models. CBOR belongs to Platform's typed
 external-protocol APIs, including browser and test fixtures. Replace owned CBOR
 records and hash inputs with Wire through an explicit format/identity migration.
-Read the [encoding contract](https://github.com/dragginzgame/toko-tooling/blob/626da7cd9626cc2e152594862a2d82ea82ef51da/rules/engineering-details.md#ic-application-encoding)
+Read the [encoding contract](https://github.com/dragginzgame/toko-tooling/blob/a716b501274678a8ebf163ef576bbb549e974acd/rules/engineering-details.md#ic-application-encoding)
 and [RPC budgets](https://github.com/dragginzgame/toko-tooling/blob/626da7cd9626cc2e152594862a2d82ea82ef51da/rules/rpc-budgets.md) for codecs, bindings or protocol changes.
 
 ## Wasm optimization
@@ -584,7 +584,7 @@ qualification evidence. Consumers select qualified recipes against their product
 budgets. Wasm size comparisons report both the complete uncompressed module and
 its code-section size. Gzip/compressed size is not a Wasm size metric and must not
 appear in those summaries unless transport/compression measurement is explicitly
-requested. Read the [Wasm optimization contract](https://github.com/dragginzgame/toko-tooling/blob/626da7cd9626cc2e152594862a2d82ea82ef51da/rules/engineering-details.md#wasm-optimization)
+requested. Read the [Wasm optimization contract](https://github.com/dragginzgame/toko-tooling/blob/a716b501274678a8ebf163ef576bbb549e974acd/rules/engineering-details.md#wasm-optimization)
 before comparing Wasm sizes or changing deployment profiles, optimizer settings
 or performance matrices.
 
@@ -593,14 +593,14 @@ or performance matrices.
 IC Tooling's `ic-host-artifacts::artifact::encode_gzip` owns gzip encoding.
 Production code, tests, examples and generators reuse it; consumers retain
 compression levels, budgets and artifact admission. Read the
-[gzip contract](https://github.com/dragginzgame/toko-tooling/blob/626da7cd9626cc2e152594862a2d82ea82ef51da/rules/engineering-details.md#gzip-encoding) before changing
+[gzip contract](https://github.com/dragginzgame/toko-tooling/blob/a716b501274678a8ebf163ef576bbb549e974acd/rules/engineering-details.md#gzip-encoding) before changing
 encoders or compressed-byte identities.
 
 ## Pre-1.0 contracts
 
 Keep one current repository-owned contract, without compatibility shims or parallel
 versions. Breaking public changes require a minor release; retained data and
-external obligations remain real. Read [the hard-cut contract](https://github.com/dragginzgame/toko-tooling/blob/626da7cd9626cc2e152594862a2d82ea82ef51da/rules/engineering-details.md#pre-10-contracts)
+external obligations remain real. Read [the hard-cut contract](https://github.com/dragginzgame/toko-tooling/blob/a716b501274678a8ebf163ef576bbb549e974acd/rules/engineering-details.md#pre-10-contracts)
 before interface or storage changes.
 
 ## Release commands
@@ -689,7 +689,7 @@ successful execution. Keep failed/missing/changed stages explicit and freshly
 check source, final archives and remote/registry state before delivery or retry.
 
 `make release-patch`, `make release-minor` and `make release-major` share the
-[release contract](https://github.com/dragginzgame/toko-tooling/blob/626da7cd9626cc2e152594862a2d82ea82ef51da/rules/engineering-details.md#release-commands). Read it and the
+[release contract](https://github.com/dragginzgame/toko-tooling/blob/a716b501274678a8ebf163ef576bbb549e974acd/rules/engineering-details.md#release-commands). Read it and the
 local adapter before authorized release work. Normal releases start fresh;
 specific-attempt recovery uses `release-resume`. Preserve complete qualification
 of the selected release. Independent groups may adopt an explicitly qualified
@@ -703,14 +703,14 @@ Keep decisions and compact results in Git, not raw experiment archives. Routine
 checks need no new evidence report. Experimental evidence defaults to one current
 summary and at most two small data files per topic, 100 KiB combined, with a 5 MiB
 repository budget; raw output belongs under `target/evidence/`. See the
-[retention contract](https://github.com/dragginzgame/toko-tooling/blob/626da7cd9626cc2e152594862a2d82ea82ef51da/rules/engineering-details.md#changelogs-and-artifact-preservation)
+[retention contract](https://github.com/dragginzgame/toko-tooling/blob/a716b501274678a8ebf163ef576bbb549e974acd/rules/engineering-details.md#changelogs-and-artifact-preservation)
 for exceptions, historical cleanup and protected release/recovery records.
 
 Use `### 🎯 Qualification` for results such as cursor behavior across an upgrade
 or the workload budget at which an operation completes. Use `### 🧪 Testing`
 for changes to test tooling or coverage.
 Use IcyDB-style emoji category sections in the owning release changelog; read the
-[changelog rules](https://github.com/dragginzgame/toko-tooling/blob/e873b124c1b23fa8e25718c6931b596e908c640f/rules/changelogs.md) when updating them. Every issue fixed must
+[changelog rules](https://github.com/dragginzgame/toko-tooling/blob/a716b501274678a8ebf163ef576bbb549e974acd/rules/changelogs.md) when updating them. Every issue fixed must
 have a descriptive link with its number and title in that changelog before handoff, except legal and licensing
 changes, which must not be recorded there: root `CHANGELOG.md` for a
 workspace without independent release groups, or `releases/<group>/CHANGELOG.md`
@@ -720,7 +720,7 @@ deliverables and required provenance/recovery evidence. Regenerable tool-build
 scratch and obsolete cache generations need bounded retention; they are not
 permanent evidence. Consumer release artifacts remain protected from implicit
 cleanup. See
-[artifact preservation](https://github.com/dragginzgame/toko-tooling/blob/626da7cd9626cc2e152594862a2d82ea82ef51da/rules/engineering-details.md#changelogs-and-artifact-preservation).
+[artifact preservation](https://github.com/dragginzgame/toko-tooling/blob/a716b501274678a8ebf163ef576bbb549e974acd/rules/engineering-details.md#changelogs-and-artifact-preservation).
 Keep plain `cargo clean` able to remove the owning workspace's entire `target/`
 directory. Put workspace build/test scratch and generated fixtures beneath
 `target/`; use `.tmp/` or other outside-target scratch only for a documented
@@ -732,7 +732,7 @@ preserving evidence must not silently preserve every compiler output.
 ## IC stable-memory governance
 
 Production stable stores use `ic-storage`-issued checked allocation handles. Read the
-[memory contract](https://github.com/dragginzgame/toko-tooling/blob/626da7cd9626cc2e152594862a2d82ea82ef51da/rules/engineering-details.md#ic-stable-memory-governance) for
+[memory contract](https://github.com/dragginzgame/toko-tooling/blob/a716b501274678a8ebf163ef576bbb549e974acd/rules/engineering-details.md#ic-stable-memory-governance) for
 storage allocation, admission, backing access or persistence integrations.
 
 ## Rust workspaces and portable tooling
@@ -765,12 +765,12 @@ These rules apply to handwritten and generated Rust.
   `tests/`. Move their references with them, retain the test module’s existing
   conditional attributes and declare fixture-only package roles explicitly.
 
-For examples, test layout and endpoint documentation, see the [Rust hygiene guide](https://github.com/dragginzgame/toko-tooling/blob/e873b124c1b23fa8e25718c6931b596e908c640f/docs/principles/rust-code-hygiene.md).
+For examples, test layout and endpoint documentation, see the [Rust hygiene guide](https://github.com/dragginzgame/toko-tooling/blob/a716b501274678a8ebf163ef576bbb549e974acd/docs/principles/rust-code-hygiene.md).
 
 Prefer `#[expect(..., reason = "...")]` over `#[allow(...)]` for Rust lint
 suppressions. Repositories must review every `allow` for conversion and retain
 one only with a concrete reason why an expectation cannot work. Follow the
-[lint suppression rule](https://github.com/dragginzgame/toko-tooling/blob/e873b124c1b23fa8e25718c6931b596e908c640f/docs/principles/rust-code-hygiene.md#lint-suppressions).
+[lint suppression rule](https://github.com/dragginzgame/toko-tooling/blob/a716b501274678a8ebf163ef576bbb549e974acd/docs/principles/rust-code-hygiene.md#lint-suppressions).
 
 ### Common Rust lint policy
 
@@ -940,7 +940,7 @@ in that order. Omit empty groups and sort within each. Production includes
 normal and build dependencies across supported targets and features. Use the
 mixed heading for entries also declared for tests or tooling. Keep group ownership
 in the existing JSON policy under the
-[workspace versioning rules](https://github.com/dragginzgame/toko-tooling/blob/e873b124c1b23fa8e25718c6931b596e908c640f/rules/rust-workspaces.md#coordinated-versions-and-workspace-boundaries).
+[workspace versioning rules](https://github.com/dragginzgame/toko-tooling/blob/a716b501274678a8ebf163ef576bbb549e974acd/rules/rust-workspaces.md#coordinated-versions-and-workspace-boundaries).
 Dependency adoption must distinguish required compatibility/security changes from
 optional refreshes and check the destination graph before planning downstream
 releases. A newer external patch alone does not require republishing consumers.
@@ -953,12 +953,12 @@ Follow the [adoption planning contract](https://github.com/dragginzgame/toko-too
 Use root-owned dependency selections, reviewed toko tooling and explicit setup.
 Rust 1.100.0 is the approved minimum and pinned development/release compiler;
 this supersedes older compiler versions in the revision-bound references below.
-Follow the [compiler support policy](https://github.com/dragginzgame/toko-tooling/blob/e873b124c1b23fa8e25718c6931b596e908c640f/rules/cargo-dependencies.md#minimum-supported-rust-version-msrv)
+Follow the [compiler support policy](https://github.com/dragginzgame/toko-tooling/blob/a716b501274678a8ebf163ef576bbb549e974acd/rules/cargo-dependencies.md#minimum-supported-rust-version-msrv)
 when adopting it and consolidating duplicate compiler checks. Preserve product
 host requirements. Select canonical identities
 from `ic-platform-types`, IC0/execution from `ic-platform-runtime`, and crypto or
 external IC adapters from `ic-platform`, following the
-[Platform ownership rules](https://github.com/dragginzgame/toko-tooling/blob/e873b124c1b23fa8e25718c6931b596e908c640f/rules/cargo-dependencies.md#platform-package-owners).
+[Platform ownership rules](https://github.com/dragginzgame/toko-tooling/blob/a716b501274678a8ebf163ef576bbb549e974acd/rules/cargo-dependencies.md#platform-package-owners).
 External IC dependencies remain behind that reviewed boundary; Types alone may
 add `ic_principal` for explicit registry conversions. Platform's unpublished
 `qualification/bls-probe` comparison oracle may use unaliased crates.io
@@ -971,15 +971,15 @@ not enable those conversions. npm SDK Core uses
 `@tokostudios/ic-platform`. Keep reusable cores independently upgradable;
 adapters own their matching integration stacks and must not impose consumer
 framework dependencies on core development. Follow the
-[core and integration graph boundary](https://github.com/dragginzgame/toko-tooling/blob/e873b124c1b23fa8e25718c6931b596e908c640f/rules/rust-workspaces.md#core-and-integration-graph-boundary).
+[core and integration graph boundary](https://github.com/dragginzgame/toko-tooling/blob/a716b501274678a8ebf163ef576bbb549e974acd/rules/rust-workspaces.md#core-and-integration-graph-boundary).
 Do not add Python tooling. Read the applicable
-[workspace/tooling contracts](https://github.com/dragginzgame/toko-tooling/blob/626da7cd9626cc2e152594862a2d82ea82ef51da/rules/engineering-details.md#rust-workspaces-and-portable-tooling)
+[workspace/tooling contracts](https://github.com/dragginzgame/toko-tooling/blob/a716b501274678a8ebf163ef576bbb549e974acd/rules/engineering-details.md#rust-workspaces-and-portable-tooling)
 for manifests, dependencies, hooks, installers or shared snapshots, and the
-[Rust hygiene guide](https://github.com/dragginzgame/toko-tooling/blob/e873b124c1b23fa8e25718c6931b596e908c640f/docs/principles/rust-code-hygiene.md) for Rust implementation.
+[Rust hygiene guide](https://github.com/dragginzgame/toko-tooling/blob/a716b501274678a8ebf163ef576bbb549e974acd/docs/principles/rust-code-hygiene.md) for Rust implementation.
 
 ## Host support
 
-All packages support their applicable workflows on macOS. Read the [host contract](https://github.com/dragginzgame/toko-tooling/blob/626da7cd9626cc2e152594862a2d82ea82ef51da/rules/engineering-details.md#host-support)
+All packages support their applicable workflows on macOS. Read the [host contract](https://github.com/dragginzgame/toko-tooling/blob/a716b501274678a8ebf163ef576bbb549e974acd/rules/engineering-details.md#host-support)
 when changing platform behavior or CI. Routine CI cancels superseded runs while
 preserving required hosts on the retained run.
 
@@ -1000,10 +1000,10 @@ closing syntax requires it. Verify an uncertain owner rather than guessing.
 Shared dependency defects and advisories have one remediation issue at the
 supplying owner. Do not create a waiting issue in every consumer; separate
 consumer issues need distinct actionable work. Apply the
-[dependency finding rule](https://github.com/dragginzgame/toko-tooling/blob/626da7cd9626cc2e152594862a2d82ea82ef51da/rules/engineering-details.md#shared-dependency-findings).
+[dependency finding rule](https://github.com/dragginzgame/toko-tooling/blob/a716b501274678a8ebf163ef576bbb549e974acd/rules/engineering-details.md#shared-dependency-findings).
 
 Use owning GitHub issues for follow-up; no parallel local trackers. CI/issue
-maintenance and scheduled work run only when activated. Read [feedback details](https://github.com/dragginzgame/toko-tooling/blob/626da7cd9626cc2e152594862a2d82ea82ef51da/rules/engineering-details.md#feedback-and-handoff)
+maintenance and scheduled work run only when activated. Read [feedback details](https://github.com/dragginzgame/toko-tooling/blob/a716b501274678a8ebf163ef576bbb549e974acd/rules/engineering-details.md#feedback-and-handoff)
 when reporting findings across repositories or maintaining issues.
 Use the [shared audit methods](https://github.com/dragginzgame/toko-tooling/blob/626da7cd9626cc2e152594862a2d82ea82ef51da/audits/README.md) for selected code/structural
 audits; adoption activates neither an audit schedule nor repair authority.
@@ -1014,5 +1014,5 @@ Keep the current handoff a replacement summary of accepted scope, active blocker
 next actions and latest relevant evidence. Aim for 50–100 lines; trim above 150
 on the next update while preserving unresolved safety/recovery facts. Link
 canonical evidence instead of copying logs, test inventories or final reports.
-Read [handoff retention details](https://github.com/dragginzgame/toko-tooling/blob/626da7cd9626cc2e152594862a2d82ea82ef51da/rules/engineering-details.md#repository-handoff-files)
+Read [handoff retention details](https://github.com/dragginzgame/toko-tooling/blob/a716b501274678a8ebf163ef576bbb549e974acd/rules/engineering-details.md#repository-handoff-files)
 when trimming historical content. Do not create a handoff file just for ceremony.
