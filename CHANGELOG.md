@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.45.18] - Unreleased
+## [0.45.18] - 2026-11-19
 
 ### 📚 Documentation
 
