@@ -799,12 +799,12 @@ These rules apply to handwritten and generated Rust.
   `#[cfg(test)]` on unit-test modules. Apply the [Wasm target guard rule](#wasm-target-guards)
   to any target condition on the declaration. Declare fixture-only package roles explicitly.
 
-For import and test layout examples, see the [Rust hygiene guide](https://github.com/dragginzgame/toko-tooling/blob/6b698abe60094d90aacb39695cb696aa9a4e7c91/docs/principles/rust-code-hygiene.md).
+For import and test layout examples, see the [Rust hygiene guide](https://github.com/dragginzgame/toko-tooling/blob/3846fcb68e52a00c4a5ee5376c3e4ab8ac1f80af/docs/principles/rust-code-hygiene.md).
 
 Prefer `#[expect(..., reason = "...")]` over `#[allow(...)]` for Rust lint
 suppressions. Repositories must review every `allow` for conversion and retain
 one only with a concrete reason why an expectation cannot work. Follow the
-[lint suppression rule](https://github.com/dragginzgame/toko-tooling/blob/6b698abe60094d90aacb39695cb696aa9a4e7c91/docs/principles/rust-code-hygiene.md#lint-suppressions).
+[lint suppression rule](https://github.com/dragginzgame/toko-tooling/blob/3846fcb68e52a00c4a5ee5376c3e4ab8ac1f80af/docs/principles/rust-code-hygiene.md#lint-suppressions).
 
 ### Wasm target guards
 
@@ -1069,7 +1069,7 @@ framework dependencies on core development. Follow the
 Do not add Python tooling. Read the applicable
 [workspace/tooling contracts](https://github.com/dragginzgame/toko-tooling/blob/a716b501274678a8ebf163ef576bbb549e974acd/rules/engineering-details.md#rust-workspaces-and-portable-tooling)
 for manifests, dependencies, hooks, installers or shared snapshots, and the
-[Rust hygiene guide](https://github.com/dragginzgame/toko-tooling/blob/6b698abe60094d90aacb39695cb696aa9a4e7c91/docs/principles/rust-code-hygiene.md) for Rust implementation.
+[Rust hygiene guide](https://github.com/dragginzgame/toko-tooling/blob/3846fcb68e52a00c4a5ee5376c3e4ab8ac1f80af/docs/principles/rust-code-hygiene.md) for Rust implementation.
 
 ## Host support
 
