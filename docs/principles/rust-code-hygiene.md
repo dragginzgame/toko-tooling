@@ -99,6 +99,28 @@ transport and endpoint projection.
 
 ## Documentation and comments
 
+- In repositories with a documented design, separate each macro-defined type
+  from its neighbours with a doc block. The first text is the exact type
+  name. Explain what the type represents or which invariant it owns. For example:
+
+  ```rust
+  ///
+  /// AddressBook
+  /// Tracks a shard account’s address IDs and its optional primary address.
+  ///
+
+  #[entity(
+      name = "AddressBook",
+      pk(field = "owner"),
+      fields(
+          field(name = "owner", value(item(prim = "Ulid"))),
+          field(name = "addresses", value(many, max_items = 100, item(prim = "Ulid"))),
+          field(name = "primary", value(opt, item(prim = "Ulid")))
+      )
+  )]
+  pub struct AddressBook {}
+  ```
+
 - Separate imports, item-level macro invocations, guards and endpoint functions
   with a blank line. Place an endpoint's doc comment immediately above its
   attributes. Give each named argument its own line in a multi-argument

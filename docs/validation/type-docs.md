@@ -13,8 +13,10 @@ perl scripts/ci/check-type-docs.pl crates
 ```
 
 For each selected declaration the required block contains an empty `///` line,
-the declared name, another empty line, one or more description lines, a closing
+the declared name, another empty `///` line, one or more description lines, a closing
 empty `///` line, then a blank source line before attributes or the item.
+For attributed declarations the checker also accepts the description directly
+under the name, as in the [macro type example](../principles/rust-code-hygiene.md#documentation-and-comments).
 Multiline/nested bracket attributes are admitted. Strings, raw strings and nested
 comments are excluded from declaration discovery. Violations return status 1;
 missing/empty selections, unreadable sources and unsupported attribute/literal

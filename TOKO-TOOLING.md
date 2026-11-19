@@ -739,6 +739,11 @@ storage allocation, admission, backing access or persistence integrations.
 
 These rules apply to handwritten and generated Rust.
 
+- In repositories with a documented design, give every macro-defined type,
+  including private types, its own `///` block above its attributes or defining
+  macro. Start with a bare `///`, put the exact type name alone on the next
+  line, then describe its role on one or more lines. Close with a bare `///`
+  and leave one blank source line before the code.
 - Start with module comments and inner attributes, then child module declarations
   (including `mod tests;`), then imports. Leave one blank line before the import
   block and one before the following item. Prefer one nested `use` per crate

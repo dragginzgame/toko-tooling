@@ -80,6 +80,12 @@ pub trait NotCode {}
 */
 RUST
 check($valid, 0);
+my $entity = "///\n/// AddressBook\n/// Tracks the account's address IDs.\n///\n\n#[entity(name = \"AddressBook\")]\npub struct AddressBook {}\n";
+check($entity, 0);
+(my $no_details = $entity) =~ s/Tracks the account's address IDs\./  /;
+check($no_details, 1);
+(my $no_attribute = $entity) =~ s/^#\[entity.*\n//m;
+check($no_attribute, 1);
 for my $name ('r#type', '型甲') {
     (my $logical_name = $name) =~ s/^r#//;
     my $documented = $valid;

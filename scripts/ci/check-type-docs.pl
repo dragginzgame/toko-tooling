@@ -59,11 +59,13 @@ for my $file (sort keys %rust_files) {
             $before =~ /\s*\z/;
             $cursor = $-[0];
         }
+        # Attributed types can put the description directly under the name.
+        my $heading_gap = length($prefix) < $offset ? qr/(?:[ \t]*\/\/\/\n)?/ : qr/[ \t]*\/\/\/\n/;
         my $valid = $prefix =~ m{
             (?:\A|\n)[ \t]*///\n
             [ \t]*///[ ]\Q$name\E\n
-            [ \t]*///\n
-            (?:[ \t]*///[ ][^\n]+\n)+
+            $heading_gap
+            (?:[ \t]*///[ ][^\n]*\S[^\n]*\n)+
             [ \t]*///\n
             [ \t]*\n[ \t]*\z
         }xms;

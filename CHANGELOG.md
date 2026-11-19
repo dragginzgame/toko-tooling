@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.45.15] - Unreleased
+
+### 🥾 Governance
+
+- Require a named, spaced documentation block for macro-defined types in
+  repositories with a documented design. The type documentation checker accepts
+  the description directly below the name on attributed declarations.
+
 ## [0.45.14] - 2026-11-19
 
 ### 📚 Documentation
