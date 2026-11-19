@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.45.13] - Unreleased
+
+### 📚 Documentation
+
+- Consolidate the shared Rust layout rules and refresh their pinned references.
+  Clarify release-group membership, dependency roles and locked Cargo preparation.
+  Correct the qualification formatting and snapshot update instructions.
+- Clarify when shared Rust code needs a compound configuration guard and when
+  a package needs the always-false Cargo tooling marker.
+- Check the Rust source supplied by starters and style guides. Test specific
+  refusals through their observable reason and the state they must preserve.
+
 ## [0.45.12] - 2026-11-19
 
 ### 🥾 Governance

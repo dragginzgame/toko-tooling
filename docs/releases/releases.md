@@ -637,20 +637,12 @@ Consumer Make targets provide these adapters:
 
 ### Dependency preparation before compiled adapters
 
-Standard release entry points include locked cache preparation; maintainers
-should not need a separate manual fetch after every selected dependency update.
-Document the affected workspace graphs and exact preparation commands in the
-consumer's release guide. An explicit request for that documented release
-includes this network preparation, but never dependency upgrades or lock repairs.
-Cargo's explicit offline environment/configuration settings remain authoritative.
-Authorized development and validation also include separate locked source-cache
-preparation under the Cargo network policy below. Standalone adapters and validation inherit the same Cargo network policy.
-The same separation applies to authorized deployment preparation. See the
-[Cargo network policy](../../rules/cargo-dependencies.md#cargo-network-policy):
-an expressly requested dependency update may resolve online before qualification,
-whereas an ordinary release/deployment fetches its existing lockfile and does not
-upgrade dependencies. Explicitly offline local-version synchronization and test fixtures
-are separate from dependency updates that need new registry inputs.
+Document the workspace graphs and locked preparation commands in the consumer’s
+release guide. A release request includes fetching missing packages selected by
+each existing lockfile. Dependency upgrades and lock repairs require separate
+authority. Standalone adapters, validation and deployment follow the same
+[Cargo network policy](../../rules/cargo-dependencies.md#cargo-network-policy),
+including any explicitly selected offline settings.
 
 If an adapter must compile before it can read the version or run preflight,
 prepare its selected cache before compilation. Keep this within the runner's
@@ -1176,9 +1168,8 @@ Independent release groups require the maintainer agreement described in
 [workspace boundaries](../../rules/rust-workspaces.md#coordinated-versions-and-workspace-boundaries).
 Ordinary coordinated workspaces need no configuration or invocation changes.
 Keep related packages in their existing workspace; separate release identities
-do not require package moves or another lockfile. Make the declared groups easy
-to inspect using the root
-[`Cargo.toml` group catalog](../../rules/rust-workspaces.md#visible-release-group-map-in-cargotoml).
+do not require package moves or another lockfile. Use `make deps-list` for the
+[package and group inventory](../../rules/rust-workspaces.md#package-inventory-and-dependency-declarations).
 Use [one changelog per group and retained shared history](../../rules/changelogs.md#release-group-changelogs-and-shared-history);
 all ledgers live at `releases/<group>/CHANGELOG.md`. Root `CHANGELOG.md` is an
 index, and root `Cargo.toml` has no `workspace.package.version`. Comments, the
@@ -1317,32 +1308,19 @@ transaction mechanics restore all selected files on failure. Failed checks retai
 Cargo output/statuses, policy/root inputs and preparation evidence. Source, index,
 receipt custody and the complete gate remain consumer-owned.
 
-The root dependency catalog also provides readable version information. Every
-workspace member must have a `[workspace.dependencies]` entry with its local path.
-Publishable members require their full current package version, optionally
-prefixed by `=`, `^` or `~`. Private members (`publish = false`) may use path-only
-entries; their package versions still advance with their group. Include unused
-aliases and register every alias in its owning group's `dependencies` roster.
-Path-only entries need no dependency-version edit. Unused catalog entries add no
-dependency edges. Publishable members may depend on private workspace members
-only through path-only dev-dependencies, which Cargo omits from published
-manifests. Versioned private dependencies and normal/build edges are rejected.
-Admission checks all groups, even when releasing only one; the existing
-`check-dependency-pins.sh --cargo-inheritance` path uses this same admission.
-It rejects missing catalog entries, missing paths or required versions, paths pointing at
-other packages and incomplete group alias rosters, including unused entries that
-Cargo itself does not resolve.
-For example, `0.73` and `0.73.0` both fail for a local package at `0.73.1`, even
-though Cargo accepts them as compatible requirements. External dependencies
-retain their existing policies. Preparation updates
-selected local requirements and preserves their operators within the existing
-transaction; no generated numeric comment summary or second version catalog is
-maintained. Before adopting this check, reconcile used dependency declarations and
-group alias rosters, expand abbreviated local requirements and align stale ones
-without changing the packages' own versions. Remove display-only unused aliases;
-retain group membership. Use the
-[package inventory](../../rules/rust-workspaces.md#visible-release-group-map-in-cargotoml)
-instead of requiring Cargo.toml group labels or sections.
+The `members` roster records every package in the group. The group’s
+`dependencies` roster records the root catalog aliases used for local
+dependencies, including renamed ones. Remove a display-only alias from both
+the catalog and that roster while keeping the package in `members`.
+
+Admission checks every group’s declared aliases and paths against the actual
+member manifests. A versioned local requirement must spell the full current
+member version: for a package at `0.73.1`, both `0.73` and `0.73.0` fail.
+Preparation preserves the requirement operator (bare, `=`, `^` or `~`) while
+updating the selected group. Private members may use path-only entries.
+Publishable members can consume private members only through path-only
+dev-dependencies. The [workspace rules](../../rules/rust-workspaces.md#package-inventory-and-dependency-declarations)
+cover alias admission and the separate qualification catalog.
 
 Group preparation requires an IC Build editor supplying `group-manifest` with
 the existing bounded input contract. Its selection JSON explicitly names a

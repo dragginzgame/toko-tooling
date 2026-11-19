@@ -21,6 +21,13 @@ architecture on another.
   must acquire them differently, put the guard around that acquisition alone.
   Guard a whole module only when every item in it requires the same target
   restriction. Shared behavior stays visible in editors and runs in native tests.
+- Apply that rule to `cfg(any(...))` too. For example, a database update that
+  takes its ID generator as an argument can compile on the host even when its
+  current callers are a canister endpoint and unit tests. Keep the update and
+  its imports unconditional when their dependencies support both targets.
+  Use `any` when several configurations genuinely share a boundary, such as
+  two independently selectable features that need the same optional adapter.
+  Use the predicate directly when there is only one.
 - Leave a blank line between adjacent functions, including methods, tests and
   test helpers. If the next function has doc comments or attributes, put the
   blank line before them.
@@ -31,13 +38,15 @@ architecture on another.
   declarations. Within the import block, follow the consumer's import order.
   Prefer one `use` declaration per crate for imports with the same scope,
   visibility and attributes. Nest shared paths and let rustfmt wrap long groups.
-  For example, combine an existing prelude import and two named signup imports:
+  For example, a route module can declare its child and group its imports:
 
   ```rust
-  use toko::schema::{
-      prelude::*,
-      signup::{DisplayName, Status},
-  };
+  //! Private route reads for the authenticated account.
+  pub(crate) mod provisioning;
+
+  use crate::{Status, database};
+  use ic_db::{Database, Principal, Ulid};
+  use toko_schema::{entity::user_hub::UserRoute, types::signup::DisplayName};
   ```
 - In code that requires `std`, use `std::...` instead of `core::...` whenever
   the equivalent API is available through `std` at the package's supported MSRV.
@@ -133,6 +142,10 @@ or section banners.
   or an `Error` implementation on a passive wire enum that does not need one.
 - Do not match rendered error strings in code or tests when a variant, kind, or
   observable state is available.
+- When a test specifies why an operation must refuse, assert the error variant,
+  kind or other distinguishing result visible to the caller. For a refused
+  mutation, also check the state it promises to preserve. Inspect rendered
+  text when the output itself is the contract, such as secret redaction.
 - Persisted decoding is bounded and fallible. Validate before publishing data
   into runtime authority.
 - Keep defensive validation at independent trust boundaries even when semantic
@@ -185,9 +198,8 @@ or section banners.
   test modules over large inline `#[cfg(test)] mod tests { ... }` blocks so
   file-based tools such as `cloc` can distinguish test source from production
   source. Keep only small wiring declarations such as `#[cfg(test)] mod tests;`
-  in production files. Place `mod tests;` with the module declarations at the
-  top, after module documentation and inner attributes and before implementation
-  items. Move its existing `cfg` attributes with it.
+  in production files. Place the declaration with the other child modules and
+  preserve its conditional compilation attributes.
 - Use ordinary module discovery: `foo/mod.rs` can declare tests in `foo/tests.rs`
   or `foo/tests/mod.rs`. Move a standalone `foo.rs` to `foo/mod.rs` before adding
   `foo/` test files. Choose either `tests.rs` or `tests/mod.rs`, never `tests.rs`

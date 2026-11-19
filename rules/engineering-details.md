@@ -940,9 +940,11 @@ blind retries.
 - Follow the [Rust hygiene baseline](../docs/principles/rust-code-hygiene.md): narrow
   visibility, documented APIs/invariants, ordinary module discovery, bounded
   fallible decoding, typed errors and `std` paths in code that requires `std`,
-  preserving documented `no_std` support. Exact edition, internal module layout and
-  lint choices stay local within the workspace rules. Do not fake platform
-  behavior with production cfg(test) paths.
+  preserving documented `no_std` support. Follow the shared
+  [module layout and lint policy](../TOKO-TOOLING.md#rust-workspaces-and-portable-tooling).
+  Consumers own their domain boundaries and additional justified lints.
+  Keep host/Wasm selection at the operation that requires it. Keep test doubles
+  in test code.
 - Rust repositories adopt the [standard formatting hook](git-hooks.md):
   `make install-hooks` enables a reviewed repository-local pre-commit hook that
   auto-formats and refreshes only selected files, rejects partial staging and

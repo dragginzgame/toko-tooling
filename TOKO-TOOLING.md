@@ -100,7 +100,7 @@ or authorizing unsolicited sibling changes.
 
 ## Scope and authorization
 
-The [contribution rules](https://github.com/dragginzgame/toko-tooling/blob/626da7cd9626cc2e152594862a2d82ea82ef51da/rules/contributions.md) own detailed action authority;
+The [contribution rules](https://github.com/dragginzgame/toko-tooling/blob/e873b124c1b23fa8e25718c6931b596e908c640f/rules/contributions.md) own detailed action authority;
 local overlays must not duplicate it or add routine permission gates.
 
 - Prefer direct edits in the normal authorized checkout when a PR is optional.
@@ -113,8 +113,8 @@ local overlays must not duplicate it or add routine permission gates.
   Git to know those paths (for example, a new qualification lockfile). This is
   intent-to-add bookkeeping, not content staging: inspect the index, preserve
   existing staged work, explain the reason and proceed without asking again.
-  This narrow permission supersedes older linked wording that reserves every
-  index change. Toko Tooling alone also prepares its pending `VERSION`.
+  Toko Tooling’s local preparation helper aligns the pending changelog entry
+  with the package version in `Cargo.toml` and its lockfile.
 - A PR request includes its topic branch, scoped commits, branch push and PR.
   Release/ship/deploy requests include their necessary delivery steps and direct
   integration-branch pushes. An unqualified “deploy”, “ship” or “release” applies
@@ -123,7 +123,7 @@ local overlays must not duplicate it or add routine permission gates.
   publication confirmation. Sibling delivery requires an explicit request;
   do not scan siblings or ask whether to include them by default. Announce the
   selected plan, then
-  proceed under [delegated delivery](https://github.com/dragginzgame/toko-tooling/blob/626da7cd9626cc2e152594862a2d82ea82ef51da/rules/contributions.md#delegated-delivery).
+  proceed under [delegated delivery](https://github.com/dragginzgame/toko-tooling/blob/e873b124c1b23fa8e25718c6931b596e908c640f/rules/contributions.md#delegated-delivery).
 - Named scope, no-push/read-only instructions and exclusions take precedence.
   `toko` and `toko-miner` require explicit inclusion; DFINITY contributions remain
   excluded. A dependency blocker alone does not expand delivery scope.
@@ -135,7 +135,7 @@ local overlays must not duplicate it or add routine permission gates.
   authority does not. Additional checkouts require approval of their location.
   Never leave the only copy of lasting work in `/tmp`, `target/`, caches or a
   disposable patch.
-  Follow the [checkout contract](https://github.com/dragginzgame/toko-tooling/blob/626da7cd9626cc2e152594862a2d82ea82ef51da/rules/contributions.md#durable-work-and-checkout-location).
+  Follow the [checkout contract](https://github.com/dragginzgame/toko-tooling/blob/e873b124c1b23fa8e25718c6931b596e908c640f/rules/contributions.md#durable-work-and-checkout-location).
 - Carry authorization forward without repeated approval. Inspection and readiness
   questions alone do not authorize repair or delivery. Ask only for a genuinely
   missing decision; do not create unsolicited PRs or sibling-release waiting issues.
@@ -149,6 +149,9 @@ Prefer deleting, reusing or narrowing an existing mechanism before adding one.
 Give each policy and invariant one owner; consumers project its decisions.
 Keep independent checks at real trust, corruption and recovery boundaries.
 Trace callers before combining flows. Change generated code at its generator.
+When a starter or style guide supplies a complete Rust example, use the same
+source for the example people copy and the checks that exercise it. Short
+illustrative snippets can stay inline.
 New modes and abstractions need a demonstrated requirement and simpler-alternative
 check. See [ownership details](https://github.com/dragginzgame/toko-tooling/blob/626da7cd9626cc2e152594862a2d82ea82ef51da/rules/engineering-details.md#ownership-and-simplification)
 when changing component boundaries.
@@ -158,7 +161,7 @@ when changing component boundaries.
 Finish the accepted coherent outcome, including directly required callers,
 fixtures, docs and cleanup. Split independent outcomes, not compiler fallout or
 each proof of the same change. Stop at new independent scope or a release boundary.
-Maintain meaningful [changelog notes](https://github.com/dragginzgame/toko-tooling/blob/626da7cd9626cc2e152594862a2d82ea82ef51da/rules/changelogs.md) once per completed batch;
+Maintain meaningful [changelog notes](https://github.com/dragginzgame/toko-tooling/blob/e873b124c1b23fa8e25718c6931b596e908c640f/rules/changelogs.md) once per completed batch;
 governance-only edits need no note unless they change a maintained surface or one
 is requested. Exclude all legal and licensing content from changelogs, including
 adoption notices and notes about this policy or its cleanup. This exclusion overrides
@@ -209,6 +212,7 @@ file or separate review framework.
   Offline mode requires explicit authorization for the invocation or job. Preserve
   the caller’s Cargo settings and report Cargo’s error if a selected package is
   unavailable. Complete dependency preparation before sealing reusable evidence.
+  See the [Cargo network policy](https://github.com/dragginzgame/toko-tooling/blob/e873b124c1b23fa8e25718c6931b596e908c640f/rules/cargo-dependencies.md#cargo-network-policy).
 
 - Ordinary coding and cleanup end after the relevant focused checks pass. Do not
   turn that handoff into release preparation, fleet adoption or qualification of
@@ -236,15 +240,17 @@ file or separate review framework.
   suite. Name the changed behavior each selected check proves. Keep unchanged
   generic regression matrices with their producer.
 - Repository tooling uses one exact root Cargo dependency pin inherited as a
-  dev-dependency by every real workspace package. The exact
-  `target.'cfg(any())'.dev-dependencies` form is also permitted for this
-  source-bundle marker: it preserves Cargo selection without compiling an unused
+  dev-dependency by every real workspace package. Use ordinary
+  `[dev-dependencies]` unless a supported check for that package reports the
+  unused tooling marker. Only then use the exact
+  `target.'cfg(any())'.dev-dependencies` form for this
+  source-bundle marker. It preserves Cargo selection without compiling an unused
   crate into binary tests. Other target selectors, dummy imports and lint
   suppressions are not substitutes. `cargo update -v` reports newer
   releases; after changing the pin and Cargo.lock, run `make toko-tooling-update`.
   Offline admission checks every member, Cargo.lock and installed bytes together.
   See the
-  [tooling selection rule](https://github.com/dragginzgame/toko-tooling/blob/d4b09ceb6dd94d825adee2b894fa26dac4618ae0/rules/cargo-dependencies.md#toko-tooling-during-dependency-updates).
+  [tooling selection rule](https://github.com/dragginzgame/toko-tooling/blob/e873b124c1b23fa8e25718c6931b596e908c640f/rules/cargo-dependencies.md#toko-tooling-during-dependency-updates).
 - When adding or widening a release check, record the failure it detects, the
   changes that require it, its existing callers and its observed elapsed cost in
   the owning release plan or review. Use existing timing evidence. If the cost
@@ -283,7 +289,7 @@ file or separate review framework.
 - Toko Tooling owns its general regression matrix. Consumers check snapshot integrity,
   actual caller wiring and their product/native contracts. Do not replay generic
   producer fixtures by default; retain one only for a named missing consumer proof.
-  Use [consumer qualification selection](https://github.com/dragginzgame/toko-tooling/blob/626da7cd9626cc2e152594862a2d82ea82ef51da/docs/consuming-snapshots.md#consumer-qualification-selection)
+  Use [consumer qualification selection](https://github.com/dragginzgame/toko-tooling/blob/e873b124c1b23fa8e25718c6931b596e908c640f/docs/adoption/consuming-snapshots.md#consumer-qualification-selection)
   before changing existing rosters.
 - Documentation-only changes need link, consistency and diff checks, not code
   suites. Inspection-only work does not activate tests. Test maintained behavior,
@@ -687,7 +693,7 @@ check source, final archives and remote/registry state before delivery or retry.
 local adapter before authorized release work. Normal releases start fresh;
 specific-attempt recovery uses `release-resume`. Preserve complete qualification
 of the selected release. Independent groups may adopt an explicitly qualified
-[group validation plan](https://github.com/dragginzgame/toko-tooling/blob/626da7cd9626cc2e152594862a2d82ea82ef51da/docs/release-group-validation.md); until adoption, keep
+[group validation plan](https://github.com/dragginzgame/toko-tooling/blob/e873b124c1b23fa8e25718c6931b596e908c640f/docs/releases/release-group-validation.md); until adoption, keep
 the existing full gate. Repository-wide CI coverage remains required; authorised
 reconstruction may replace its orchestration under the flow rules above.
 
@@ -704,8 +710,8 @@ Use `### 🎯 Qualification` for results such as cursor behavior across an upgra
 or the workload budget at which an operation completes. Use `### 🧪 Testing`
 for changes to test tooling or coverage.
 Use IcyDB-style emoji category sections in the owning release changelog; read the
-[changelog rules](https://github.com/dragginzgame/toko-tooling/blob/626da7cd9626cc2e152594862a2d82ea82ef51da/rules/changelogs.md) when updating them. Every issue fixed must
-have a direct link in that changelog before handoff, except legal and licensing
+[changelog rules](https://github.com/dragginzgame/toko-tooling/blob/e873b124c1b23fa8e25718c6931b596e908c640f/rules/changelogs.md) when updating them. Every issue fixed must
+have a descriptive link with its number and title in that changelog before handoff, except legal and licensing
 changes, which must not be recorded there: root `CHANGELOG.md` for a
 workspace without independent release groups, or `releases/<group>/CHANGELOG.md`
 for the owning group. A grouped workspace's root remains a navigation index;
@@ -731,53 +737,40 @@ storage allocation, admission, backing access or persistence integrations.
 
 ## Rust workspaces and portable tooling
 
-Start handwritten and generated Rust files with any module comments and inner
-attributes, followed by the `mod` declarations. Leave one blank line between
-the module declarations and the `use` block, and one between the imports and
-the next item. Prefer one grouped `use` declaration per crate in each scope. Factor out shared
-path prefixes with nested braces. Group imports that share visibility and
-attributes, and preserve the names each import brings into scope.
+These rules apply to handwritten and generated Rust.
 
-Write handwritten and generated Rust to compile on all supported targets by
-default. Use a Wasm or host target condition only when a specific operation
-requires a target-exclusive API or a genuinely different implementation.
-Deployment to the IC alone does not justify a target guard. Reuse a portable
-API when one exists. Where IC and host clock or entropy sources must differ,
-confine target selection to the implementation that obtains the time or random
-bytes. Keep callers and shared application logic unconditional.
+- Start with module comments and inner attributes, then child module declarations
+  (including `mod tests;`), then imports. Leave one blank line before the import
+  block and one before the following item. Prefer one nested `use` per crate
+  for imports with the same scope, visibility and attributes. Preserve imported names.
+- Separate item-level macro invocations and functions with a blank line, including
+  adjacent methods, tests and test helpers. Keep comments and attributes attached
+  to their item. Give each named argument its own line in multi-argument endpoint
+  mounts and attributes. Document each mount’s role, each guard’s access policy
+  and each endpoint’s caller-visible purpose.
+- Compile shared logic on all supported targets. Use a target guard only for an
+  operation that requires a target-exclusive API or a different implementation.
+  Prefer an existing portable API. For example, isolate IC-specific clock or
+  entropy acquisition and keep the callers unconditional.
+  The same rule applies to `#[cfg(any(test, target_arch = "wasm32"))]`.
+  A helper having only test and canister callers is insufficient reason to
+  hide it from ordinary host builds.
+- Use ordinary module discovery. The prohibition on `#[path]` includes
+  conditional path overrides. Use either `foo.rs` or `foo/mod.rs` for a module.
+  When adding a `foo/` directory for children, tests or fixtures, move `foo.rs`
+  to `foo/mod.rs` and preserve the public module path. Apply this recursively.
+  Keep executable entrypoints free of embedded Rust source injection and source
+  patches, including in tests.
+- Keep test bodies and test-only helpers in `tests.rs`, `*_tests.rs` or
+  `tests/`. Move their references with them, retain the test module’s existing
+  conditional attributes and declare fixture-only package roles explicitly.
 
-In handwritten and generated Rust, leave a blank line between the import block,
-item-level macro invocations and function definitions. Separate adjacent functions
-with a blank line, including methods, tests and test helpers. Keep comments and
-attributes attached to their item. Write endpoint mounts and endpoint attributes
-with several named arguments on multiple lines, one argument per line.
-Document each endpoint's caller-visible purpose, each guard's access policy and
-each mount's role. A shared mount needs one comment for the group.
-
-Place `mod tests;` with the module declarations at the top of its parent file,
-after module documentation and inner attributes and before implementation items.
-Keep its conditional compilation attributes attached to the declaration.
-Keep Rust tests and test-only helpers in `tests.rs`, `*_tests.rs` or `tests/`;
-declare fixture-only package roles explicitly. Adopt the naming layout as a
-hard cut, including references, under the
-[test layout rule](https://github.com/dragginzgame/toko-tooling/blob/626da7cd9626cc2e152594862a2d82ea82ef51da/docs/principles/rust-code-hygiene.md#tests).
-
-Use ordinary Rust module discovery. `#[path]` module attributes, including
-conditional path overrides, are prohibited. Do not inject embedded Rust source
-or patch generated entrypoints to change executable code, including in tests.
-Use either a standalone `foo.rs` or a directory module `foo/mod.rs`; never keep
-`foo.rs` and sibling `foo/` together. If a module needs a directory for children,
-tests, fixtures or support code, move its file to `foo/mod.rs` and preserve its
-public module path. Apply this recursively, including test and generated modules.
-This supersedes older linked guidance permitting `foo.rs` with `foo/tests.rs`.
-Follow the
-[module layout rule](https://github.com/dragginzgame/toko-tooling/blob/626da7cd9626cc2e152594862a2d82ea82ef51da/docs/principles/rust-code-hygiene.md#ownership-and-module-shape)
-for source, tests and generated code.
+For examples, test layout and endpoint documentation, see the [Rust hygiene guide](https://github.com/dragginzgame/toko-tooling/blob/e873b124c1b23fa8e25718c6931b596e908c640f/docs/principles/rust-code-hygiene.md).
 
 Prefer `#[expect(..., reason = "...")]` over `#[allow(...)]` for Rust lint
 suppressions. Repositories must review every `allow` for conversion and retain
 one only with a concrete reason why an expectation cannot work. Follow the
-[lint suppression rule](https://github.com/dragginzgame/toko-tooling/blob/626da7cd9626cc2e152594862a2d82ea82ef51da/docs/principles/rust-code-hygiene.md#lint-suppressions).
+[lint suppression rule](https://github.com/dragginzgame/toko-tooling/blob/e873b124c1b23fa8e25718c6931b596e908c640f/docs/principles/rust-code-hygiene.md#lint-suppressions).
 
 ### Common Rust lint policy
 
@@ -927,9 +920,7 @@ Apply this standard across repositories through scoped adoption work, preserving
 package identities, coverage and release history. Previous general permission to
 keep qualification packages in product groups or a nested `crates/` tree does not
 exempt a migration. Policy adoption does not itself move sibling files or publish
-packages. This section supersedes conflicting layout/group wording in the older
-revision-bound detailed references below; it specifies policy, not a claim that
-every required multi-lock helper is already implemented.
+packages. Verify multi-lock support in the selected release helpers during adoption.
 
 Keep related product crates in that development workspace, with coordinated
 versions within explicit release groups where contracts need independent
@@ -942,15 +933,14 @@ declarations for actual member usage, not display-only package entries. Remove a
 unused alias from its group's dependency roster when removing its declaration;
 retain the package in the group's member roster. Private product dependencies
 may use path-only entries; qualification owns its own workspace catalog.
-Remove unused workspace dependencies and their obsolete aliases; do not allow
-the unused-dependency lint merely to preserve a display catalog. When
+Keep unused-dependency linting enabled. When
 `[workspace.dependencies]` contains multiple roles, group the used entries
 under `# Production`, `# Production and tests`, and `# Tests and tooling`,
 in that order. Omit empty groups and sort within each. Production includes
 normal and build dependencies across supported targets and features. Use the
 mixed heading for entries also declared for tests or tooling. Keep group ownership
 in the existing JSON policy under the
-[workspace versioning rules](https://github.com/dragginzgame/toko-tooling/blob/626da7cd9626cc2e152594862a2d82ea82ef51da/rules/rust-workspaces.md#coordinated-versions-and-workspace-boundaries).
+[workspace versioning rules](https://github.com/dragginzgame/toko-tooling/blob/e873b124c1b23fa8e25718c6931b596e908c640f/rules/rust-workspaces.md#coordinated-versions-and-workspace-boundaries).
 Dependency adoption must distinguish required compatibility/security changes from
 optional refreshes and check the destination graph before planning downstream
 releases. A newer external patch alone does not require republishing consumers.
@@ -959,16 +949,16 @@ natural release boundary when requested. Adopt Toko Tooling for a needed fix,
 capability or explicit refresh; an intact older snapshot alone is not work to do.
 Required API, security or compatibility migrations qualify the affected consumer
 boundary, rather than automatically updating the whole fleet.
-Follow the [adoption planning contract](https://github.com/dragginzgame/toko-tooling/blob/626da7cd9626cc2e152594862a2d82ea82ef51da/docs/cargo-graph-checks.md#dependency-adoption-planning).
+Follow the [adoption planning contract](https://github.com/dragginzgame/toko-tooling/blob/e873b124c1b23fa8e25718c6931b596e908c640f/docs/validation/cargo-graph-checks.md#dependency-adoption-planning).
 Use root-owned dependency selections, reviewed toko tooling and explicit setup.
 Rust 1.100.0 is the approved minimum and pinned development/release compiler;
 this supersedes older compiler versions in the revision-bound references below.
-Follow the [compiler support policy](https://github.com/dragginzgame/toko-tooling/blob/d4b09ceb6dd94d825adee2b894fa26dac4618ae0/rules/cargo-dependencies.md#minimum-supported-rust-version-msrv)
+Follow the [compiler support policy](https://github.com/dragginzgame/toko-tooling/blob/e873b124c1b23fa8e25718c6931b596e908c640f/rules/cargo-dependencies.md#minimum-supported-rust-version-msrv)
 when adopting it and consolidating duplicate compiler checks. Preserve product
 host requirements. Select canonical identities
 from `ic-platform-types`, IC0/execution from `ic-platform-runtime`, and crypto or
 external IC adapters from `ic-platform`, following the
-[Platform ownership rules](https://github.com/dragginzgame/toko-tooling/blob/d4b09ceb6dd94d825adee2b894fa26dac4618ae0/rules/cargo-dependencies.md#platform-package-owners).
+[Platform ownership rules](https://github.com/dragginzgame/toko-tooling/blob/e873b124c1b23fa8e25718c6931b596e908c640f/rules/cargo-dependencies.md#platform-package-owners).
 External IC dependencies remain behind that reviewed boundary; Types alone may
 add `ic_principal` for explicit registry conversions. Platform's unpublished
 `qualification/bls-probe` comparison oracle may use unaliased crates.io
@@ -981,11 +971,11 @@ not enable those conversions. npm SDK Core uses
 `@tokostudios/ic-platform`. Keep reusable cores independently upgradable;
 adapters own their matching integration stacks and must not impose consumer
 framework dependencies on core development. Follow the
-[core and integration graph boundary](https://github.com/dragginzgame/toko-tooling/blob/626da7cd9626cc2e152594862a2d82ea82ef51da/rules/rust-workspaces.md#core-and-integration-graph-boundary).
+[core and integration graph boundary](https://github.com/dragginzgame/toko-tooling/blob/e873b124c1b23fa8e25718c6931b596e908c640f/rules/rust-workspaces.md#core-and-integration-graph-boundary).
 Do not add Python tooling. Read the applicable
 [workspace/tooling contracts](https://github.com/dragginzgame/toko-tooling/blob/626da7cd9626cc2e152594862a2d82ea82ef51da/rules/engineering-details.md#rust-workspaces-and-portable-tooling)
 for manifests, dependencies, hooks, installers or shared snapshots, and the
-[Rust hygiene guide](https://github.com/dragginzgame/toko-tooling/blob/626da7cd9626cc2e152594862a2d82ea82ef51da/docs/principles/rust-code-hygiene.md) for Rust implementation.
+[Rust hygiene guide](https://github.com/dragginzgame/toko-tooling/blob/e873b124c1b23fa8e25718c6931b596e908c640f/docs/principles/rust-code-hygiene.md) for Rust implementation.
 
 ## Host support
 

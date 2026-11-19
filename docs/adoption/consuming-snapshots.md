@@ -1,9 +1,9 @@
 # Consuming Toko Tooling Snapshots
 <!-- Shared companions: docs/toko-tooling.md docs/tools/rust-toolchains.md scripts/distribution/maintenance-files.txt scripts/distribution/governance-files.txt docs/tools/ic-tools.md docs/validation/verification-helpers.md docs/adoption/local-setup.md docs/adoption/make-interface.md tasks/snapshot-drift.md rules/dependency-pinning.md rules/changelogs.md docs/adoption/migrations.md -->
 
-CI and release behavior must not depend on a sibling checkout, a moving Git
-branch, or network availability. Consumers vendor a reviewed file set and
-record its exact Toko Tooling source revision.
+CI and release callers execute the reviewed tooling installed in the consumer
+checkout. The snapshot records its exact source and file digests. Explicit setup
+may download the selected archive, tools and locked dependencies.
 
 ## Start here
 
@@ -24,9 +24,9 @@ the `0.42.1` examples below are a concrete selection, not a latest-version alias
    inputs, following the [Make interface](make-interface.md). Run
    `make install-tools`, `make tools-check` and `make toko-tooling-check`.
    Installing the hook separately requires `make install-hooks`.
-4. For later updates, edit the root pin, run `cargo update -p toko-tooling`, then
-   `make toko-tooling-preview` and `make toko-tooling-update`. These Make commands
-   install the locked selection; they do not choose a version or edit Cargo.lock.
+4. For later updates, edit the pin in each maintained workspace. Update its
+   lockfile, preview the changes and install the selected snapshot using the
+   [Cargo update sequence](#cargo-selection-and-installation).
    To retire copied docs, use the complete selection described under
    [small baseline snapshots](#small-baseline-snapshots).
 5. Run the affected consumer checks and review the pin, locks, receipt and owned
@@ -121,8 +121,9 @@ For binary-only packages whose tests reject the unused marker under Cargo 1.100,
 move that declaration to `[target.'cfg(any())'.dev-dependencies]`. The exact
 always-false selector retains the dependency in Cargo metadata and Cargo.lock
 without compiling it. Do not add an empty library, artificial import or lint
-allowance. This source-only form is also supported for other package kinds and
-standalone packages; retain exactly one declaration, never both forms.
+allowance. Apply the same exception to another package kind or a standalone
+package only when its supported check reports the unused marker. Otherwise
+keep the ordinary dev-dependency.
 
 Merge the cargo-machete exemption with existing entries: the dependency supplies
 installed source tooling, not imported Rust APIs. Do not add an artificial Rust
@@ -140,10 +141,13 @@ admission. The standard `toko-tooling-*` selection commands require a real
 Cargo workspace/package.
 
 An exact pin allows `cargo update -v` to show a newer available version without
-silently adopting it. After deliberately editing the root pin:
+silently adopting it. After editing the pins, consumers with the shared
+`make/cargo-dependencies.mk` interface can run the sequence below. Otherwise,
+run `cargo update -p toko-tooling` in each affected workspace for the first step.
 
 ```bash
-cargo update -p toko-tooling # update Cargo.lock; leave unrelated selections alone
+make deps-update DEPENDENCY_PACKAGE=toko-tooling  # update the selected workspace locks
+make toko-tooling-preview # inspect changes to the installed snapshot
 make toko-tooling-update  # install the selected authenticated crate and tools
 make toko-tooling-check   # offline member/pin/lock/snapshot admission
 ```

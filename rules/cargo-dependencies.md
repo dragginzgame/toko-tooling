@@ -284,6 +284,13 @@ availability is separate evidence; a cached offline build or a `version` beside
 
 ## Cargo network policy
 
+Cargo may obtain missing locked sources during development, validation and
+release. Use `--locked` to preserve the selected graph. Offline mode requires
+explicit authorization for the invocation or job. Honour the caller’s Cargo
+environment and configuration and the execution environment’s restrictions.
+If an offline input is missing, report the setting, the missing input and
+Cargo’s original error. Keep the selected version and network mode on failure.
+
 - Authorized development, tests and validation include preparing missing sources
   with `cargo fetch --locked` for each affected workspace's existing lockfile.
   Run it with that workspace's selected toolchain and Cargo cache; do not ask for
@@ -291,18 +298,12 @@ availability is separate evidence; a cached offline build or a `version` beside
   Keep manifests, lockfiles and version selections unchanged. If the lockfile is
   missing or inconsistent, report the failure; this authority does not include
   generating a lockfile, an unlocked retry or a dependency update.
-  Honour explicit offline settings and actual environment/sandbox restrictions;
-  an agent-added offline flag does not create a new approval requirement.
   This covers dependency-source preparation only, not executable-tool downloads
   or installation, runtime network access, new credentials/targets, paid effects,
   deployment or release execution. Keep preparation separate from offline checks
   and read-only helpers; do not add automatic fetches to every check target.
 - An authorized dependency update includes normal registry/Git access needed to
-  resolve and obtain the selected dependencies. Agents and helpers must not add
-  `--offline`, `--frozen` or `CARGO_NET_OFFLINE=true` to `cargo update` without
-  explicit authorization for the invocation or job. Do not require another permission
-  request for network access already inherent in that authorized operation;
-  actual execution-environment network restrictions still apply.
+  resolve and obtain the selected dependencies.
 - Scope the update to the requested packages/versions and affected workspaces.
   Use `cargo update --package NAME --precise VERSION` when an exact version was
   selected. Review its lockfile changes, including required transitive changes.
@@ -329,27 +330,14 @@ availability is separate evidence; a cached offline build or a `version` beside
   consumer-selected CLI through its existing setup target, then run its offline
   admission before dependent validation or builds. The documented preparation
   includes those selected installations, never an unrelated tool upgrade.
-- Keep `--locked` on validation and artifact builds; it preserves dependency
-  selection without prohibiting downloads. Add `--offline` or `--frozen` only
-  when the maintainer explicitly authorizes offline operation for that invocation or job.
-  Scope offline environment settings to those commands, rather than exporting
-  them across a workflow that must also prepare dependencies.
-- Honour an explicit caller-selected offline mode, including Cargo environment
-  or configuration settings. If required inputs are unavailable, identify the
-  setting and missing input; do not silently unset it, retry online, or substitute
-  an older cached version. Agent-added flags are not a maintainer request to work
-  offline. Do not repeatedly retry the same cache-only resolution when registry
-  access is required.
-- Offline dependency-free fixtures and qualified local workspace-version
-  synchronization may select offline mode with that authorization when the external dependency graph is
-  unchanged and the required inputs are prepared. They do not establish the
-  policy for adopting newly published dependencies.
+- For an explicitly authorized offline job, scope `--offline`, `--frozen` or
+  `CARGO_NET_OFFLINE=true` to its commands. Dependency-free fixtures and local
+  workspace-version synchronization can use prepared inputs when the external
+  graph stays fixed. Finish setup before sealing reusable validation evidence.
 
-Cargo documents that [offline updates](https://doc.rust-lang.org/cargo/commands/cargo-update.html)
-are limited by the local cache and can resolve differently from online updates.
-[Locked fetching](https://doc.rust-lang.org/cargo/commands/cargo-fetch.html)
-prepares the selected graph for subsequent offline commands. Use these distinct
-operations according to their purpose rather than applying one flag everywhere.
+Cargo documents how [offline updates](https://doc.rust-lang.org/cargo/commands/cargo-update.html)
+resolve from the available cache and how [locked fetching](https://doc.rust-lang.org/cargo/commands/cargo-fetch.html)
+prepares the selected graph.
 
 ## Preparing authorized dependency changes
 
@@ -513,7 +501,8 @@ in [the Cargo Book](https://doc.rust-lang.org/cargo/reference/specifying-depende
 Select Toko Tooling once in root `[workspace.dependencies]` with an exact
 `=X.Y.Z` crates.io pin. Every real workspace package must inherit it under
 `[dev-dependencies]` with `toko-tooling.workspace = true`, including root, private
-and test packages. For the source-bundle marker,
+and test packages. Use this ordinary table by default. When compiling the
+unused source-bundle marker produces a diagnostic for that package,
 `[target.'cfg(any())'.dev-dependencies]` is also admitted; it retains Cargo
 metadata/lock selection without compiling a Rust API that is never imported.
 This resolves Cargo 1.100's unused-marker diagnostic in binary-only tests without

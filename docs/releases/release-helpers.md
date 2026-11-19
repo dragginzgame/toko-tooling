@@ -210,7 +210,7 @@ alphabetical order within each group. Both options require `check` and include
 Current and committed-source checks must select the same ordering policy as
 the consumer's formatter and hook. The flag does not change those callers or
 verify dependency roles. Follow the
-[dependency-role adoption checklist](../adoption/migrations.md#dependency-role-adoption-in-0240)
+[current dependency-role headings](../../rules/cargo-dependencies.md#dependency-roles-and-deployment-checks)
 when selecting grouped mode.
 
 ## Read-only changelog preflight

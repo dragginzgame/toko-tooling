@@ -1,6 +1,6 @@
 [package]
 name = "toko-tooling"
-version = "0.45.12"
+version = "0.45.13"
 edition = "2024"
 rust-version = "1.100.0"
 license-file = "LICENSE.md"

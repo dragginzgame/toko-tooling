@@ -7,9 +7,10 @@ Under the [contribution rules](../../rules/contributions.md), asking an agent to
 a PR authorizes its scoped commits, branch push and PR creation. You do not need
 to commit on the agent's behalf. Direct pushes to the default branch, merges and
 releases require their own authorization and remain subject to branch protections.
-Include relevant validation and update the current changelog draft where the
-[changelog rules](../../rules/changelogs.md) require it; preparing a PR does not
-require a package version bump.
+For meaningful Toko Tooling work, use `make prepare-work` to select or reuse
+the pending version. Record the batch in that changelog entry and validate
+the affected behavior. Opening a PR for the prepared batch reuses that version.
+See the [changelog rules](../../rules/changelogs.md).
 
 ## Inclusion test
 

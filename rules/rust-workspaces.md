@@ -268,7 +268,8 @@ values remain actual Cargo requirements, not package-version inheritance. Do not
 copy numeric versions into comments or add a generated summary or shadow catalog.
 
 List each catalog alias in its owning release group's `dependencies` roster so
-release preparation accounts for it, including unused and renamed aliases.
+release preparation accounts for it, including renamed dependencies. Admission
+validates every declared alias even while removing old display-only entries.
 Path-only private entries remain unchanged; their package versions still advance
 with their group. For every versioned root path dependency naming a workspace
 member, spell the full current member version. Preserve its existing bare, `^`, `~` or `=` operator; do

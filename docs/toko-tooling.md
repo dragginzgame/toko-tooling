@@ -15,24 +15,27 @@ example below uses published 0.43.2; it is not an automatic latest-version selec
 toko-tooling = "=0.43.2"
 ```
 
-Every real workspace package inherits it as a dev-dependency:
+Every real workspace package inherits the pin. A source-only marker works for
+libraries and binaries, including binary tests with strict unused-dependency lints:
 
 ```toml
-[dev-dependencies]
+[target.'cfg(any())'.dev-dependencies]
 toko-tooling.workspace = true
 
 [package.metadata.cargo-machete]
 ignored = ["toko-tooling"]
 ```
 
+A plain `[dev-dependencies]` entry is also supported. Use one form per package.
 Merge existing exemptions. A standalone package declares the exact version
 in its own dev-dependencies instead. No helper packages or Rust imports are needed.
 `cargo update -v` reports newer available releases; the exact pin keeps adoption
 intentional. For an installed consumer, change the pin in each maintained
-workspace, run `make deps-update DEPENDENCY_PACKAGE=toko-tooling`, then
-`make toko-tooling-preview` and `make toko-tooling-update`. This updates the root
-and independent qualification locks. Cargo.lock supplies the version and checksum;
-installation downloads and authenticates the actual crates.io source payload.
+workspace, update its lock with `cargo update -p toko-tooling`, then run
+`make toko-tooling-preview` and `make toko-tooling-update`. The shared
+`make deps-update DEPENDENCY_PACKAGE=toko-tooling` target can update both the
+root and independent qualification locks in one invocation when installed. Installation authenticates the crates.io
+source archive against the version and checksum in Cargo.lock.
 
 For first installation, these Make commands are not available yet. Prepare the
 prerequisites and use the installer from a reviewed producer checkout or

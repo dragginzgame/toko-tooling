@@ -11,6 +11,7 @@ provides the short Cargo installation overview.
 | Validation | [Helper index](validation/verification-helpers.md), [target runner](validation/validation-runner.md), [Cargo graphs](validation/cargo-graph-checks.md), [Rust source](validation/rust-source-checks.md), [type docs](validation/type-docs.md), [Candid boundary](validation/candid-boundary.md), [CI change selection](validation/ci-change-selection.md) |
 | Releases | [Workflow and recovery](releases/releases.md), [Cargo publication](releases/cargo-publication.md), [batches](releases/release-batches.md), [group validation](releases/release-group-validation.md), [adoption interfaces](releases/group-validation-adoption.md), [validation reuse](releases/release-validation-reuse.md), [tag maintenance](releases/tag-maintenance.md) |
 | Fleet | [Current plan](fleet/current-plan.md), [reports and commands](fleet/fleet-tools.md), [stack overview](fleet/overview.md), [package graph](fleet/stack.md) |
+| Rules used when editing | [Rust source layout](principles/rust-code-hygiene.md#ownership-and-module-shape), [Cargo dependency roles](../rules/cargo-dependencies.md#dependency-roles-and-deployment-checks), [formatting hooks](../rules/git-hooks.md), [changelog headings](../rules/changelogs.md#root-emoji-sections) |
 | Engineering | [Principles](principles/README.md), [baseline](../TOKO-TOOLING.md), [engineering contribution guide](adoption/contributing.md) |
 
 [Historical audit reports](reports/audits/) and

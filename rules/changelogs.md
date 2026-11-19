@@ -43,8 +43,7 @@ this contract; the [release contract](../docs/releases/releases.md) owns release
   maintainer explicitly requests a release note. Meaningful coverage or test
   tooling changes may be noted; a `Testing` section describes those changes,
   rather than listing validation commands.
-- Root release entries use the [emoji section format](#root-emoji-sections)
-  established by IcyDB. Include only relevant categories; even a small entry
+- Each owning release entry uses the [emoji section format](#root-emoji-sections). Include only relevant categories; even a small entry
   has one section rather than an unlabelled bullet list. Repository titles,
   audience and detailed-note presentation remain consumer choices.
 - Keep implementation inventories, internal paths, test names, footprint tables
@@ -93,9 +92,10 @@ this contract; the [release contract](../docs/releases/releases.md) owns release
 
 Keep release/version headings and dates unchanged, such as `## [0.26.20]` or
 `## [0.26.19] - 2026-10-26`. Use emoji-labelled category headings beneath each
-root release entry, following IcyDB's format:
+version in the owning changelog: the root file for a single release group or
+`releases/<group>/CHANGELOG.md` for independently released groups.
 
-| Category | Standard root heading |
+| Category | Standard release heading |
 | --- | --- |
 | Breaking changes | `### ⚠️ Breaking` |
 | Additions | `### ➕ Added` |
