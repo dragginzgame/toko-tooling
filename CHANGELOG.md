@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.45.22] - Unreleased
+
+### ➕ Added
+
+- Private Cargo workspaces can deliver a prepared version through Git using
+  shared cutoff, changelog and lockfile checks and their own validation target.
+  [#400 — Provide a reusable Git-only release setup for private Cargo workspaces](https://github.com/dragginzgame/toko-tooling/issues/400)
+
+- Audit required Rust lint settings across independent Cargo workspaces and
+  package-local overrides during on-demand snapshot adoption reviews.
+  [#399 — Audit required Cargo workspace lint settings](https://github.com/dragginzgame/toko-tooling/issues/399)
+
 ## [0.45.21] - 2026-11-19
 
 ### 🥾 Governance

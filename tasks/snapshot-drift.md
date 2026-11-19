@@ -55,6 +55,23 @@ or execute its Makefile merely to inspect selections; report computed/ambiguous
 values as unresolved. Propose cleanup at the owning issue without deleting files,
 changing pins, installing tools or refreshing a snapshot during this check.
 
+To check the common Rust lint policy against consumer-owned Cargo manifests,
+run the following from the reviewed Toko Tooling checkout with Git, Perl,
+Cargo and Mike Farah yq on PATH:
+
+```bash
+perl scripts/dev/audit-workspace-lints.pl /absolute/consumer/root
+```
+
+The command reads tracked and nonignored working-tree manifests. It checks
+independent workspace tables, package-local tables and Cargo's selected owner
+for inheriting members. Stronger warning and denial levels are accepted.
+The two explicit style allowances and the relative ordering of the Clippy
+groups are required. It skips vendor, third-party, generated, node_modules
+and target directories. Use repeatable `--exclude relative/directory` for
+additional generated or historical trees. Findings name the manifest and lint
+and return status 1. Run this on demand during adoption.
+
 Keep three conclusions distinct: snapshot byte integrity, available upstream
 changes, and consumer behavior/host qualification. An older intact snapshot is
 not corruption; prioritize applicable corrections rather than automatic churn.

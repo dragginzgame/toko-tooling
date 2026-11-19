@@ -102,6 +102,9 @@ gate is valid when a narrower dependency closure has not been qualified.
 | `make publish`, `make publish-check` | Cargo publication adapter | Exact package/group selection and fresh admission; `publish-check` is optional and does not grant reusable proof by itself. Unpublished products omit upload. |
 | `make release-resume`, `release-batch-resume` and reconciliation | Shared release/batch runner and publication attempt custody | Exact attempt identity and product receipt checks; no custom retry loop or automatic uncertain-upload replay. |
 
+For a private Cargo workspace that treats a push to its delivery branch as the
+version cutoff, use the [Git-only source release adapter](private-source-release.md).
+
 The executable callback roster is `SHARED_RELEASE_TARGETS` in `make/release.mk`;
 use it rather than copying a second list. The [Makefile example](#makefile-example)
 and [adapter protocol](#adoption-and-verification) define wiring. The
