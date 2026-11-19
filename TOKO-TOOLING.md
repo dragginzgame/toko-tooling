@@ -906,7 +906,13 @@ wildcard_imports = "warn"
 missing_panics_doc = "warn"
 must_use_candidate = "warn"
 too_many_lines = "allow"
+empty_line_after_doc_comments = "allow"
 ```
+
+Allow `clippy::empty_line_after_doc_comments` in the workspace lint table (or
+the package lint table for a standalone crate). The blank line after an entity
+or adapter header is intentional. Never add an item-level `#[expect]` or
+`#[allow]` for this lint.
 
 Use `unsafe_code = "forbid"` for packages requiring no unsafe constructs. Keep
 `deny` with narrow reviewed expectations for FFI and unsafe export attributes;

@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.45.21] - Unreleased
+
+### 🥾 Governance
+
+- Allow blank lines after Rust doc comments in the shared Clippy policy so
+  entity and adapter headers can use the required spacing without per-item attributes.
+
 ## [0.45.20] - 2026-11-19
 
 ### 🥾 Governance

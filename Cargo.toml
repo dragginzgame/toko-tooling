@@ -1,6 +1,6 @@
 [package]
 name = "toko-tooling"
-version = "0.45.20"
+version = "0.45.21"
 edition = "2024"
 rust-version = "1.100.0"
 license-file = "LICENSE.md"
@@ -51,3 +51,4 @@ wildcard_imports = "warn"
 missing_panics_doc = "warn"
 must_use_candidate = "warn"
 too_many_lines = "allow"
+empty_line_after_doc_comments = "allow"
