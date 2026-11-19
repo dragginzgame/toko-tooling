@@ -120,16 +120,26 @@ transport and endpoint projection.
   ```
 
 - Separate imports, item-level macro invocations, guards and endpoint functions
-  with a blank line. Place an endpoint's doc comment immediately above its
-  attributes. Give each named argument its own line in a multi-argument
-  endpoint mount or attribute so reviewers can see the handler, guard, codecs
-  and request limit individually.
-- Require a purpose comment on each endpoint mount and a doc comment on each
-  endpoint and guard, including private Rust functions exported by attributes.
-  Describe what a caller can do and which authority the guard requires. For
-  example, a refresh endpoint could say `/// Refreshes enrollment on a controller's request.`
-  and its guard `/// Restricts this operation to controllers of this canister.`
-  Apply the same layout and comments to generated endpoint modules at their source.
+  with a blank line. Give each named argument its own line in a multi-argument
+  endpoint mount or attribute. Give each mount a purpose comment and each guard
+  a doc comment describing the authority it requires.
+- In a small greeting canister, a reader opening `src/lib.rs` should find the
+  readiness and metrics mounts and the greeting query and update together
+  after the imports. The reply type, greeting formatter, readiness callback
+  and metrics snapshot can follow below. This example needs no extra directories.
+- Use the shared endpoint header for handwritten and generated endpoints,
+  including private functions exported by attributes. For example:
+
+  ```rust
+  // my_shard
+  // Returns the signed-in user's shard once confirmed, otherwise None.
+  // scope  : read, restricted to the session's issuer and subject
+  // limits : route lookup work limit of 1
+  #[canic::query(scope = "read")]
+  fn my_shard(session: SessionView) -> Option<Principal> {
+      // ...
+  }
+  ```
 - Public APIs document purpose, ownership, invariants, and caller-visible
   failure behavior.
 - Public APIs with reachable panic paths include a `# Panics` section; prefer a

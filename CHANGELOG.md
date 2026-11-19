@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.45.17] - Unreleased
+
+### 🥾 Governance
+
+- Require ordinary line comments above handwritten and generated canister
+  endpoints naming the handler, its caller-visible behavior, access scope and limits.
+- Group canister endpoint mounts and exported handlers at the top of the library
+  root so readers can find the whole endpoint surface in one place.
+
 ## [0.45.16] - 2026-11-19
 
 ### 🥾 Governance
