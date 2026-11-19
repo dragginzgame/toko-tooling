@@ -24,6 +24,8 @@ where applicable; consumers supply other language conventions and commands.
    identify conversions to scoped `expect` attributes, verify expectations across
    the maintained configurations, and require a concrete limitation for any
    retained allowance. Keep unfulfilled expectations visible to the owning gate.
+   For canister target guards, apply the [Wasm target guard rule](../TOKO-TOOLING.md#wasm-target-guards)
+   to the configurations the product supports.
 3. Inspect boundary validation and negative tests. Errors should retain actionable
    typed context through callers. Golden-path tests, rendered-string matching,
    and tests of private layout do not substitute for the maintained contract.

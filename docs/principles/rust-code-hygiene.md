@@ -11,24 +11,22 @@ architecture on another.
 - Give each behavior one clear owner and expose intentional APIs from that
   owner boundary.
 - Prefer narrow visibility. Widen a symbol only for a demonstrated consumer.
-- Within shared logic, before adding `#[cfg(target_arch = "wasm32")]`, its host inverse or an
-  equivalent conditional, identify the operation that requires different code
-  on the supported targets. If the same implementation works on both, compile
-  it on both. This also applies to generated endpoints and testable helpers.
-- For example, expiry calculation can take a timestamp, and identifier
-  generation can take random bytes. If an existing runtime API already
-  supplies those inputs on both targets, call it directly. If the IC and host
-  must acquire them differently, put the guard around that acquisition alone.
-- For a Wasm-only product whose ordinary host build exposes no state API,
-  `#[cfg(any(target_arch = "wasm32", test))] mod state;` lets native unit
-  tests exercise the canister's private state implementation. One guard on
-  that declaration covers the module. Its storage crates can be Wasm target
-  dependencies and dev-dependencies, and its types and helpers stay private.
-- Apply that rule to `cfg(any(...))` too. For example, a database update that
-  takes its ID generator as an argument can compile on the host even when its
-  current callers are a canister endpoint and unit tests. Keep the update and
-  its imports unconditional when their dependencies support both targets.
-  Use `any` when several configurations genuinely share a boundary, such as
+- Apply the [Wasm target guard rule](../../TOKO-TOOLING.md#wasm-target-guards)
+  to imports, module declarations, functions and generated endpoints. During
+  review, remove the guard and check the affected shipped target or supported
+  caller. Use the existing focused check for the claimed failure. A Wasm-only
+  canister needs no new ordinary host build for this review.
+- For example, if the IC reads time through a Wasm-only import and a maintained
+  native test supplies a clock, isolate the difference where time is acquired.
+  Expiry calculation, database mutations and their callers stay unconditional.
+  Use an existing portable runtime API directly wherever it supplies the same
+  behavior.
+- For a canister's private state, check the claimed failure using the Wasm
+  artifact and the native unit tests that exercise it. If the repo also ships a
+  host library, include its contract in the decision. For example, an unresolved
+  IC symbol in that library can justify isolating the import. Private visibility
+  alone places no constraint on which targets can compile a module.
+- For feature predicates, use `any` when several configurations genuinely share a boundary, such as
   two independently selectable features that need the same optional adapter.
   Use the predicate directly when there is only one.
 - Leave a blank line between adjacent functions, including methods, tests and
@@ -224,7 +222,8 @@ or section banners.
   file-based tools such as `cloc` can distinguish test source from production
   source. Keep only small wiring declarations such as `#[cfg(test)] mod tests;`
   in production files. Place the declaration with the other child modules and
-  preserve its conditional compilation attributes.
+  preserve its test selection. Review any Wasm target predicate against the
+  [shared guard rule](../../TOKO-TOOLING.md#wasm-target-guards).
 - Use ordinary module discovery: `foo/mod.rs` can declare tests in `foo/tests.rs`
   or `foo/tests/mod.rs`. Move a standalone `foo.rs` to `foo/mod.rs` before adding
   `foo/` test files. Choose either `tests.rs` or `tests/mod.rs`, never `tests.rs`
@@ -280,7 +279,7 @@ of architectural quality, regardless of whether a human or agent wrote the code.
   generated Rust, Cargo lint tables and command-line settings. Replace it with
   a scoped expectation wherever the supported compiler, target and feature
   configurations permit. Shared helpers and test fixtures follow the same rule.
-- Where a warning depends on configuration, first narrow the scope or use
+- Where a warning depends on a supported configuration, first narrow the scope or use
   `cfg_attr` to express the applicable expectation. Retain an `allow` only when
   an expectation cannot faithfully cover the maintained configurations; record
   that specific limitation using `reason` for Rust attributes. For configuration

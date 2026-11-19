@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.45.16] - Unreleased
+
+### 🥾 Governance
+
+- Require a concrete build, behavior or supported-caller failure to retain a
+  Wasm target guard, including guards on a canister’s private state module.
+  Align test-module layout, lint guidance and code hygiene audits with that rule.
+
 ## [0.45.15] - 2026-11-19
 
 ### 🥾 Governance
