@@ -37,6 +37,10 @@ architecture on another.
 - Leave a blank line between adjacent functions, including methods, tests and
   test helpers. If the next function has doc comments or attributes, put the
   blank line before them.
+- Within a longer function, use one blank line where the work changes purpose.
+  For example, keep the statements that load and initialize a row together.
+  Leave a blank line before the comment that introduces editing the row and
+  deciding whether it needs a write.
 - Separate the returned value from preceding statements with one blank line.
   Keep a comment explaining the return attached to it, with the blank line
   above the comment. For example:
@@ -97,6 +101,23 @@ architecture on another.
   as JSON, SQL and expected output. Rust snippets used as parser/scanner input or
   compiler qualification cases remain legitimate test data; they must not be
   used to patch an application's executable implementation.
+- Place module-wide types after imports and any required endpoint group.
+  Prefer a section-specific type immediately above the operations that use it.
+  Give handwritten structs and enums the standard type header, including
+  small private helpers.
+
+  ```rust
+  ///
+  /// MembershipEdit
+  /// Selects whether to add or remove a member while preserving list order.
+  ///
+
+  pub(crate) enum MembershipEdit {
+      Add,
+      Remove,
+  }
+  ```
+
 - Group a type declaration with its implementations. Put inherent blocks
   first, then trait blocks in alphabetical order by trait name. For example,
   a request to format just `Shard` covers its header, declaration and

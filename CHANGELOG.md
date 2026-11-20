@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.45.26] - Unreleased
+
+### 🥾 Governance
+
+- Separate distinct steps in longer Rust functions with a blank line. Give
+  handwritten structs and enums the standard type header and place them at
+  module scope near the top or immediately above the section they serve.
+
 ## [0.45.25] - 2026-11-20
 
 ### 🥾 Governance
