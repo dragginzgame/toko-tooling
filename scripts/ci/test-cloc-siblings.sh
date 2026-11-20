@@ -10,6 +10,7 @@ FIXTURE="$(cd "$FIXTURE" && pwd -P)"
 source "$ROOT/scripts/ci/fixture-lifecycle.sh"
 fixture_complete=false
 trap 'fixture_finish "$?" "$FIXTURE" "Failed sibling LOC fixture retained"' EXIT
+[[ $# == 0 || ( $# == 1 && $1 == --summary-only ) ]] || exit 2
 parent="$FIXTURE/parent [projects]"
 mkdir -p "$parent/alpha repo/src" "$parent/zeta/src" "$parent/.notes" "$parent/not-a-repo" "$FIXTURE/gitdirs"
 git init -q "$parent/alpha repo"
@@ -34,6 +35,11 @@ perl -0777 -e 'local $/; $_=<>; /\r +\r\z/ or exit 1' "$FIXTURE/progress"
 tr '\r' '\n' < "$FIXTURE/progress" > "$FIXTURE/progress-lines"
 grep -F 'cloc: scanning 1/3 .notes' "$FIXTURE/progress-lines" >/dev/null
 grep -F 'cloc: scanning 3/3 zeta' "$FIXTURE/progress-lines" >/dev/null
+if [[ "${1:-}" == --summary-only ]]; then
+    grep -E '^TOTAL +2 +4 +0 +0 +0 +0 +6$' "$FIXTURE/summary" >/dev/null
+    fixture_complete=true
+    exit 0
+fi
 (unset TMPDIR RUNNER_TEMP; report "$parent") > "$FIXTURE/default-scratch"
 cmp "$FIXTURE/summary" "$FIXTURE/default-scratch"
 [[ -d "$ROOT/target/tmp" && ! -d "$parent/target" ]]

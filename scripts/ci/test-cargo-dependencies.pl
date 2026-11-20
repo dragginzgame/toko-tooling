@@ -33,6 +33,10 @@ write_file('bin/cargo', <<'STUB');
 #!/usr/bin/env perl
 use strict; use warnings;
 $ARGV[0] eq 'update' && $ARGV[1] eq '-v' or die 'unexpected Cargo command';
+die 'unexpected Cargo network flag' if grep { /^(?:--offline|--frozen)$/ } @ARGV;
+open my $policy, '>>', "$ENV{FIXTURE}/policy" or die $!;
+print {$policy} ($ENV{CARGO_NET_OFFLINE} // 'unset'), "\n";
+close $policy or die $!;
 open my $fh, '>>', "$ENV{FIXTURE}/events" or die $!;
 print {$fh} join("\t", @ARGV), "\n"; close $fh;
 print "Cargo stdout\n"; warn "Cargo stderr\n";
@@ -55,6 +59,16 @@ sub run {
 }
 is(run(), 0, 'consumer default goal preserved');
 like(read_file('output'), qr/fixture-help/, 'consumer help remains default');
+# Make invokes the shared helper, which dispatches Cargo for both workspaces.
+for my $mode (undef, 'false', 'true') {
+    local $ENV{CARGO_NET_OFFLINE};
+    if (defined $mode) { $ENV{CARGO_NET_OFFLINE} = $mode; }
+    else { delete $ENV{CARGO_NET_OFFLINE}; }
+    my $expected = $mode // 'unset';
+    unlink "$fixture/policy";
+    is(run('deps-update'), 0, "nested Cargo succeeds with network mode $expected");
+    is(read_file('policy'), "$expected\n$expected\n", 'both workspaces inherit the mode');
+}
 is(run('deps-update'), 0, 'updates succeed');
 my $events = read_file('events');
 is(scalar(split /\n/, $events), 2, 'only two Cargo update calls');
@@ -76,8 +90,7 @@ is(run('-n','deps-update'), 2, 'execution guard rejects dry-run');
 ok(!-e "$fixture/events", 'dry-run never calls Cargo');
 {
     local $ENV{PATH} = $real_path;
-    local $ENV{CARGO_NET_OFFLINE} = 'true';
-    is(run('deps-list'), 0, 'real offline inventory works without lockfiles');
+    is(run('deps-list'), 0, 'real inventory works without lockfiles');
     ok(!-e "$fixture/consumer/Cargo.lock" && !-e "$fixture/consumer/qualification/Cargo.lock", 'inventory creates no lockfiles');
     like(read_file('output'), qr/qualification\s+-\s+qualification\/\s+0\.1\.0/, 'private workspace shown separately');
     unlike(read_file('output'), qr/publication status/, 'normal inventory has no explanatory footer');

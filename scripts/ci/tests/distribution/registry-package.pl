@@ -7,7 +7,7 @@ use Digest::SHA qw(sha256_hex);
 use File::Temp qw(tempdir);
 use FindBin;
 use Test::More;
-my $root = "$FindBin::Bin/../..";
+my $root = "$FindBin::Bin/../../../..";
 mkdir "$root/target" unless -d "$root/target";
 my $fixture = tempdir('registry-package.XXXXXX', DIR=>"$root/target", CLEANUP=>0);
 my $complete = 0;

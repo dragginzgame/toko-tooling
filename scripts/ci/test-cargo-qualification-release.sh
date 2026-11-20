@@ -90,8 +90,8 @@ JSON
 for path in CHANGELOG.md unused.md; do
     printf '# Changelog\n\n## [0.2.0] - Unreleased\n\n- Pending.\n\n## [0.1.0] - 2026-11-08\n\n- Previous.\n' > "$path"
 done
-cargo generate-lockfile --offline
-(cd qualification && cargo generate-lockfile --offline)
+cargo generate-lockfile
+(cd qualification && cargo generate-lockfile)
 cp -R "$fixture/source" "$fixture/original"
 refuse() { if "$@"; then echo 'unexpected qualification acceptance' >&2; exit 1; fi; }
 restore() { cp -R "$fixture/original/." "$fixture/source/"; }
@@ -103,7 +103,7 @@ if [[ $selection == inheritance ]]; then
     perl -pi -e 's/name = "probe"/name = "second"/; s/0.7.0/0.9.0/' qualification/domain/second/Cargo.toml
     cp qualification/domain/probe/src/lib.rs qualification/domain/second/src/lib.rs
     perl -pi -e 's/"domain\/probe"/"domain\/probe", "domain\/second"/; s/=0.1.0/0.1.0/' qualification/Cargo.toml
-    (cd qualification && cargo generate-lockfile --offline)
+    (cd qualification && cargo generate-lockfile)
     cp -R "$fixture/source" "$fixture/inheritance-original"
     git init -q
     git add .
@@ -145,11 +145,11 @@ if [[ $selection == inheritance ]]; then
     exit
 fi
 bash "$helper" plan product > "$fixture/plan.json"
-cargo metadata --locked --offline --format-version 1 > "$fixture/product.json"
-(cd qualification && cargo metadata --locked --offline --format-version 1) > "$fixture/qualification-default.json"
+cargo metadata --locked --format-version 1 > "$fixture/product.json"
+(cd qualification && cargo metadata --locked --format-version 1) > "$fixture/qualification-default.json"
 jq -e '[.packages[].name] == ["probe","product"]' "$fixture/qualification-default.json" > /dev/null
 # All-feature metadata proves the lock's optional identities without compilation.
-(cd qualification && cargo metadata --locked --offline --all-features --format-version 1) > "$fixture/qualification-all.json"
+(cd qualification && cargo metadata --locked --all-features --format-version 1) > "$fixture/qualification-all.json"
 jq -e '[.packages[].name] == ["derive","leaf","probe","product","unused"]' "$fixture/qualification-all.json" > /dev/null
 yq -p toml -o json '.' qualification/Cargo.toml > "$fixture/qualification-root.json"
 yq -p toml -o json '.' qualification/Cargo.lock > "$fixture/qualification-lock.json"
@@ -179,12 +179,12 @@ cmp qualification/domain/probe/Cargo.toml "$fixture/original/qualification/domai
 cmp crates/unused/Cargo.toml "$fixture/original/crates/unused/Cargo.toml"
 yq -p toml -o json '.' qualification/Cargo.lock | jq -e \
     '[.package[] | {name,version}] == [{name:"derive",version:"0.2.0"},{name:"leaf",version:"0.2.0"},{name:"probe",version:"0.7.0"},{name:"product",version:"0.2.0"},{name:"unused",version:"0.1.0"}]' > /dev/null
-(cd qualification && cargo metadata --locked --offline --format-version 1 > /dev/null)
+(cd qualification && cargo metadata --locked --format-version 1 > /dev/null)
 restore
 # Qualification need not consume every group; no selected lock entries is a no-op.
 perl -ni -e 'print unless /^unused =/' crates/derive/Cargo.toml
-cargo generate-lockfile --offline
-(cd qualification && cargo generate-lockfile --offline)
+cargo generate-lockfile
+(cd qualification && cargo generate-lockfile)
 cp qualification/Cargo.lock "$fixture/no-unused.lock"
 bash "$helper" prepare unused
 cmp qualification/Cargo.lock "$fixture/no-unused.lock"

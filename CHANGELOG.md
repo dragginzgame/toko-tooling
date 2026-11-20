@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.46.0] - Unreleased
+
+### ⚠️ Breaking
+
+- Replace `next-release-version.sh` with `perl validate-release-inputs.pl next-version`.
+  Combine allocation, completion and log replay in `scripts/ci/tests/fixture-lifecycle.sh`
+  with selectable cases. See the [fixture migration](docs/validation/evidence-helpers.md#fixture-allocation).
+
+### 🧪 Testing
+
+- Run each full LOC and digest suite once. Exercise scratch-path variations with
+  focused checks. Group producer fixtures under `scripts/ci/tests/` and run
+  private source release, workspace lint and setup
+  diagnostics regressions in CI.
+
+### 🐛 Fixed
+
+- Preserve the caller’s Cargo network mode during CI cache reuse, installer
+  qualification and release fixtures. Reject stage environments that introduce
+  their own mode and check nested Cargo invocations in both workspaces.
+  [#402 — Preserve caller-selected Cargo network mode](https://github.com/dragginzgame/toko-tooling/issues/402)
+
 ## [0.45.26] - 2026-11-20
 
 ### 🥾 Governance

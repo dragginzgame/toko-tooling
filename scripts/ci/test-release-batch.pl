@@ -212,13 +212,13 @@ release-verify:
 release-prepare-version:
 	@perl -pi -e 's/0\.1\.0/0.1.1/g' $(RELEASE_GROUP)/Cargo.toml
 	@perl -pi -e 's/0\.1\.0/0.1.1/ if /^$(RELEASE_GROUP) = /' Cargo.toml
-	@cargo generate-lockfile --offline
+	@cargo generate-lockfile
 release-files:
 	@bash scripts/ci/cargo-release-group.sh files $(RELEASE_GROUP)
 release-preflight release-prepared-check release-commit-check release-committed-check release-tagged-check release-push-check:
 	@:
 MAKE
-run('cargo','generate-lockfile','--offline','--manifest-path',"$real/Cargo.toml");
+run('cargo','generate-lockfile','--manifest-path',"$real/Cargo.toml");
 run('git','-C',$real,'add','.');run('git','-C',$real,'commit','-qm','Real runner fixture');
 run('git','-C',$real,'push','--quiet','origin','main');
 $ENV{DEVELOPMENT_ROOT}=$real;

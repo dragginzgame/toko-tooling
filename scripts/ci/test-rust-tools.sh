@@ -624,7 +624,7 @@ mv "$TOKO_TOOLING_STORE" "$fixture/store-before-restore"
 tar -xzf "$fixture/cargo-tools-cache.tar.gz" -C "$TOKO_TOOLING_STORE"
 consumer="$fixture/b"
 touch "$fixture/no-info"
-CARGO_NET_OFFLINE=true common
+common
 [[ "$(wc -l < "$fixture/builds")" -eq 2 && "$(perl -MCwd=abs_path -e 'print abs_path(shift)' "$consumer/.tools/rust/common/bin/cargo-sort")" == "$first_binary" ]] || exit 1
 [[ -z "$(find "$consumer/.tools" -type f)" ]] || exit 1
 common --check
@@ -646,20 +646,20 @@ for phase in source-preparation lock-wait compilation receipt-admission build-ad
     expect_setup_phase "$fixture/selected-setup.err" "$phase" passed 0
 done
 grep -F 'package=sample version=1.2.3 phase=compilation outcome=started elapsed=0s' "$fixture/selected-setup.err" >/dev/null
-CARGO_NET_OFFLINE=true bash "$installer" "${selected_args[@]}" --check > "$fixture/selected-check" 2> "$fixture/selected-check.err"
+bash "$installer" "${selected_args[@]}" --check > "$fixture/selected-check" 2> "$fixture/selected-check.err"
 [[ "$(cat "$fixture/selected-check")" == "$path" && ! -s "$fixture/probes" && ! -s "$fixture/selected-check.err" ]] || exit 1
 # Explicit extension setup reports reuse without info/install
 # dispatch or executable probes. Another checkout receives the same bytes.
 builds_before="$(wc -l < "$fixture/builds")"
 touch "$fixture/no-info"
 for retry in first second; do
-    CARGO_NET_OFFLINE=true bash "$installer" "${selected_args[@]}" > "$fixture/reuse-$retry.out" 2> "$fixture/reuse-$retry.err"
+    bash "$installer" "${selected_args[@]}" > "$fixture/reuse-$retry.out" 2> "$fixture/reuse-$retry.err"
     [[ "$(cat "$fixture/reuse-$retry.out")" == "$path" ]] || exit 1
     expect_setup_phase "$fixture/reuse-$retry.err" source-preparation passed 0
     expect_setup_phase "$fixture/reuse-$retry.err" selection-reuse passed 0
     if grep -F 'phase=compilation' "$fixture/reuse-$retry.err"; then exit 1; fi
 done
-extension_path="$(CARGO_NET_OFFLINE=true bash "$installer" --consumer "$fixture/a" \
+extension_path="$(bash "$installer" --consumer "$fixture/a" \
     --package sample --version 1.2.3 --example prepare --profile debug 2> "$fixture/extension-reuse.err")"
 [[ "$(wc -l < "$fixture/builds")" == "$builds_before" && ! -s "$fixture/probes" ]] || exit 1
 expect_setup_phase "$fixture/extension-reuse.err" cache-reuse passed 0
@@ -948,7 +948,7 @@ combined="$(bash "$installer" "${feature_args[@]}" --features cli,alpha --featur
 builds_before="$(wc -l < "$fixture/builds")"
 for mode in setup check; do
     options=(); [[ "$mode" != check ]] || options=(--check)
-    observed="$(CARGO_NET_OFFLINE=true bash "$installer" "${feature_args[@]}" \
+    observed="$(bash "$installer" "${feature_args[@]}" \
         --features alpha --features cli ${options[@]+"${options[@]}"})"
     [[ "$observed" == "$combined" && "$(wc -l < "$fixture/builds")" == "$builds_before" && ! -s "$fixture/probes" ]] || exit 1
 done

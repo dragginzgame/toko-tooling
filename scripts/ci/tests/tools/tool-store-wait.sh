@@ -3,7 +3,7 @@
 set -euo pipefail
 ROOT="${BASH_SOURCE[0]}"
 [[ "$ROOT" == /* ]] || ROOT="$PWD/$ROOT"
-ROOT="$(CDPATH='' cd -P -- "${ROOT%/*}/../.." && printf '%s/.' "$PWD")"
+ROOT="$(CDPATH='' cd -P -- "${ROOT%/*}/../../../.." && printf '%s/.' "$PWD")"
 ROOT="${ROOT%/.}"
 # shellcheck source=scripts/ci/fixture-lifecycle.sh
 source "$ROOT/scripts/ci/fixture-lifecycle.sh"

@@ -40,7 +40,6 @@ write_file('dep/Cargo.toml', "[package]\nname = \"policy-dep\"\nversion = \"0.0.
 write_file('dep/src/lib.rs', "//! Fixture supplier.\n");
 my $valid = "//! Fixture application.\n/// Answer.\n#[must_use]\npub fn answer() -> u32 { 42 }\n";
 write_file('app/src/lib.rs', $valid);
-local $ENV{CARGO_NET_OFFLINE} = 'true';
 local $ENV{CARGO_BUILD_WARNINGS} = 'deny';
 local $ENV{CARGO_TARGET_DIR} = "$fixture/target";
 local $ENV{RUSTUP_AUTO_INSTALL} = '0';

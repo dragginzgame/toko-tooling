@@ -27,7 +27,7 @@ if [[ "$scopes_only" == false ]]; then
     mkdir -p "$FIXTURE/policy/src"
     printf '[package]\nname="policy"\nversion="0.1.0"\n[workspace]\n' > "$FIXTURE/policy/Cargo.toml"
     printf 'pub fn fixture() {}\n' > "$FIXTURE/policy/src/lib.rs"
-    (cd "$FIXTURE/policy" && cargo generate-lockfile --offline)
+    (cd "$FIXTURE/policy" && cargo generate-lockfile)
     cp "$FIXTURE/policy/Cargo.toml" "$FIXTURE/policy-base.toml"
     cp "$FIXTURE/policy/Cargo.lock" "$FIXTURE/policy.lock"
     for declaration in misplaced both empty; do
@@ -111,7 +111,7 @@ mod inline {
     fn helper() { call(|| { test_hook(); }); }
 }
 RUST
-(cd "$FIXTURE/scopes" && cargo generate-lockfile --offline)
+(cd "$FIXTURE/scopes" && cargo generate-lockfile)
 cp "$FIXTURE/scopes/Cargo.lock" "$FIXTURE/scopes.lock"
 bash "$ROOT/scripts/dev/cloc.sh" --json --manifest "$FIXTURE/scopes/Cargo.toml" "$FIXTURE/scopes" > "$FIXTURE/scopes.json"
 jq -e '
@@ -198,7 +198,7 @@ printf 'fn main() {}\n' > "$FIXTURE/crates/app/build.rs"
 printf 'pub fn generator() {}\n' > "$FIXTURE/crates/app/generator.rs"
 printf 'pub fn orphan() {}\n' > "$FIXTURE/crates/app/src/orphan.rs"
 printf '#[test]\nfn integration() {}\n' > "$FIXTURE/crates/app/tests/integration.rs"
-(cd "$FIXTURE" && cargo generate-lockfile --offline)
+(cd "$FIXTURE" && cargo generate-lockfile)
 cp "$FIXTURE/Cargo.lock" "$FIXTURE/original.lock"
 report() { bash "$ROOT/scripts/dev/cloc.sh" --json --manifest "$FIXTURE/Cargo.toml" "$FIXTURE"; }
 report > "$FIXTURE/report.json"

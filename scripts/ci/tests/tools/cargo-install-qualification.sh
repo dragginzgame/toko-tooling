@@ -3,7 +3,7 @@
 set -euo pipefail
 ROOT="${BASH_SOURCE[0]}"
 [[ "$ROOT" == /* ]] || ROOT="$PWD/$ROOT"
-ROOT="$(cd -P "${ROOT%/*}/../.." && printf '%s/.' "$PWD")"
+ROOT="$(cd -P "${ROOT%/*}/../../../.." && printf '%s/.' "$PWD")"
 ROOT="${ROOT%/.}"
 fixture="$(mktemp -d "${TMPDIR:-/tmp}/cargo-qualification-paths.XXXXXX")"
 fixture="$(CDPATH="" cd -P -- "$fixture" && printf '%s/.' "$PWD")"

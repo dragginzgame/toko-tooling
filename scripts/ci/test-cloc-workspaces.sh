@@ -42,8 +42,8 @@ name = "shared"
 path = "../../../shared.rs"
 TOML
 cp "$repo/src/lib.rs" "$repo/qualification/domain/probe/src/lib.rs"
-(cd "$repo" && cargo generate-lockfile --offline)
-(cd "$repo/qualification" && cargo generate-lockfile --offline)
+(cd "$repo" && cargo generate-lockfile)
+(cd "$repo/qualification" && cargo generate-lockfile)
 cp "$repo/Cargo.lock" "$FIXTURE/product.lock"
 cp "$repo/qualification/Cargo.lock" "$FIXTURE/qualification.lock"
 reporter="$ROOT/scripts/dev/cloc.sh"

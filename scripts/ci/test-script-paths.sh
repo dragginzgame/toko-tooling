@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Shared companions: scripts/ci/fixture-lifecycle.sh scripts/ci/test-file-digests.sh scripts/ci/prepare-script-fixture.sh scripts/ci/test-cargo-graph.sh scripts/ci/test-release-changelog.sh scripts/ci/prepare-cargo-failure-fixture.sh scripts/ci/test-cargo-release-preflight.sh scripts/ci/test-cargo-formatting-fixture.sh scripts/ci/test-snapshot-retirement.sh scripts/ci/test-fixture-completion.sh scripts/ci/test-fixture-timing.sh scripts/ci/test-fixture-allocation.sh scripts/ci/test-prepare-common-tools.sh scripts/ci/test-hosted-failure.sh scripts/ci/test-shared-toolchain.sh scripts/ci/test-runtime-panic-qualification.sh scripts/ci/test-consumer-flow-probes.sh scripts/ci/test-rust-formatting-sources.sh scripts/ci/test-fixture-log-replay.sh scripts/ci/test-workflow-step.sh scripts/ci/test-release-receipts.sh scripts/ci/test-pipe-jobserver.sh scripts/ci/test-cargo-dependency-boundaries.sh scripts/ci/test-rust-toolchains.sh scripts/ci/test-release-metadata-transaction.sh scripts/ci/test-snapshot-takeover.sh scripts/ci/test-release-delivery.sh scripts/ci/test-cargo-publication-attempt.sh
+# Shared companions: scripts/ci/fixture-lifecycle.sh scripts/ci/test-file-digests.sh scripts/ci/prepare-script-fixture.sh scripts/ci/test-cargo-graph.sh scripts/ci/test-release-changelog.sh scripts/ci/prepare-cargo-failure-fixture.sh scripts/ci/test-cargo-release-preflight.sh scripts/ci/test-cargo-formatting-fixture.sh scripts/ci/test-snapshot-retirement.sh scripts/ci/test-fixture-timing.sh scripts/ci/tests/fixture-lifecycle.sh scripts/ci/test-prepare-common-tools.sh scripts/ci/test-hosted-failure.sh scripts/ci/test-shared-toolchain.sh scripts/ci/test-runtime-panic-qualification.sh scripts/ci/test-consumer-flow-probes.sh scripts/ci/test-rust-formatting-sources.sh scripts/ci/test-workflow-step.sh scripts/ci/test-release-receipts.sh scripts/ci/test-pipe-jobserver.sh scripts/ci/test-cargo-dependency-boundaries.sh scripts/ci/test-rust-toolchains.sh scripts/ci/test-release-metadata-transaction.sh scripts/ci/test-snapshot-takeover.sh scripts/ci/test-release-delivery.sh scripts/ci/test-cargo-publication-attempt.sh
 set -euo pipefail
 ROOT="${BASH_SOURCE[0]}"
 [[ "$ROOT" == /* ]] || ROOT="$PWD/$ROOT"
@@ -61,9 +61,7 @@ mkdir -p "$fixture/digest-caller/scratch" "$fixture/decoy/scratch"
 ln -s "$fixture/digest-caller/scratch" "$fixture/digest-caller/alias"
 for selected_tmp in scratch alias/; do
     (cd "$fixture/digest-caller" && CDPATH="$fixture/decoy" TMPDIR="$selected_tmp" \
-        "$BASH" "$ROOT/scripts/ci/test-file-digests.sh") > "$fixture/digest-path.log" 2>&1
-    grep -F 'Portable digest vectors, filenames, backend failures and verifier round trips passed' \
-        "$fixture/digest-path.log" >/dev/null
+        "$BASH" "$ROOT/scripts/ci/test-file-digests.sh" --path-only) > "$fixture/digest-path.log" 2>&1
     [[ -z "$(ls -A "$fixture/digest-caller/scratch")" && -z "$(ls -A "$fixture/decoy/scratch")" ]] || exit 1
 done
 # Exercise the affected fixture entrypoints without replaying their test bodies.
@@ -72,10 +70,10 @@ entry_checkout="$fixture/fixture checkout"
 mkdir "$entry_checkout"
 entry_scripts=(
     test-cargo-graph test-release-changelog test-cargo-release-preflight
-    test-cargo-formatting-fixture test-snapshot-retirement test-fixture-completion
-    test-fixture-timing test-fixture-allocation test-prepare-common-tools
+    test-cargo-formatting-fixture test-snapshot-retirement
+    test-fixture-timing tests/fixture-lifecycle test-prepare-common-tools
     test-hosted-failure test-shared-toolchain test-runtime-panic-qualification
-    test-consumer-flow-probes test-rust-formatting-sources test-fixture-log-replay
+    test-consumer-flow-probes test-rust-formatting-sources
     test-workflow-step test-release-receipts test-pipe-jobserver
     test-cargo-dependency-boundaries test-rust-toolchains
     test-release-metadata-transaction test-snapshot-takeover test-release-delivery
@@ -127,9 +125,11 @@ lifecycle_caller="$fixture/lifecycle caller"
 mkdir -p "$lifecycle_caller/physical" "$fixture/lifecycle-decoy/physical"
 ln -s "$lifecycle_caller/physical" "$lifecycle_caller/alias"
 for selected_tmp in physical alias/; do
-    for script in test-fixture-allocation test-pipe-jobserver test-cargo-dependency-boundaries test-release-receipts test-cargo-publication-attempt; do
+    for script in tests/fixture-lifecycle test-pipe-jobserver test-cargo-dependency-boundaries test-release-receipts test-cargo-publication-attempt; do
+        args=()
+        if [[ "$script" == tests/fixture-lifecycle ]]; then args=(allocation); fi
         if ! (cd "$lifecycle_caller" && CDPATH="$fixture/lifecycle-decoy:$lifecycle_caller" TMPDIR="$selected_tmp" \
-            "$BASH" "$ROOT/scripts/ci/$script.sh") > "$fixture/lifecycle-path.log" 2>&1; then
+            "$BASH" "$ROOT/scripts/ci/$script.sh" ${args[@]+"${args[@]}"}) > "$fixture/lifecycle-path.log" 2>&1; then
             printf 'Fixture scratch path failed: %s (%s)\n' "$script" "$selected_tmp" >&2
             cat "$fixture/lifecycle-path.log" >&2
             exit 1

@@ -62,14 +62,19 @@ cargo_policy_case() {
     mkdir "$fixture/policy-workspace"
     cp -R inputs configuration.json observe.sh command.sh environment.json "$fixture/policy-workspace/"
     cd "$fixture/policy-workspace"
-    for policy in unset true true; do
+    for policy in unset false true true; do
         unset CARGO_NET_OFFLINE
-        if [[ "$policy" == true ]]; then export CARGO_NET_OFFLINE=true; fi
+        if [[ "$policy" != unset ]]; then export CARGO_NET_OFFLINE="$policy"; fi
         run_stage > "$fixture/policy.log" 2>&1
         [[ "$(cat command-policy)" == "$policy" && "$(cat observer-policy)" == "$policy" ]]
     done
-    [[ "$(cat execution-count)" == 2 ]]
+    [[ "$(cat execution-count)" == 3 ]]
     jq -cS '.CARGO_NET_OFFLINE="false"' environment.json > "$fixture/conflict.json"
+    cp "$fixture/conflict.json" environment.json
+    refuse
+    grep -F 'conflicting invocation and stage CARGO_NET_OFFLINE' "$fixture/refused.stderr" > /dev/null
+    unset CARGO_NET_OFFLINE
+    jq -cS '.CARGO_NET_OFFLINE="true"' environment.json > "$fixture/conflict.json"
     cp "$fixture/conflict.json" environment.json
     refuse
     grep -F 'conflicting invocation and stage CARGO_NET_OFFLINE' "$fixture/refused.stderr" > /dev/null

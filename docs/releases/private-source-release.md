@@ -56,6 +56,6 @@ Cargo metadata, Git, Perl, awk, jq and Mike Farah yq.
    attempt. If another push consumed the prepared version, reconcile the branch
    and journal before starting another release.
 
-The [reference fixture](../../scripts/ci/test-private-source-release.sh) uses a
+The [reference fixture](../../scripts/ci/tests/private-source-release.sh) uses a
 local bare remote and exercises draft reuse, changelog preservation, lock
 mismatch, rejected push and exact-version recovery.

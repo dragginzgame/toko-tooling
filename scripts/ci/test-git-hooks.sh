@@ -581,7 +581,7 @@ CARGO
         absent) rm -f Cargo.lock testing/Cargo.lock ;;
         present)
             for workspace in . testing; do
-                CARGO_NET_OFFLINE=true RUSTUP_AUTO_INSTALL=0 cargo generate-lockfile --offline --manifest-path "$workspace/Cargo.toml" > output 2>&1
+                RUSTUP_AUTO_INSTALL=0 cargo generate-lockfile --manifest-path "$workspace/Cargo.toml" > output 2>&1
             done
             ;;
     esac
@@ -589,7 +589,7 @@ CARGO
         if [[ -f "$workspace/Cargo.lock" ]]; then cp "$workspace/Cargo.lock" "$workspace/selected-lock"; fi
     done
     git add Makefile Cargo.toml src/lib.rs testing/Cargo.toml testing/src/lib.rs
-    CARGO_NET_OFFLINE=true RUSTUP_AUTO_INSTALL=0 bash .githooks/pre-commit > output
+    RUSTUP_AUTO_INSTALL=0 bash .githooks/pre-commit > output
     [[ "$(git show :src/lib.rs)" == 'pub fn fixture() {}' && "$(git show :testing/src/lib.rs)" == 'pub fn fixture() {}' ]] || exit 1
     for workspace in . testing; do
         if [[ -f "$workspace/selected-lock" ]]; then
@@ -670,9 +670,9 @@ alpha.workspace = true
 CARGO
     printf 'pub fn fixture() {}\n' > "$workspace/src/lib.rs"
     printf 'pub fn fixture() {}\n' > "$workspace/consumer/src/lib.rs"
-    CARGO_NET_OFFLINE=true cargo generate-lockfile --offline --manifest-path "$workspace/Cargo.toml" > output 2>&1
+    cargo generate-lockfile --manifest-path "$workspace/Cargo.toml" > output 2>&1
     cp "$workspace/Cargo.lock" "$workspace/selected-lock"
-    CARGO_NET_OFFLINE=true cargo metadata --offline --locked --no-deps --format-version 1 --manifest-path "$workspace/Cargo.toml" |
+    cargo metadata --locked --no-deps --format-version 1 --manifest-path "$workspace/Cargo.toml" |
         jq -S '[.packages[] | .dependencies |= sort_by(.name, .kind, .target)] | sort_by(.name)' > "$workspace/selected-metadata"
 done
 git add Makefile Cargo.toml src alpha zeta consumer testing
@@ -681,11 +681,11 @@ tree="$(git write-tree)"
 expect_failure make --no-print-directory fmt-check
 [[ "$(git write-tree)" == "$tree" ]] || exit 1
 git --literal-pathspecs diff --quiet -- Cargo.toml consumer/Cargo.toml testing/Cargo.toml testing/consumer/Cargo.toml
-CARGO_NET_OFFLINE=true RUSTUP_AUTO_INSTALL=0 bash .githooks/pre-commit > output
+RUSTUP_AUTO_INSTALL=0 bash .githooks/pre-commit > output
 make --no-print-directory fmt-check > output
 for workspace in . testing; do
     cmp "$workspace/selected-lock" "$workspace/Cargo.lock"
-    CARGO_NET_OFFLINE=true cargo metadata --offline --locked --no-deps --format-version 1 --manifest-path "$workspace/Cargo.toml" |
+    cargo metadata --locked --no-deps --format-version 1 --manifest-path "$workspace/Cargo.toml" |
         jq -S '[.packages[] | .dependencies |= sort_by(.name, .kind, .target)] | sort_by(.name)' > "$workspace/sorted-metadata"
     cmp "$workspace/selected-metadata" "$workspace/sorted-metadata"
     grep -q '# Preserve the selected source and feature policy.' "$workspace/Cargo.toml"
@@ -694,7 +694,7 @@ for workspace in . testing; do
     cmp expected-order observed-order
 done
 tree="$(git write-tree)"
-CARGO_NET_OFFLINE=true RUSTUP_AUTO_INSTALL=0 bash .githooks/pre-commit > output
+RUSTUP_AUTO_INSTALL=0 bash .githooks/pre-commit > output
 [[ "$(git write-tree)" == "$tree" && ! -e target && ! -e testing/target ]] || exit 1
 # Exercise the adoption helper with this consumer's real Cargo targets, including
 # inherited Make/Git identities that must not redirect the disposable checkout.

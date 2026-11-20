@@ -3,7 +3,7 @@
 set -euo pipefail
 root="${BASH_SOURCE[0]}"
 [[ "$root" == /* ]] || root="$PWD/$root"
-root="$(cd -P "${root%/*}/../.." && pwd)"
+root="$(cd -P "${root%/*}/../../../.." && pwd)"
 collector="$root/scripts/ci/collect-release-changes.sh"
 fixture="$(mktemp -d "${TMPDIR:-/tmp}/release-changes-fixture.XXXXXX")"
 fixture_complete=false

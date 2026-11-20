@@ -2,7 +2,7 @@
 # Shared companions: scripts/ci/fixture-lifecycle.sh scripts/ci/prepare-script-fixture.sh scripts/distribution/refresh-consumer.sh scripts/ci/check-documentation-links.pl scripts/ci/verify-file-checksum.sh scripts/ci/verify-toko-tooling-snapshot.sh .githooks/pre-commit make/consumer.mk make/release.mk
 set -euo pipefail
 case "${1:-}" in ''|--baseline-only|--consumer-only) ;; *) exit 2 ;; esac
-root="$(cd -P "${BASH_SOURCE[0]%/*}/../.." && pwd -P)"
+root="$(cd -P "${BASH_SOURCE[0]%/*}/../../../.." && pwd -P)"
 # shellcheck source=scripts/ci/fixture-lifecycle.sh
 source "$root/scripts/ci/fixture-lifecycle.sh"
 fixture="$(fixture_create "${TMPDIR:-/tmp}/exported-doc-links.XXXXXX")"

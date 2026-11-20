@@ -68,11 +68,11 @@ TOML
     jq '.qualification_workspace="qualification"' ci/cargo-release-groups.json > "$fixture/policy"
     cp "$fixture/policy" ci/cargo-release-groups.json
     stage_args+=(--manifest-path qualification/Cargo.toml)
-    (cd qualification && cargo generate-lockfile --offline)
+    (cd qualification && cargo generate-lockfile)
 fi
 mkdir -p vendor/toko-tooling
 bash "$root/scripts/ci/prepare-script-fixture.sh" "$root" "$PWD/vendor/toko-tooling" scripts/ci/cargo-release-group.sh
-cargo generate-lockfile --offline
+cargo generate-lockfile
 export GIT_CONFIG_NOSYSTEM=1 GIT_CONFIG_GLOBAL=/dev/null
 unset RUSTFLAGS RUSTDOCFLAGS CARGO_ENCODED_RUSTFLAGS RUSTC_WRAPPER RUSTC_WORKSPACE_WRAPPER
 # Disposable fixture commits exercise the producer; no real source/tag is changed.
@@ -172,17 +172,17 @@ admit() {
     identity=$(jq -er .identity "$projected")
     directory=$(jq -er .directory "$projected")
     if [[ $(uname -s) != Linux ]]; then
-        if [[ "$label" == first ]]; then (cd "$directory"; cargo test --offline --locked "${stage_args[@]}") > "$fixture/native.log" 2>&1; fi
+        if [[ "$label" == first ]]; then (cd "$directory"; cargo test --locked "${stage_args[@]}") > "$fixture/native.log" 2>&1; fi
         return
     fi
     jq -cnS --arg path "$PATH" --arg home "$HOME" --arg tmp "$fixture/stage-tmp" \
         --arg tools "$fixture/tools.json" --arg identity "$identity" \
-        '{PATH:$path,HOME:$home,TMPDIR:$tmp,LC_ALL:"C",CARGO_NET_OFFLINE:"true",RUSTUP_AUTO_INSTALL:"0",CARGO_STAGE_TOOLS:$tools,CARGO_STAGE_IDENTITY:$identity}' > "$fixture/environment.json"
+        '{PATH:$path,HOME:$home,TMPDIR:$tmp,LC_ALL:"C",RUSTUP_AUTO_INSTALL:"0",CARGO_STAGE_TOOLS:$tools,CARGO_STAGE_IDENTITY:$identity}' > "$fixture/environment.json"
     (cd "$directory"; perl "$root/scripts/ci/run-validation-stage.pl" --state "$fixture/stages" \
         --stage native --contract candidate-native/1 --source "$source" --group "$group" \
         --observe "$root/scripts/ci/observe-cargo-stage.pl" --environment "$fixture/environment.json" \
         --max-bytes 536870912 --admission-output "$fixture/$label-admission.json" \
-        -- cargo test --offline --locked "${stage_args[@]}") > "$fixture/$label-native.log" 2>&1
+        -- cargo test --locked "${stage_args[@]}") > "$fixture/$label-native.log" 2>&1
     perl "$root/scripts/ci/seal-validation-stage.pl" "$fixture/$label-admission.json" "$source" "$group" "$identity" > "$fixture/$label-sealed.json"
     local expected=reused
     [[ "$label" != first && "$label" != supplier ]] || expected=executed

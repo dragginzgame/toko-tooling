@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Shared companions: scripts/ci/check-cargo-dependency-boundaries.sh scripts/ci/fixture-lifecycle.sh ci/examples/platform-owner-boundaries.json
 set -euo pipefail
-unset CARGO_NET_OFFLINE
+export FIXTURE_NETWORK_MODE="${CARGO_NET_OFFLINE-unset}"
 selection=all
 if [[ $# != 0 ]]; then
     [[ $# == 2 && $1 == --case && ($2 == upstream-client || $2 == native-client || $2 == cbor || $2 == hashing || $2 == wire-oracle || $2 == runtime-ic0 || $2 == bls-oracle) ]] || {
@@ -28,7 +28,7 @@ cat > "$FIXTURE/bin/cargo" <<'MOCK'
 #!/usr/bin/env bash
 set -euo pipefail
 [[ "$*" == 'metadata --no-deps --locked --format-version 1' ]]
-[[ -z "${CARGO_NET_OFFLINE+x}" && "$RUSTUP_AUTO_INSTALL" == 0 ]]
+[[ "${CARGO_NET_OFFLINE-unset}" == "$FIXTURE_NETWORK_MODE" && "$RUSTUP_AUTO_INSTALL" == 0 ]]
 printf 'metadata\n' >> "$BOUNDARY_CALLS"
 cat metadata.json
 case "$BOUNDARY_MODE" in failed) exit 29 ;; signal) kill -TERM "$$" ;; esac
@@ -435,7 +435,7 @@ normal = {package="substrate",path="../substrate"}
 [target.'cfg(windows)'.dev-dependencies]
 normal = {package="substrate",path="../substrate"}
 TOML
-(cd "$actual"; PATH="$original_path" CARGO_NET_OFFLINE=true RUSTUP_AUTO_INSTALL=0 "$real_cargo" generate-lockfile)
+(cd "$actual"; PATH="$original_path" RUSTUP_AUTO_INSTALL=0 "$real_cargo" generate-lockfile)
 cp "$actual/Cargo.lock" "$FIXTURE/lock.before"
 printf '%s\n' '[{"dependency":"substrate","allowed_packages":["owner"]}]' > "$actual/ci/cargo-dependency-boundaries.json"
 PATH="$original_path" bash "$root/scripts/ci/check-cargo-dependency-boundaries.sh" --consumer "$actual"
@@ -455,7 +455,7 @@ for package in identity-model ic0-adapter crypto-adapter ic-platform-types ic-pl
     cp "$owners/$package/Cargo.toml" "$owners/$package/base.toml"
     : > "$owners/$package/src/lib.rs"
 done
-(cd "$owners"; PATH="$original_path" CARGO_NET_OFFLINE=true RUSTUP_AUTO_INSTALL=0 "$real_cargo" generate-lockfile)
+(cd "$owners"; PATH="$original_path" RUSTUP_AUTO_INSTALL=0 "$real_cargo" generate-lockfile)
 for dependency in ic-platform-types ic-platform-runtime ic-platform; do
     case "$dependency" in
         ic-platform-types) allowed=identity-model; denied=ic0-adapter ;;
@@ -490,4 +490,4 @@ for dependency in ic-platform-types ic-platform-runtime ic-platform; do
     done
 done
 fixture_complete=true
-echo 'Dependency boundaries, failed/malformed observations and actual offline Cargo declarations passed'
+echo 'Dependency boundaries, failed/malformed observations and actual Cargo declarations passed'

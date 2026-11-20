@@ -8,7 +8,7 @@ use IPC::Open3;
 use Symbol qw(gensym);
 use POSIX qw(WIFEXITED WEXITSTATUS);
 
-my $root = "$FindBin::Bin/../..";
+my $root = "$FindBin::Bin/../../../..";
 sub run {
     my (@args) = @_;
     my $err = gensym;

@@ -62,7 +62,7 @@ printf 'shared qualification bytes\n' > ci/qualification.lock
 printf '{"version":"0.1.0"}\n' > ci/endpoint-pin.json
 printf '# Changelog\n\n## [0.12.0]\n\n- Codec draft.\n\n## [0.11.0] - 2026-10-30\n\n- Previous.\n' > CHANGELOG.md
 printf '# Endpoint\n\n## [0.2.0]\n\n- Endpoint draft.\n\n## [0.1.0] - 2026-10-30\n\n- Previous.\n' > docs/endpoint.md
-cargo generate-lockfile --offline > "$fixture/lock.log" 2>&1
+cargo generate-lockfile > "$fixture/lock.log" 2>&1
 git add -- Cargo.toml Cargo.lock CHANGELOG.md codec derive endpoint docs ci
 git commit -qm fixture
 cp ci/cargo-release-groups.json "$fixture/policy.json"
@@ -218,7 +218,7 @@ for fault in missing-entry missing-path wrong-path; do
         missing-path) sed 's/derive = .*/derive = { version = "0.11.0" }/' "$fixture/manifest" > Cargo.toml ;;
         wrong-path) sed 's/derive = .*/derive = { path = "codec", version = "0.11.0" }/' "$fixture/manifest" > Cargo.toml ;;
     esac
-    cargo metadata --locked --offline --format-version 1 > /dev/null
+    cargo metadata --locked --format-version 1 > /dev/null
     refuse bash "$helper" prepare endpoint > "$fixture/catalog-$fault.log" 2>&1
     cmp Cargo.lock "$fixture/lock"
     cmp docs/endpoint.md "$fixture/changelog"
@@ -237,7 +237,7 @@ cp "$fixture/manifest" Cargo.toml
 # Equivalent relative paths remain valid; catalog-only entries add no edges.
 sed 's/path = "derive"/path = ".\/derive"/' "$fixture/manifest" > Cargo.toml
 bash "$helper" check-graph endpoint
-cargo metadata --locked --offline --format-version 1 | jq -e '
+cargo metadata --locked --format-version 1 | jq -e '
     [.packages[] | select(.name == "derive")][0] as $p |
     $p.publish == [] and all(.resolve.nodes[]; all(.deps[]; .pkg != $p.id))' > /dev/null
 cp "$fixture/manifest" Cargo.toml
@@ -251,7 +251,7 @@ cp "$fixture/policy.json" ci/cargo-release-groups.json
 # Cargo accepts an abbreviated requirement in the unselected group, but the
 # shared admission and its dependency-check caller must reject that stale view.
 sed 's/path = "codec", version = "0.11.0"/path = "codec", version = "0.11"/' "$fixture/manifest" > Cargo.toml
-cargo metadata --locked --offline --format-version 1 > /dev/null
+cargo metadata --locked --format-version 1 > /dev/null
 refuse bash "$helper" check-graph endpoint > "$fixture/abbreviated.log" 2>&1
 grep -F 'root dependency codec declares 0.11; expected full local version 0.11.0' "$fixture/abbreviated.log"
 refuse bash "$ROOT/scripts/ci/check-dependency-pins.sh" --consumer "$PWD" --cargo-inheritance > "$fixture/pins-drift.log" 2>&1
@@ -259,8 +259,8 @@ cp "$fixture/manifest" Cargo.toml
 # A full but older compatible bound also passes Cargo. Reject it before release
 # writes, without changing the current packages, lock or selected ledger.
 sed 's/^version = "0.11.0"$/version = "0.11.1"/' "$fixture/manifest" > Cargo.toml
-cargo generate-lockfile --offline > "$fixture/drift-lock.log" 2>&1
-cargo metadata --locked --offline --format-version 1 > /dev/null
+cargo generate-lockfile > "$fixture/drift-lock.log" 2>&1
+cargo metadata --locked --format-version 1 > /dev/null
 cp Cargo.toml "$fixture/drift-manifest"
 cp Cargo.lock "$fixture/drift-lock"
 refuse bash "$helper" prepare endpoint > "$fixture/stale-requirement.log" 2>&1
@@ -359,7 +359,7 @@ jq -ne --slurpfile before "$fixture/before.json" --slurpfile after "$fixture/aft
     ($before[0].package | map(select(.name != "endpoint"))) == ($after[0].package | map(select(.name != "endpoint"))) and
     ($after[0].package | map(select(.name == "endpoint"))[0].version) == "0.2.0"' > /dev/null
 grep -q 'version = "\^0.2.0"' Cargo.toml
-cargo metadata --locked --offline --format-version 1 > "$fixture/publication-metadata.json"
+cargo metadata --locked --format-version 1 > "$fixture/publication-metadata.json"
 perl "$ROOT/scripts/ci/cargo-publication-selection.pl" "$fixture/publication-metadata.json" \
     'codec derive endpoint' 'codec endpoint' crates-io > "$fixture/publication-selection"
 printf 'codec@0.11.0\0endpoint@0.2.0\0' > "$fixture/publication-expected"
@@ -420,7 +420,7 @@ case "$operation" in
         bash "$root/cargo-release-group.sh" check-graph "$group"
         ;;
     verify)
-        cargo metadata --locked --offline --format-version 1 > /dev/null
+        cargo metadata --locked --format-version 1 > /dev/null
         mkdir -p "$state"
         release_receipt_write "$state/validated" release_receipt_identity
         ;;
@@ -523,7 +523,7 @@ cat > ci/cargo-release-groups.json <<'JSON'
 JSON
 cp "$fixture/changelog" CHANGELOG.md
 printf '# Other group\n' > other.md
-cargo generate-lockfile --offline > /dev/null
+cargo generate-lockfile > /dev/null
 RELEASE_GROUP=root RELEASE_PREVIOUS=0.1.0 RELEASE_VERSION=0.2.0 RELEASE_DATE=2026-10-31 \
     bash "$helper" prepare root > "$fixture/root-package.log" 2>&1
 yq -p toml -o json '.' Cargo.toml | jq -e '.package.version == "0.2.0" and .workspace.package.version == "0.11.0" and
@@ -561,7 +561,7 @@ cat > ci/cargo-release-groups.json <<'JSON'
 {"schema":1,"groups":[{"name":"public","primary":"public","version":"package","members":["public","private-helper"],"changelog":"CHANGELOG.md","dependencies":["public","test_helper"]}]}
 JSON
 cp "$fixture/changelog" CHANGELOG.md
-cargo generate-lockfile --offline > /dev/null
+cargo generate-lockfile > /dev/null
 bash "$group_helper" plan public | jq -e '
     (.members | index("private-helper") != null) and
     (.dependencies | map(.alias)) == ["public"]' > /dev/null
@@ -590,7 +590,7 @@ yq -p toml -o json '.' Cargo.toml | jq -e '
     .workspace.dependencies.public.version == "0.2.0" and
     (.workspace.dependencies.test_helper | has("version") | not)' > /dev/null
 yq -p toml -o json '.' helper/Cargo.toml | jq -e '.package.version == "0.2.0" and .package.publish == false' > /dev/null
-cargo package --locked --offline --allow-dirty -p public > "$fixture/private-package.log" 2>&1
+cargo package --locked --allow-dirty -p public > "$fixture/private-package.log" 2>&1
 tar -xOf target/package/public-0.2.0.crate public-0.2.0/Cargo.toml > "$fixture/packaged.toml"
 yq -p toml -o json '.' "$fixture/packaged.toml" | jq -e '
     (."dev-dependencies" // {} | has("test_helper") | not)' > /dev/null
@@ -601,7 +601,7 @@ printf '\n[workspace]\n' >> helper/Cargo.toml
 jq '.groups[0].members=["public"] | .groups[0].dependencies=["public"]' \
     ci/cargo-release-groups.json > "$fixture/excluded-policy"
 cp "$fixture/excluded-policy" ci/cargo-release-groups.json
-cargo metadata --locked --offline --format-version 1 > "$fixture/excluded-metadata.json"
+cargo metadata --locked --format-version 1 > "$fixture/excluded-metadata.json"
 jq -e '.workspace_members | length == 1' "$fixture/excluded-metadata.json" > /dev/null
 bash "$group_helper" plan public | jq -e '.members == ["public"]' > /dev/null
 cp helper/Cargo.toml "$fixture/excluded-helper"

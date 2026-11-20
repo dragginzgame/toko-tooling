@@ -2,8 +2,8 @@
 # Shared companions: scripts/ci/verify-file-checksum.sh scripts/dev/install-rust-tools.sh ci/tool-versions.env scripts/ci/tool-catalog-records.pl
 set -euo pipefail
 
-# Explicit native qualification, separate from the offline portable suite.
-# Cargo may prepare registry inputs unless CARGO_NET_OFFLINE=true is selected.
+# Explicit native qualification, separate from the portable suite.
+# Each Cargo invocation inherits the caller's network mode.
 # Retain every install, build, receipt and failed attempt in a new owned root.
 [[ $# == 1 && ! -e "$1" && ! -L "$1" ]] || {
     echo 'usage: qualify-cargo-install.sh <new-evidence-directory>' >&2; exit 2;
@@ -90,11 +90,11 @@ exercise() {
     cp "$case_root/install/.crates2.json" "$case_root/crates2.before.json"
     digest="$(bash "$checksum" --print sha256 "$case_root/binary.before")"
     printf '%s\n' "$digest" > "$case_root/observed.sha256"
-    CARGO_NET_OFFLINE=true install_at "$case_root/install" "$case_root/build" > "$case_root/reuse.log" 2>&1
+    install_at "$case_root/install" "$case_root/build" > "$case_root/reuse.log" 2>&1
     admit_receipt "$case_root/install"
     assert_preserved
 
-    if CARGO_NET_OFFLINE=true install_at "$case_root/install" "$case_root/build" \
+    if install_at "$case_root/install" "$case_root/build" \
         --bin toko_tooling_missing_target > "$case_root/missing-target.log" 2>&1; then
         echo 'missing Cargo target was admitted' >&2; exit 1
     fi
@@ -102,17 +102,17 @@ exercise() {
 
     # A real failed Cargo compilation must retain the usable installation.
     status=0
-    CARGO_NET_OFFLINE=true RUSTC_WRAPPER="$fixture/reject-compile" \
+    RUSTC_WRAPPER="$fixture/reject-compile" \
         CARGO_QUALIFICATION_REJECTION="$case_root/compile-rejected.txt" \
         install_at "$case_root/install" "$case_root/failed-build" --force \
         > "$case_root/failed-build.log" 2>&1 || status=$?
     [[ "$status" != 0 && -s "$case_root/compile-rejected.txt" ]] || exit 1
     assert_preserved
 
-    # Concurrent offline requests share Cargo's lock and recheck installation.
-    CARGO_NET_OFFLINE=true install_at "$case_root/concurrent" "$case_root/build" > "$case_root/concurrent-1.log" 2>&1 &
+    # Concurrent install requests share Cargo's lock and recheck installation.
+    install_at "$case_root/concurrent" "$case_root/build" > "$case_root/concurrent-1.log" 2>&1 &
     first=$!
-    CARGO_NET_OFFLINE=true install_at "$case_root/concurrent" "$case_root/build" > "$case_root/concurrent-2.log" 2>&1 &
+    install_at "$case_root/concurrent" "$case_root/build" > "$case_root/concurrent-2.log" 2>&1 &
     second=$!
     first_status=0 second_status=0
     wait "$first" || first_status=$?
@@ -139,12 +139,12 @@ exercise() {
     bash "$ROOT/scripts/dev/install-rust-tools.sh" "${installer_args[@]}" > "$case_root/selected-install.txt" 2> "$case_root/selected-install.log"
     installed="$(cat "$case_root/selected-install.txt")"
     [[ -x "$installed" && -f "$installed" && ! -L "$installed" ]] || exit 1
-    CARGO_NET_OFFLINE=true bash "$ROOT/scripts/dev/install-rust-tools.sh" "${installer_args[@]}" --check > "$case_root/selected-check.txt"
-    CARGO_NET_OFFLINE=true bash "$ROOT/scripts/dev/install-rust-tools.sh" "${installer_args[@]}" > "$case_root/selected-reuse.txt"
+    bash "$ROOT/scripts/dev/install-rust-tools.sh" "${installer_args[@]}" --check > "$case_root/selected-check.txt"
+    bash "$ROOT/scripts/dev/install-rust-tools.sh" "${installer_args[@]}" > "$case_root/selected-reuse.txt"
     cmp "$case_root/selected-install.txt" "$case_root/selected-check.txt"
     cmp "$case_root/selected-install.txt" "$case_root/selected-reuse.txt"
     printf '\nchanged qualification bytes\n' >> "$installed"
-    if CARGO_NET_OFFLINE=true bash "$ROOT/scripts/dev/install-rust-tools.sh" "${installer_args[@]}" --check > "$case_root/selected-corruption.log" 2>&1; then
+    if bash "$ROOT/scripts/dev/install-rust-tools.sh" "${installer_args[@]}" --check > "$case_root/selected-corruption.log" 2>&1; then
         echo 'production check admitted changed executable' >&2; exit 1
     fi
     printf 'Native Cargo bin installation qualified: %s %s (%s); observed sha256 %s\n' "$package" "$version" "$target" "$digest"

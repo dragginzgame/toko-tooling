@@ -1423,9 +1423,7 @@ use this same grammar at each saved-input/receipt boundary.
 decimal arithmetic and the same u64 component ceiling. Only the incremented
 component needs headroom; lower components reset to zero for minor/major bumps.
 Overflow, invalid inputs and unsupported increments produce no candidate.
-The public `next-release-version.sh X.Y.Z patch|minor|major` entrypoint delegates
-to this calculation and returns exit 2 for invalid inputs; existing adapters do
-not need an invocation change.
+Invalid next-version arguments exit 2.
 The runner admits generated and retained dates before dispatching release
 callbacks. Consumers still own metadata, selected identity, receipts and replay.
 

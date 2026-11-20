@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Shared companions: scripts/ci/release-plan.pl scripts/ci/fixture-lifecycle.sh
 set -euo pipefail
-ROOT="$(cd "${BASH_SOURCE[0]%/*}/../.." && pwd -P)"
+ROOT="$(cd "${BASH_SOURCE[0]%/*}/../../../.." && pwd -P)"
 mkdir -p "$ROOT/target/tmp"
 fixture="$(mktemp -d "$ROOT/target/tmp/release-plan.XXXXXX")"
 # shellcheck source=scripts/ci/fixture-lifecycle.sh

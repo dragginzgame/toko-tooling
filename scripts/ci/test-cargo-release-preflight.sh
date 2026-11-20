@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Shared companions: scripts/ci/cargo-release-preflight.sh scripts/ci/run-release.sh scripts/ci/fixture-lifecycle.sh
 set -euo pipefail
+caller_network_mode="${CARGO_NET_OFFLINE:-false}"
 unset RELEASE_MAKE PREFLIGHT_REAL_FETCH
 unset MAKEFLAGS MFLAGS MAKEOVERRIDES GNUMAKEFLAGS MAKEFILES RELEASE_COMMIT
 unset GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE GIT_COMMON_DIR GIT_OBJECT_DIRECTORY GIT_ALTERNATE_OBJECT_DIRECTORIES
@@ -153,7 +154,7 @@ for scenario in cold standalone-cold environment-offline config-offline fetch-fa
     cmp "$fixture/original.lock" Cargo.lock
 ); done
 # Each matrix owns its own environment; do not reuse a subshell selection.
-unset PREFLIGHT_CACHE CARGO_NET_OFFLINE PREFLIGHT_FETCH_STATUS PREFLIGHT_FAIL_TARGET
+unset PREFLIGHT_CACHE PREFLIGHT_FETCH_STATUS PREFLIGHT_FAIL_TARGET
 # Qualify the real runner/helper boundary here. A successful cold preflight
 # reaches only a deliberately failing validation; every setup refusal stops
 # earlier. Real Git objects and a bare destination belong solely to this fixture.
@@ -241,7 +242,7 @@ for scenario in cold offline fetch-failure tool-install-failure tool-check-failu
     [[ -z "$(git ls-remote --refs origin)" ]]
 ); done
 # A private Git registry with file URLs exercises real Cargo downloads without
-# external network access. Each policy gets the same lock and a fresh Cargo home.
+# external network access. Real Cargo inherits the invocation’s network mode.
 registry="$fixture/registry"
 package='fixture-input'
 mkdir -p "$registry/index/fi/xt" "$registry/$package-1.0.0/src"
@@ -254,10 +255,9 @@ printf '{"dl":"file://%s/{crate}-{version}.crate"}\n' "$registry" > "$registry/i
 git -C "$registry/index" init --quiet
 git -C "$registry/index" add .
 git -C "$registry/index" -c user.name=Fixture -c user.email=fixture@example.invalid commit --quiet -m 'Publish fixture input'
-for policy in environment config ordinary; do (
-    unset CARGO_NET_OFFLINE PREFLIGHT_FETCH_STATUS PREFLIGHT_CACHE
-    export PREFLIGHT_REAL_FETCH=1 CARGO_HOME="$fixture/real-cargo-home-$policy"
-    workspace="$fixture/real-cargo-$policy"
+(
+    export PREFLIGHT_REAL_FETCH=1 CARGO_HOME="$fixture/real-cargo-home"
+    workspace="$fixture/real-cargo"
     mkdir -p "$CARGO_HOME" "$workspace/src"
     cat > "$workspace/Cargo.toml" <<'TOML'
 [package]
@@ -288,17 +288,12 @@ LOCK
     cp "$workspace/Cargo.toml" "$workspace/original.toml"
     cp "$workspace/Cargo.lock" "$workspace/original.lock"
     printf '[source.crates-io]\nreplace-with = "fixture"\n[source.fixture]\nregistry = "file://%s/index"\n' "$registry" > "$CARGO_HOME/config.toml"
-    if [[ "$policy" == config ]]; then printf '[net]\noffline = true\n' >> "$CARGO_HOME/config.toml"; fi
     cd "$workspace"
     : > "$PREFLIGHT_EVENTS"
     status=0
-    if [[ "$policy" == environment ]]; then
-        CARGO_NET_OFFLINE=true run 1 > "$workspace/preflight.log" 2>&1 || status=$?
-    else
-        run 1 > "$workspace/preflight.log" 2>&1 || status=$?
-    fi
+    run 1 > "$workspace/preflight.log" 2>&1 || status=$?
     printf 'cargo:%s:fetch --locked\n' "$PWD" > "$workspace/expected-events"
-    if [[ "$policy" == ordinary ]]; then
+    if [[ "$caller_network_mode" != true ]]; then
         [[ "$status" == 0 ]] || { cat "$workspace/preflight.log" >&2; exit 1; }
         cmp "$registry/$package-1.0.0.crate" "$CARGO_HOME"/registry/cache/*/"$package-1.0.0.crate"
         printf 'make:install\nmake:offline-check\n' >> "$workspace/expected-events"
@@ -310,6 +305,6 @@ LOCK
     cmp "$workspace/expected-events" "$PREFLIGHT_EVENTS"
     cmp original.toml Cargo.toml
     cmp original.lock Cargo.lock
-); done
+)
 fixture_complete=true
 echo 'Locked Cargo preparation, ordered tool checks and multi-pin refusal passed'

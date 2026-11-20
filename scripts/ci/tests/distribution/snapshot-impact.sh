@@ -3,7 +3,7 @@
 set -euo pipefail
 root="${BASH_SOURCE[0]}"
 [[ "$root" == /* ]] || root="$PWD/$root"
-root="$(CDPATH='' cd -P -- "${root%/*}/../.." && printf '%s/.' "$PWD")"
+root="$(CDPATH='' cd -P -- "${root%/*}/../../../.." && printf '%s/.' "$PWD")"
 root="${root%/.}"
 source "$root/scripts/ci/fixture-lifecycle.sh"
 fixture="$(fixture_create "${TMPDIR:-/tmp}/snapshot-impact.XXXXXX")"
@@ -25,7 +25,7 @@ cp -Rp "$fixture/consumer" "$fixture/before"
 git -C "$fixture/source" checkout -q --detach "$head"
 bash "$root/scripts/distribution/refresh-consumer.sh" --impact --source "$fixture/source" \
     --consumer "$fixture/consumer" > "$fixture/impact.log"
-grep -F $'AFFECTS\tCHANGELOG.md\tCHANGELOG.md' "$fixture/impact.log" >/dev/null
+grep -Fx $'AFFECTS\tvendor/toko-tooling/CHANGELOG.md\tvendor/toko-tooling/CHANGELOG.md' "$fixture/impact.log" >/dev/null
 grep -F "$(printf 'COMMIT\t%s\t' "$change")" "$fixture/impact.log" >/dev/null
 diff -r "$fixture/before" "$fixture/consumer"
 git -C "$fixture/source" checkout -q --detach "$base"

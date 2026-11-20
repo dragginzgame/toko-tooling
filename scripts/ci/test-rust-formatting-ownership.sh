@@ -7,7 +7,7 @@ mkdir -p "$root/target/tmp"
 fixture="$(fixture_create "$root/target/tmp/format-ownership.XXXXXX")"
 fixture_complete=false
 trap 'fixture_finish "$?" "$fixture" "Formatting ownership fixture retained"' EXIT
-export CARGO_NET_OFFLINE=true RUSTUP_AUTO_INSTALL=0
+export RUSTUP_AUTO_INSTALL=0
 export GIT_CONFIG_NOSYSTEM=1 GIT_CONFIG_GLOBAL=/dev/null
 real_cargo="$(command -v cargo)"
 export real_cargo
@@ -28,7 +28,7 @@ exec "$real_cargo" "$@"
 WRAPPER
 chmod +x "$fixture/cargo-wrapper"
 for path in consumer sibling consumer/extra; do
-    (cd "$fixture/$path" && cargo generate-lockfile --offline)
+    (cd "$fixture/$path" && cargo generate-lockfile)
 done
 git -C "$fixture/sibling" init -q
 git -C "$fixture/sibling" add .

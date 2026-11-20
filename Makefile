@@ -91,7 +91,7 @@ check-tool-catalogs:
 	@perl scripts/ci/check-tool-catalogs.pl --consumer "$(TOOL_CATALOG_CONSUMER)" --bindings "$(TOOL_CATALOG_BINDINGS)"
 
 check-shell:
-	$(SHELLCHECK) scripts/ci/*.sh scripts/dev/*.sh scripts/dev/toko-cloc scripts/distribution/*.sh scripts/release/*.sh .githooks/pre-commit
+	$(SHELLCHECK) scripts/ci/*.sh scripts/ci/tests/*.sh scripts/ci/tests/*/*.sh scripts/dev/*.sh scripts/dev/toko-cloc scripts/distribution/*.sh scripts/release/*.sh .githooks/pre-commit
 
 test-portable:
 	+@editor="$$($(RELEASE_EDITOR_COMMAND) --check)" || exit $$?; \

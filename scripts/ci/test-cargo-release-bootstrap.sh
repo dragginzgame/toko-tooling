@@ -8,7 +8,7 @@ fixture="$(fixture_create "${TMPDIR:-/tmp}/cargo-bootstrap-observation.XXXXXX")"
 fixture_complete=false
 trap 'fixture_finish "$?" "$fixture" "Bootstrap observation fixture retained"' EXIT
 unset RELEASE_COMMIT RELEASE_VERSION RELEASE_PREVIOUS
-export RUSTUP_AUTO_INSTALL=0 CARGO_NET_OFFLINE=true
+export RUSTUP_AUTO_INSTALL=0
 mkdir "$fixture/exported"
 bash "$root/scripts/ci/prepare-script-fixture.sh" "$root" "$fixture/exported" scripts/ci/observe-cargo-release-bootstrap.sh
 observer="$fixture/exported/scripts/ci/observe-cargo-release-bootstrap.sh"
@@ -36,7 +36,7 @@ cat > ci/cargo-release-groups.json <<'JSON'
  {"name":"gamma","primary":"gamma","version":"package","members":["gamma"],"changelog":"gamma.md","dependencies":["gamma"]}
 ]}
 JSON
-cargo generate-lockfile --offline
+cargo generate-lockfile
 for group in alpha beta gamma; do printf '# Group notes\n' > "$group.md"; done
 cp -R . "$fixture/original"
 observe() { bash "$observer" observe; }
@@ -179,7 +179,7 @@ BOOTSTRAP_REAL_CARGO="$(command -v cargo)"
 cat > "$fixture/bin/cargo" <<'SH'
 #!/usr/bin/env bash
 set -euo pipefail
-[[ "$1" == metadata && "$*" == *--no-deps* && "$*" == *--locked* && "$CARGO_NET_OFFLINE" == true ]]
+[[ "$1" == metadata && "$*" == *--no-deps* && "$*" == *--locked* ]]
 "$BOOTSTRAP_REAL_CARGO" "$@"
 exit 29
 SH

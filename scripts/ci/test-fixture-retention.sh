@@ -459,7 +459,7 @@ chmod +x "$fixture/bin/"*
 mkdir -p "$fixture/source"
 "$BASH" "$ROOT/scripts/ci/prepare-script-fixture.sh" "$ROOT" "$fixture/source" scripts/ci/test-cloc.sh
 status=0
-TMPDIR="$fixture/cloc" PATH="$fixture/bin:$PATH" CARGO_NET_OFFLINE=true RUSTUP_AUTO_INSTALL=0 \
+TMPDIR="$fixture/cloc" PATH="$fixture/bin:$PATH" RUSTUP_AUTO_INSTALL=0 \
     "$BASH" "$fixture/source/scripts/ci/test-cloc.sh" --scopes-only > "$fixture/cloc.log" 2>&1 || status=$?
 [[ "$status" == 23 ]] || exit 1
 set -- "$fixture/cloc"/shared-cloc-test.*
@@ -494,7 +494,7 @@ jq -e --arg save_condition "\${{ needs.change-scope.outputs.scope != 'docs' && (
   map(select(.value.uses? | strings | startswith("actions/cache/restore@"))) as $restore |
   map(select(.value.uses? | strings | startswith("actions/cache/save@"))) as $save |
   map(select(.value.run == "bash scripts/ci/prepare-common-tools.sh")) as $setup |
-  map(select(.value.run? | strings | contains("CARGO_NET_OFFLINE=true bash scripts/dev/install-rust-tools.sh"))) as $reuse |
+  map(select(.value.id == "native-tool-reuse")) as $reuse |
   map(select(.value.id == "portable-tests")) as $gate |
   ($restore | length) == 1 and ($save | length) == 1 and
   ($setup | length) == 1 and ($reuse | length) == 1 and ($gate | length) == 1 and

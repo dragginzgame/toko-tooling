@@ -267,7 +267,7 @@ cold="$fixture/cold consumer"; mkdir "$cold"
 for mode in ic rust; do
     args=(--consumer "$cold" --preflight)
     [[ "$mode" != ic ]] || args+=(--tool wasm-opt)
-    PATH="$fixture/bin" TOOL_COMMAND_CONSUMER="$cold" CARGO_NET_OFFLINE=true \
+    PATH="$fixture/bin" TOOL_COMMAND_CONSUMER="$cold" \
         bash "$snapshot/scripts/dev/install-$mode-tools.sh" "${args[@]}" > "$fixture/preflight-$mode.out"
     [[ ! -s "$fixture/preflight-$mode.out" && ! -e "$cold/.tools" ]] || exit 1
 done

@@ -40,7 +40,7 @@ edition = "2024"
 TOML
 printf 'pub fn record() {}\n' > "$consumer/src/lib.rs"
 printf '# Retention fixture\n' > "$consumer/README.md"
-(cd "$consumer"; cargo generate-lockfile --offline)
+(cd "$consumer"; cargo generate-lockfile)
 git init --quiet "$consumer"
 git -C "$consumer" add -- .
 git -C "$consumer" -c user.name=Fixture -c user.email=fixture@example.invalid \

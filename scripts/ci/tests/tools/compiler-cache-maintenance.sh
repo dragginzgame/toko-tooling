@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-root="$(cd "$(dirname "$0")/../.." && pwd -P)"
+root="$(cd "$(dirname "$0")/../../../.." && pwd -P)"
 fixture="$(mktemp -d "${TMPDIR:-/tmp}/compiler-cache.XXXXXX")"
 fixture="$(cd "$fixture" && pwd -P)"
 trap 'printf "Compiler cache evidence: %s\n" "$fixture"' EXIT

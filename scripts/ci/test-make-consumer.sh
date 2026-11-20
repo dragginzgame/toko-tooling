@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Shared companions: scripts/ci/prepare-script-fixture.sh make/consumer.mk scripts/ci/check-make-execution.sh scripts/ci/verify-file-checksum.sh .githooks/pre-commit scripts/ci/check-pipe-jobserver.pl scripts/ci/fixture-lifecycle.sh
 set -euo pipefail
-unset CARGO_NET_OFFLINE
+export FIXTURE_NETWORK_MODE="${CARGO_NET_OFFLINE-unset}"
 unset MAKEFLAGS MFLAGS MAKEOVERRIDES GNUMAKEFLAGS MAKEFILES
 root="${BASH_SOURCE[0]}"
 [[ "$root" == /* ]] || root="$PWD/$root"
@@ -86,7 +86,7 @@ MAKE
 cat > "$consumer/.tools/rust/common/bin/fixture-cargo" <<'CARGO'
 #!/usr/bin/env bash
 set -eu
-[[ -z "${CARGO_NET_OFFLINE+x}" && "$RUSTUP_AUTO_INSTALL" == 0 ]]
+[[ "${CARGO_NET_OFFLINE-unset}" == "$FIXTURE_NETWORK_MODE" && "$RUSTUP_AUTO_INSTALL" == 0 ]]
 case "$*" in
     'metadata --locked --no-deps --format-version 1')
         [[ "${FIXTURE_METADATA_EMPTY:-0}" == 0 ]] || exit 0
@@ -183,7 +183,7 @@ cat > "$consumer/custom formatter.sh" <<'FORMAT'
 #!/usr/bin/env bash
 set -eu
 [[ "$CARGO_HOME" == "$PWD/selected cargo home" ]]
-[[ -z "${CARGO_NET_OFFLINE+x}" && "$RUSTUP_AUTO_INSTALL" == 0 ]]
+[[ "${CARGO_NET_OFFLINE-unset}" == "$FIXTURE_NETWORK_MODE" && "$RUSTUP_AUTO_INSTALL" == 0 ]]
 [[ $# == 2 && "$2" == 'workspace with spaces' ]]
 if [[ "${REQUIRE_JOBSERVER:-0}" == 1 ]]; then
     perl "$JOBSERVER_PROBE"

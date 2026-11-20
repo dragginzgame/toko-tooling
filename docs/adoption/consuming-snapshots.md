@@ -542,9 +542,10 @@ The release runner requires `scripts/ci/validate-release-inputs.pl` and its
 validation logger and formatting hook also require
 `scripts/ci/check-make-execution.sh`. The exporter derives these companions when
 adding or refreshing those entrypoints; review the additions in the preview.
-The public `next-release-version.sh X.Y.Z patch|minor|major` command delegates to
-that same calculation, retaining exit 2 for invalid inputs. Existing direct callers
-can keep their command and select it as an export root.
+In 0.46, replace the retired `bash next-release-version.sh VERSION KIND` call with
+`perl validate-release-inputs.pl next-version VERSION KIND` from the same
+directory. Select the Perl entrypoint in place of the shell wrapper when refreshing.
+Invalid increments still exit 2 and produce no candidate.
 
 PR release delivery additionally requires `scripts/ci/release-pr.sh` beside
 `run-release.sh`, the updated `docs/releases/releases.md` and explicit
@@ -582,7 +583,7 @@ using the maintained snapshot verifier. The retired tooling LOC reporter and its
 two dedicated fixtures are no longer selectable entrypoints. Remove their local
 callers and selections during an authorized refresh; retain the verifier and
 checksum helpers required by other entrypoints.
-`test-cloc-fixture-contexts.sh` is the upstream admission check for the reusable
+`scripts/ci/tests/loc-contexts.sh` is the upstream admission check for the reusable
 LOC fixtures under enclosing Git/Cargo configuration, including sibling-report
 checks with trailing-slash and aliased temporary roots. Refresh
 `test-cloc-siblings.sh` to receive its physical-path correction; counts, partial

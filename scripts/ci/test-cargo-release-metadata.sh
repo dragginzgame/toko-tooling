@@ -127,7 +127,7 @@ TOML
     done
     chmod 0640 "$root/Cargo.toml"
     printf '# Changelog\n\n## [1.2.4]\n\n- Prepared change.\n\n## [1.2.3] - 2026-10-12\n\n- Previous.\n' > "$root/CHANGELOG.md"
-    (cd "$root" && "$REAL_CARGO" generate-lockfile --offline > /dev/null)
+    (cd "$root" && "$REAL_CARGO" generate-lockfile > /dev/null)
 }
 mkdir "$fixture/success"
 make_workspace "$fixture/success"
@@ -210,7 +210,7 @@ for ordering in --manifest-order --manifest-order-grouped; do
 done
 for package in primary secondary; do
     jq -e --arg name "$package" '.packages[] | select(.name == $name) | .version == "1.2.4"' \
-        < <(cd "$fixture/success" && "$REAL_CARGO" metadata --offline --locked --format-version 1) > /dev/null
+        < <(cd "$fixture/success" && "$REAL_CARGO" metadata --locked --format-version 1) > /dev/null
 done
 # Exercise real Cargo resolution across semver boundaries. An owned dependency
 # alias/requirement must follow its path target, not an unrelated registry row.
@@ -264,7 +264,7 @@ TOML
     case "$mode" in minor) edge='alias' ;; major) edge=tilde ;; zero-major) edge=exact ;; esac
     printf '\n[dependencies]\n%s.workspace = true\n' "$edge" >> "$root/secondary/Cargo.toml"
     printf '# Changelog\n\n## [%s]\n\n- Change.\n\n## [%s] - 2026-10-12\n\n- Previous.\n' "$candidate" "$previous" > "$root/CHANGELOG.md"
-    (cd "$root" && "$REAL_CARGO" generate-lockfile --offline > /dev/null)
+    (cd "$root" && "$REAL_CARGO" generate-lockfile > /dev/null)
     mkdir "$root/originals"
     for file in Cargo.toml Cargo.lock CHANGELOG.md; do cp -p "$root/$file" "$root/originals/$file"; done
     "${YQ:-yq}" -p toml -o json '.' "$root/Cargo.toml" > "$root/before.json"
@@ -295,7 +295,7 @@ root="$fixture/restrictive-local-range"
 make_workspace "$root"
 printf '\n[workspace.dependencies.primary]\npath="primary"\nversion=">=1.2, <1.3"\n' >> "$root/Cargo.toml"
 printf '\n[dependencies]\nprimary.workspace=true\n' >> "$root/secondary/Cargo.toml"
-(cd "$root" && "$REAL_CARGO" generate-lockfile --offline > /dev/null)
+(cd "$root" && "$REAL_CARGO" generate-lockfile > /dev/null)
 mkdir "$root/originals"
 for file in Cargo.toml Cargo.lock CHANGELOG.md; do cp -p "$root/$file" "$root/originals/$file"; done
 printf '# Changelog\n\n## [1.3.0]\n\n- Change.\n\n## [1.2.3] - 2026-10-12\n\n- Previous.\n' > "$root/CHANGELOG.md"
@@ -525,11 +525,11 @@ for mode in mixed-version resolved-primary-version stale-primary stale-secondary
     case "$mode" in
         mixed-version)
             perl -pi -e 's/version.workspace = true/version = "1.2.2"/' "$root/secondary/Cargo.toml"
-            (cd "$root" && "$REAL_CARGO" generate-lockfile --offline >/dev/null)
+            (cd "$root" && "$REAL_CARGO" generate-lockfile >/dev/null)
             ;;
         resolved-primary-version)
             perl -pi -e 's/version.workspace = true/version = "1.2.2"/' "$root/primary/Cargo.toml"
-            (cd "$root" && "$REAL_CARGO" generate-lockfile --offline >/dev/null)
+            (cd "$root" && "$REAL_CARGO" generate-lockfile >/dev/null)
             ;;
         stale-primary|stale-secondary)
             package="${mode#stale-}"

@@ -569,18 +569,18 @@ native installation contract in a new disposable evidence directory:
 
 ```bash
 mkdir -p .tools
-CARGO_NET_OFFLINE=true bash scripts/ci/qualify-cargo-install.sh "$PWD/.tools/cargo-install-assessment"
+bash scripts/ci/qualify-cargo-install.sh "$PWD/.tools/cargo-install-assessment"
 ```
 
-The offline command requires the registry packages and their locked dependencies
-to be prepared already. Explicit online qualification may omit
-`CARGO_NET_OFFLINE=true`; it installs only into the new evidence root and retains
+The command inherits the caller’s Cargo network mode throughout. If the caller
+selects offline mode, prepare the registry packages and locked dependencies first.
+It installs only into the new evidence root and retains
 builds and logs on both success and failure. Relative evidence paths resolve from
 the caller's working directory independently of `CDPATH`; existing roots are
 refused before tool probes. It never cleans or changes an existing installation.
 The common fixture selects the reviewed cargo-sort version, using the debug
 profile for direct Cargo assessment and release for the shared production
-installer, including offline reuse and changed-byte refusal. Product compiler
+installer, including cache reuse and changed-byte refusal. Product compiler
 floors and application CLI selections remain consumer-owned.
 
 The frozen published Blob example assessment moves to
@@ -589,8 +589,8 @@ Integrate that owner before adopting this snapshot. Its Linux and both native
 macOS jobs retain the former example-installation proof
 ([#280 — Retire frozen Blob example assessment after native owner qualification](https://github.com/dragginzgame/toko-tooling/issues/280)).
 
-It checks Cargo receipt package/registry/version/target/profile identity, offline
-reuse, missing-target refusal, concurrent offline installation and preservation
+It checks Cargo receipt package/registry/version/target/profile identity, cache
+reuse, missing-target refusal, concurrent installation and preservation
 of the executable and receipts after an injected compiler failure. It records
 local executable digests and rejects changed bytes using the shared checksum
 owner. Those digests detect changes to an observed build; they are not publisher

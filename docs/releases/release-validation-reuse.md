@@ -20,7 +20,8 @@ The caller supplies an executable observer, an explicit bounded environment as
 canonical JSON, a byte allowance for each input/log, the exact command, a trusted
 exclusive state directory and fresh source/group identities. An invocation-level `CARGO_NET_OFFLINE` is
 included in the effective environment for observation, execution and proof lookup.
-A conflicting value in the stage environment fails before dispatch.
+A stage environment can repeat that value. Introducing a mode when the caller
+left it unset, or supplying a conflicting value, fails before dispatch.
 
 The source identifier is a caller-admitted 40- or 64-digit hexadecimal content
 identity, such as a Git commit or a retained source-projection digest. This tool

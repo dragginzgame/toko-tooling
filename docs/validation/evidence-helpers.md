@@ -169,8 +169,11 @@ fixture_complete=true
 ```
 
 The allocation helper is additive and does not change existing cleanup callers.
-Its focused fixture is `scripts/ci/test-fixture-allocation.sh`; selecting that
-fixture through the snapshot exporter includes the lifecycle helper.
+Run `bash scripts/ci/tests/fixture-lifecycle.sh allocation` to check allocation.
+The same fixture accepts `completion` or `log-replay`; the default runs all three.
+When upgrading to 0.46, replace `test-fixture-allocation.sh`,
+`test-fixture-completion.sh` or `test-fixture-log-replay.sh` with the new
+fixture root and pass the corresponding case in your caller.
 
 ### Completion admission without cleanup
 

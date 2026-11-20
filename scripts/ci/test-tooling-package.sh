@@ -60,7 +60,7 @@ jq '{files: (.files | map_values(.checksum)), package: .checksum}' \
     "$fixture/vendor/toko-tooling/.toko-tooling.files.json" > "$fixture/vendor/toko-tooling/.cargo-checksum.json"
 rm "$fixture/vendor/toko-tooling/.toko-tooling.files.json"
 printf '[source.crates-io]\nreplace-with="fixture"\n[source.fixture]\ndirectory="%s"\n' "$fixture/vendor" > "$consumer/.cargo/config.toml"
-(cd "$consumer" && cargo generate-lockfile --offline)
+(cd "$consumer" && cargo generate-lockfile)
 if [[ "$installation_only" == false ]]; then
     bash "$ROOT/scripts/ci/test-vendor-snapshot.sh"
     make --no-print-directory -C "$consumer" toko-tooling-check
@@ -110,5 +110,5 @@ bash "$installed/scripts/dev/install-git-hooks.sh" --consumer "$consumer"
 documents=()
 while IFS= read -r path; do documents+=("${path#"$consumer/"}"); done < <(find "$consumer" -type f -name '*.md' -not -path '*/.git/*' | sort)
 perl "$fixture/package/scripts/ci/check-documentation-links.pl" --root "$consumer" "${documents[@]}"
-printf 'Published tooling source bundle installs its complete governance/Make closure and verifies offline.\n'
+printf 'Published tooling source bundle installs its complete governance/Make closure and verifies the installed snapshot.\n'
 fixture_complete=true

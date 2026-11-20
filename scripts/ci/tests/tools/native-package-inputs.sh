@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Shared companions: scripts/dev/native-package-inputs.pl scripts/ci/fixture-lifecycle.sh
 set -euo pipefail
-root="$(cd -P "${BASH_SOURCE[0]%/*}/../.." && pwd -P)"
+root="$(cd -P "${BASH_SOURCE[0]%/*}/../../../.." && pwd -P)"
 # shellcheck source=scripts/ci/fixture-lifecycle.sh
 source "$root/scripts/ci/fixture-lifecycle.sh"
 mkdir -p "$root/target/tmp"

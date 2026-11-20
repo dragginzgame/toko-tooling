@@ -2,7 +2,7 @@
 # Shared companions: scripts/dev/tool-store-maintenance.pl scripts/dev/compiler-cache-maintenance.pl scripts/ci/fixture-lifecycle.sh scripts/ci/shared-companions.sh
 set -euo pipefail
 umask 077
-root="$(cd -P "${BASH_SOURCE[0]%/*}/../.." && pwd -P)"
+root="$(cd -P "${BASH_SOURCE[0]%/*}/../../../.." && pwd -P)"
 # shellcheck source=scripts/ci/fixture-lifecycle.sh
 source "$root/scripts/ci/fixture-lifecycle.sh"
 mkdir -p "$root/target/tmp"

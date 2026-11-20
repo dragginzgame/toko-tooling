@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Shared companions: scripts/ci/check-cargo-graph.pl scripts/ci/fixture-lifecycle.sh
 set -euo pipefail
-unset CARGO_NET_OFFLINE
+export FIXTURE_NETWORK_MODE="${CARGO_NET_OFFLINE-unset}"
 root="${BASH_SOURCE[0]}"
 [[ "$root" == /* ]] || root="$PWD/$root"
 root="$(CDPATH='' cd -P "${root%/*}/../.." && printf '%s/.' "$PWD")"
@@ -19,7 +19,7 @@ cat > "$fixture/bin/cargo" <<'CARGO'
 #!/usr/bin/env bash
 set -euo pipefail
 [[ "$*" == 'tree --locked --color never --target wasm32-unknown-unknown --edges normal,build --prefix none --format {p} --package consumer'* || "$*" == 'tree --locked --color never --target wasm32-unknown-unknown --edges normal,build,features --prefix none --format {p} --package consumer'* || "$*" == *$'--format {p}\t{f} --package consumer'* ]]
-[[ -z "${CARGO_NET_OFFLINE+x}" && "$RUSTUP_AUTO_INSTALL" == 0 ]]
+[[ "${CARGO_NET_OFFLINE-unset}" == "$FIXTURE_NETWORK_MODE" && "$RUSTUP_AUTO_INSTALL" == 0 ]]
 printf '%s\n' "$*" >> "$GRAPH_CALLS"
 cat "$GRAPH_INPUT"
 case "$GRAPH_MODE" in failed) exit 29 ;; signal) kill -TERM "$$" ;; esac
@@ -129,7 +129,7 @@ for invalid in 'consumer v0.1.0' $'consumer v0.1.0\tbad,,feature' $'consumer v0.
     if "${checker[@]}" --forbid absent --json --observations > "$fixture/malformed.json" 2> "$fixture/malformed.log"; then exit 1; fi
     [[ ! -s "$fixture/malformed.json" ]]
 done
-# Real offline Cargo: transitive aliases, optional features, build/dev edges and
+# Real Cargo: transitive aliases, optional features, build/dev edges and
 # target placement. No registry dependencies, compilation or network is involved.
 export PATH="$original_path"
 actual="$fixture/actual workspace"
@@ -154,7 +154,7 @@ dev-only={path="../dev-only"}
 wasm-only={path="../wasm-only"}
 TOML
 printf '[features]\ndefault=[]\ndanger=[]\n[dependencies]\nhidden={package="substrate",path="../substrate"}\n[build-dependencies]\nbuild-only={path="../build-only"}\n' >> "$actual/bridge/Cargo.toml"
-(cd "$actual"; cargo generate-lockfile --offline)
+(cd "$actual"; cargo generate-lockfile)
 cp "$actual/Cargo.lock" "$fixture/lock.before"
 native="$(rustc -vV | sed -n 's/^host: //p')"
 checker=(perl "$root/scripts/ci/check-cargo-graph.pl" --consumer "$actual" --package consumer)
@@ -201,7 +201,7 @@ mkdir -p "$fixture/unpublished supplier/src"
 printf '[workspace]\n[package]\nname="substrate"\nversion="0.2.0"\nedition="2021"\n' > "$fixture/unpublished supplier/Cargo.toml"
 : > "$fixture/unpublished supplier/src/lib.rs"
 printf '\n[dependencies]\nsubstrate={path="../../unpublished supplier"}\n' >> "$actual/build-only/Cargo.toml"
-(cd "$actual"; cargo generate-lockfile --offline)
+(cd "$actual"; cargo generate-lockfile)
 cp "$actual/Cargo.lock" "$fixture/destination.lock"
 "${checker[@]}" --target "$native" --features runtime --edges normal --require substrate=1 --explain --json > "$fixture/runtime.json"
 jq -e '.passed and .edges == "normal"' "$fixture/runtime.json" > /dev/null
@@ -213,7 +213,7 @@ jq -e '.violations[0].identity_paths | length == 2 and
 # A real runtime conflict reports both introducing paths, even though the
 # candidate provider has never been published. Graph admission is source-only.
 printf '\n[dependencies.new-substrate]\npackage="substrate"\npath="../../unpublished supplier"\n' >> "$actual/bridge/Cargo.toml"
-(cd "$actual"; cargo generate-lockfile --offline)
+(cd "$actual"; cargo generate-lockfile)
 cp "$actual/Cargo.lock" "$fixture/destination.lock"
 status=0
 "${checker[@]}" --target "$native" --features runtime --edges normal --require substrate=1 --explain --json > "$fixture/runtime-conflict.json" || status=$?
@@ -228,8 +228,8 @@ if "${checker[@]}" --target "$native" --edges normal --forbid absent --json > "$
 cmp "$fixture/destination.lock" "$actual/Cargo.lock"
 # Optional refreshes stay excluded and the compatible consumer keeps its version.
 sed -i.bak 's/name="stale-lock-member"/name="dev-only"/' "$actual/dev-only/Cargo.toml"
-(cd "$actual"; cargo metadata --locked --offline --no-deps --format-version 1) > "$fixture/destination-metadata.json"
+(cd "$actual"; cargo metadata --locked --no-deps --format-version 1) > "$fixture/destination-metadata.json"
 jq -e '.packages[] | select(.name == "consumer") | .version == "0.1.0"' "$fixture/destination-metadata.json" > /dev/null
 "${checker[@]}" --target "$native" --edges normal --require bridge=0 --require substrate=0 --forbid build-only
 fixture_complete=true
-echo 'Locked graph selection, identity counts, aliases, failed observations and offline Cargo checks passed'
+echo 'Locked graph selection, identity counts, aliases, failed observations and Cargo checks passed'
