@@ -132,12 +132,8 @@ Read [CONTRIBUTING.md](CONTRIBUTING.md) and this repository's [AGENTS.md](AGENTS
 Only authorised Toko Studios personnel may contribute; outside contributions
 are not accepted.
 Prepare [Toko Tooling's pinned compiler](docs/adoption/local-setup.md#toko-toolings-own-compiler)
-before installing Cargo tools. For ordinary changes, select the affected
-fixtures and checks; documentation-only changes use `make check-doc-links` and
-`git diff --check`. Normal releases use `make release-basic`; the complete
-regression matrix stays
-in hosted CI. Run `make ci` or `make test-portable` locally only when explicitly
-requested. See [validation selection](AGENTS.md#validation-in-toko-tooling).
+before installing Cargo tools. For development, documentation and release
+checks, follow the [local validation instructions](AGENTS.md#validation-in-toko-tooling).
 
 `make version` reads package.version in [Cargo.toml](Cargo.toml); the top undated [changelog](CHANGELOG.md)
 entry describes pending work and does not prove publication. Tags establish

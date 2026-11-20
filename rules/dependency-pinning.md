@@ -32,7 +32,7 @@ older dependency merely to match an upstream integration stack.
   Do not exact-pin every library merely to reproduce a build.
 - Track each build workspace's lockfile, including maintained test/integration
   workspaces. CI, release validation and artifact-producing Cargo commands use
-  `--locked` (or `--frozen` when offline operation is explicitly authorized). Explicit cache
+  `--locked` and preserve the caller’s [Cargo network mode](cargo-dependencies.md#cargo-network-policy). Explicit cache
   preparation preserves that lockfile. Do not regenerate a lockfile to make a
   gate pass. Published libraries still declare compatibility for their consumers;
   their own lockfile does not constrain a downstream application's resolution.

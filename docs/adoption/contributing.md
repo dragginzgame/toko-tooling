@@ -7,10 +7,8 @@ Under the [contribution rules](../../rules/contributions.md), asking an agent to
 a PR authorizes its scoped commits, branch push and PR creation. You do not need
 to commit on the agent's behalf. Direct pushes to the default branch, merges and
 releases require their own authorization and remain subject to branch protections.
-For meaningful Toko Tooling work, use `make prepare-work` to select or reuse
-the pending version. Record the batch in that changelog entry and validate
-the affected behavior. Opening a PR for the prepared batch reuses that version.
-See the [changelog rules](../../rules/changelogs.md).
+Prepare the pending version under the [local instructions](../../AGENTS.md#validation-in-toko-tooling).
+Opening a PR for the prepared batch reuses that version.
 
 ## Inclusion test
 
@@ -112,8 +110,8 @@ Portable scripts must:
 - use temporary files safely, clean disposable scratch and retain failed evidence;
 - fail with a non-zero status and actionable diagnostics;
 - preserve consumer-owned version and policy decisions; and
-- include an offline regression whenever the behavior can be exercised with a
-  fixture or command stub.
+- use local fixtures or command stubs for behavior that can be tested without
+  external services. Preserve the caller’s [Cargo network mode](../../rules/cargo-dependencies.md#cargo-network-policy).
 
 CI and release scripts must remain usable as reviewed vendored snapshots. A
 new helper dependency must be included in the consumer's declared snapshot
@@ -132,10 +130,7 @@ macOS behavior.
 
 ## Validation
 
-For script changes, run affected focused fixtures and source-following ShellCheck
-under [AGENTS.md](../../AGENTS.md) and the baseline's
-[validation policy](../../TOKO-TOOLING.md#validation-and-evidence). For documentation-only
-changes, check links, instruction consistency and the diff.
+Select checks from the [local validation instructions](../../AGENTS.md#validation-in-toko-tooling).
 Keep scratch and loop variables local to fixture helpers. Construct and assert
 each negative case's intended precondition: a partial-staging case must select
 the intended file before adding its unstaged edit. Do not rely on copied tooling

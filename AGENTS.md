@@ -7,15 +7,13 @@ overlay. Consumers adopt the baseline and keep their own `AGENTS.md`.
 For changes to Toko Tooling itself, apply the
 [engineering contribution guide](docs/adoption/contributing.md).
 
-For sibling tooling audits, use [snapshot-drift](tasks/snapshot-drift.md) for
-integrity and applicable updates, then [tooling-duplication](tasks/tooling-duplication.md)
-for actual caller wiring and missed shared capabilities. An older version or
-LOC count alone is not an adoption defect. Run on request, not as background
-monitoring or an added release gate.
-
 Before fleet planning or sibling audits, read the
 [current fleet plan](docs/fleet/current-plan.md). It records active reconstruction
 work so legacy code and plans are not mistaken for current requirements.
+
+For a requested sibling tooling audit, run [snapshot-drift](tasks/snapshot-drift.md)
+for integrity and applicable updates, then [tooling-duplication](tasks/tooling-duplication.md)
+for actual caller wiring and missed shared capabilities. Keep these audits outside release gates.
 
 By maintainer direction on 2026-11-09, exclude `ic-replica-watch` and
 `ic-profiler` from sibling audits for now unless the user explicitly includes
@@ -52,12 +50,9 @@ owns when to run checks. This overlay identifies the local checks only.
   `check-tooling-package` selects fresh installation-only verification; the default
   `scripts/ci/test-tooling-package.sh` retains takeover/refusal/preview regressions
   for CI and focused changes to the package/installer contract.
-- By maintainer direction on 2026-11-08, the long-tail regression suite stays in
-  GitHub CI. Keep `make ci` and `bash scripts/ci/test-portable-tools.sh` unchanged
-  for CI and explicitly requested full local checks. A normal tooling release
-  or publication does not run that suite locally. This is Toko Tooling's local gate
-  selection for its source-distribution crate, which has no Rust runtime API;
-  it does not change consumer repositories' release obligations.
+- GitHub CI owns the full regression suite, including
+  `scripts/ci/test-portable-tools.sh`. Run the full suite locally only on
+  explicit request. Toko Tooling releases use the source-bundle gate above.
 - Documentation/policy-only changes use `make check-doc-links`, instruction
   consistency review and `git diff --check`; they do not require installer/export
   regression suites. Run `make check-version` when maintaining the pending pair.

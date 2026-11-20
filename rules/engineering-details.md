@@ -518,7 +518,9 @@ contracts; ordinary development does not require rereading these mechanics.
   explicit offline settings and execution-environment restrictions still apply.
   Prepare selected executable tools separately through the
   [release/setup contract](../docs/releases/releases.md), before dependent validation.
-  Offline checks and standalone read helpers must not install or fetch implicitly.
+  Installed-tool checks and standalone read helpers inspect prepared inputs
+  without installing tools or fetching sources. Preserve the caller’s Cargo
+  network settings in child commands.
 - Test maintained observable behavior, typed failures and genuine architectural
   boundaries. Delete tests that only prohibit a removed name or remember an old
   implementation. Source inspection can enforce a live architectural invariant;

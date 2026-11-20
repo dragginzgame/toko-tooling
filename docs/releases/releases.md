@@ -335,7 +335,7 @@ The default `RELEASE_DELIVERY=direct` workflow is:
    still have different staged content. Check pending changelog/candidate
    agreement here, before the validation gate or saved preparation intent. Prepare
    the selected dependency cache and required executable tools through their
-   existing setup/check targets before an offline gate without changing the
+   existing setup/check targets before validation without changing the
    lockfile selection. Authorized dependency changes must already have
    [prepared every affected independent lockfile](../../rules/cargo-dependencies.md#preparing-authorized-dependency-changes);
    cache fetching stays locked and does not repair stale dependency graphs.

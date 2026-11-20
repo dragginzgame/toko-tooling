@@ -17,8 +17,9 @@
 targets, retaining individual failures through the shared validation logger.
 It returns nonzero if any check fails and never calls install targets. It is an
 optional diagnostic, not release admission: `make tools-check` keeps its existing
-fail-fast behavior. Local check targets must retain their offline/no-install
-contract. The report uses the consumer root even with a nested shared snapshot.
+fail-fast behavior. Installed-tool checks inspect local executables and receipts
+without installing or downloading tools. Cargo build and test commands inherit
+the caller’s network settings. The report uses the consumer root even with a nested shared snapshot.
 
 The host, IC and Rust installers accept `--describe` instead of installation,
 `--check` or `--preflight`. They print JSON after parsing the same selection

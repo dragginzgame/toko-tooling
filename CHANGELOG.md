@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.45.23] - Unreleased
+
+### 🥾 Governance
+
+- Make the caller the sole owner of Cargo network mode across CI, release
+  commands and fixtures. Clarify local tool checks and consolidate contributor
+  guidance on version preparation and validation.
+
 ## [0.45.22] - 2026-11-19
 
 ### ➕ Added

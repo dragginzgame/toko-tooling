@@ -285,9 +285,9 @@ availability is separate evidence; a cached offline build or a `version` beside
 ## Cargo network policy
 
 Cargo may obtain missing locked sources during development, validation and
-release. Use `--locked` to preserve the selected graph. Offline mode requires
-explicit authorization for the invocation or job. Honour the caller’s Cargo
-environment and configuration and the execution environment’s restrictions.
+release. Use `--locked` to preserve the selected graph. Only the caller selects
+offline mode for an invocation. Honor the caller’s Cargo environment and
+configuration throughout nested commands and respect execution-environment restrictions.
 If an offline input is missing, report the setting, the missing input and
 Cargo’s original error. Keep the selected version and network mode on failure.
 
@@ -330,10 +330,12 @@ Cargo’s original error. Keep the selected version and network mode on failure.
   consumer-selected CLI through its existing setup target, then run its offline
   admission before dependent validation or builds. The documented preparation
   includes those selected installations, never an unrelated tool upgrade.
-- For an explicitly authorized offline job, scope `--offline`, `--frozen` or
-  `CARGO_NET_OFFLINE=true` to its commands. Dependency-free fixtures and local
-  workspace-version synchronization can use prepared inputs when the external
-  graph stays fixed. Finish setup before sealing reusable validation evidence.
+- Repository-owned scripts, CI definitions, Cargo configuration and fixtures
+  must not set an offline default or override the caller in either direction.
+  This includes `--offline`, `--frozen` and `CARGO_NET_OFFLINE`. Fetching the
+  lockfile’s sources grants no authority to change the next command’s mode.
+  Use local inputs or a command stub for deterministic refusal tests. Finish
+  setup before sealing reusable validation evidence.
 
 Cargo documents how [offline updates](https://doc.rust-lang.org/cargo/commands/cargo-update.html)
 resolve from the available cache and how [locked fetching](https://doc.rust-lang.org/cargo/commands/cargo-fetch.html)
