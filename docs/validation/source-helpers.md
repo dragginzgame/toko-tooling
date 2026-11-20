@@ -1,5 +1,31 @@
 # Source verification helpers
 
+## API baseline comparison
+
+For applications that review public API changes in PRs, select
+`scripts/ci/check-api-baseline.sh` as an optional snapshot entrypoint.
+From the consumer root, pass the checked-in manifest directory, then the
+consumer's generator command and its arguments:
+
+```sh
+bash vendor/toko-tooling/scripts/ci/check-api-baseline.sh api/baseline -- make-manifests --profile production
+```
+
+Here `make-manifests` stands for the application's executable. The runner
+appends one argument: the absolute path to a fresh empty directory under
+`target/tmp/`. The generator writes its complete candidate file tree there.
+Generator stdout passes through, so a caller can also compare a second output.
+The candidate path and Git diff go to stderr. Generator errors propagate before
+comparison. Equal trees pass and the scratch directory is removed. On failure,
+the candidate is retained for inspection. Review and update the tracked baseline
+explicitly for intentional changes.
+
+The application owns its supported baseline, selected Wasm and features,
+coverage of deployed methods, and compatibility with real client bytes. Wire
+owns schema generation. The runner requires Bash and Git and compares files
+without interpreting their format. Select it at the existing PR check that
+already generates the manifests.
+
 ## Repository symlink admission
 
 This optional helper enforces an all-regular repository inventory. It is stricter

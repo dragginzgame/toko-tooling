@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.45.24] - Unreleased
+
+### ➕ Added
+
+- Add an opt-in CI runner that compares a consumer's generated API manifests
+  with its reviewed baseline and reports added, changed and removed files.
+  [Toko Tooling #401 — Shared API baseline check](https://github.com/dragginzgame/toko-tooling/issues/401)
+
 ## [0.45.23] - 2026-11-20
 
 ### 🥾 Governance

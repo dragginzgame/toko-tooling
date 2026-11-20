@@ -141,6 +141,7 @@ run_fixture test-checker-retention.sh bash "$ROOT/scripts/ci/test-checker-retent
 run_fixture test-cargo-dependency-boundaries.sh bash "$ROOT/scripts/ci/test-cargo-dependency-boundaries.sh"
 run_fixture test-cargo-graph.sh bash "$ROOT/scripts/ci/test-cargo-graph.sh"
 run_fixture test-tool-selection.sh bash "$ROOT/scripts/ci/test-tool-selection.sh"
+run_fixture test-api-baseline.sh bash "$ROOT/scripts/ci/test-api-baseline.sh"
 run_fixture test-dependency-pins.sh bash "$ROOT/scripts/ci/test-dependency-pins.sh"
 run_fixture test-npm-pins.sh bash "$ROOT/scripts/ci/test-npm-pins.sh"
 run_fixture test-cargo-metadata.sh bash "$ROOT/scripts/ci/test-cargo-metadata.sh"
