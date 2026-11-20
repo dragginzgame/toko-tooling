@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.45.25] - Unreleased
+
+### 🥾 Governance
+
+- Require PR baseline comparison for supported public Wire APIs and assign
+  schema, mount, client and comparison regressions to their respective owners.
+
 ## [0.45.24] - 2026-11-20
 
 ### ➕ Added

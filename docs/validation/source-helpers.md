@@ -20,11 +20,19 @@ comparison. Equal trees pass and the scratch directory is removed. On failure,
 the candidate is retained for inspection. Review and update the tracked baseline
 explicitly for intentional changes.
 
-The application owns its supported baseline, selected Wasm and features,
-coverage of deployed methods, and compatibility with real client bytes. Wire
-owns schema generation. The runner requires Bash and Git and compares files
-without interpreting their format. Select it at the existing PR check that
-already generates the manifests.
+Keep each regression with the code that could break it.
+
+- IC Wire tests deterministic output and changes to method descriptors and
+  reachable request and reply schemas, including nested enum tags and field
+  order. Use known encoded bytes when testing changes to wire layout.
+- Canic tests that mounted declarations supply the expected contract and that
+  their names and call modes agree with callable exports in built canisters.
+- The application selects its supported baseline, production roles and features,
+  accounts for every callable export and tests its supported client bytes.
+  Generate into a fresh directory in PR CI. Update the tracked baseline only
+  through explicit review. Reuse the selected Wasm from the existing build.
+- Toko Tooling tests file-tree comparison and generator failure handling. The
+  runner requires Bash and Git and treats each manifest as an ordinary file.
 
 ## Repository symlink admission
 
